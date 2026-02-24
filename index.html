@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Pathshala - Ultimate All-in-One Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        :root {
+            --chakra-blue: #000080;
+            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
+            --text-main: #1d1d1f;
+            --success: #27ae60;
+        }
+        body { 
+            margin: 0; 
+            min-height: 100vh; 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(180deg, #FF9933 0%, #FFFFFF 50%, #138808 100%); 
+            background-attachment: fixed;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* অশোক চক্র স্টাইল */
+        .chakra-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            z-index: -1;
+            opacity: 0.15; /* হালকা দেখানোর জন্য */
+            animation: rotateChakra 20s linear infinite;
+        }
+
+        @keyframes rotateChakra {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .container { max-width: 1200px; margin: 20px auto; padding: 30px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative; z-index: 1; }
+        .glass-card { background: rgba(255, 255, 255, 0.6); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255, 255, 255, 0.5); }
+        .apple-btn { background: var(--chakra-blue); color: white; padding: 12px 25px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-approve { background: var(--success) !important; color: white; border-radius: 8px; padding: 8px 15px; }
+        .btn-disabled { opacity: 0.2; cursor: not-allowed; pointer-events: none; }
+        
+        .rank-1 { background: var(--gold) !important; font-weight: bold; }
+        .rank-2 { background: var(--silver) !important; }
+        .rank-3 { background: var(--bronze) !important; color: white; }
+
+        .marquee-box { overflow: hidden; background: rgba(0, 0, 128, 0.05); padding: 10px 0; border-radius: 10px; margin: 20px 0; }
+        .moving-text { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; color: var(--chakra-blue); font-weight: 600; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        .pass-wrapper { position: relative; width: 100%; }
+        .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--chakra-blue); }
+
+        input, select, textarea { background: rgba(255, 255, 255, 0.8); border: 1px solid #ddd; padding: 12px; border-radius: 10px; margin: 10px 0; width: 95%; }
+        .hidden { display: none; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th { background: rgba(0, 0, 128, 0.1); padding: 12px; }
+        td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        #clock { font-size: 1.2rem; font-weight: bold; color: var(--chakra-blue); text-align: right; }
+    </style>
+</head>
+<body>
+
+<svg class="chakra-bg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" fill="none" stroke="#000080" stroke-width="2"/>
+    <circle cx="100" cy="100" r="85" fill="none" stroke="#000080" stroke-width="1"/>
+    <circle cx="100" cy="100" r="8" fill="#000080"/>
+    <g id="spokes" stroke="#000080" stroke-width="2">
+        <script>
+            for (let i = 0; i < 24; i++) {
+                document.write(`<line x1="100" y1="100" x2="${100 + 85 * Math.cos(i * 15 * Math.PI / 180)}" y2="${100 + 85 * Math.sin(i * 15 * Math.PI / 180)}" />`);
+            }
+        </script>
+    </g>
+</svg>
+
+<div class="container">
+    <div id="clock">00:00:00</div>
+    <h1 style="text-align: center; font-size: 3rem; margin: 0; background: linear-gradient(90deg, #FF9933, #000080, #138808); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pathshala.</h1>
+
+    <div id="publicView">
+        <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; margin-top: 20px;">
+            <div class="glass-card">
+                <h3 style="color: var(--chakra-blue); text-align: center;"><i class="fa-solid fa-trophy"></i> Public Rank List</h3>
+                <center>
+                    <select id="rankClassSelect" onchange="renderRankList()" style="width: 180px;">
+                        <option value="6">Class 6</option><option value="7">Class 7</option>
+                        <option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option>
+                    </select>
+                </center>
+                <table>
+                    <thead><tr><th>Rank</th><th>Name</th><th>Average (%)</th></tr></thead>
+                    <tbody id="rankListBody"></tbody>
+                </table>
+            </div>
+
+            <div class="glass-card" style="text-align: center;">
+                <div id="loginForm">
+                    <h3>Sign In</h3>
+                    <input type="text" id="lUser" placeholder="Full Name (Login ID)">
+                    <div class="pass-wrapper">
+                        <input type="password" id="lPass" placeholder="Password">
+                        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('lPass', this)"></i>
+                    </div>
+                    <button class="apple-btn" style="width: 100%; margin-top: 15px;" onclick="handleLogin()">Login</button>
+                    <p id="pendingMsg" style="color:red; font-size:12px; display:none;">Waiting for Admin approval...</p>
+                    <p>নতুন? <a href="#" onclick="toggleAuth(true)">Registration করুন</a></p>
+                </div>
+
+                <div id="regForm" class="hidden">
+                    <h3>Registration</h3>
+                    <input type="text" id="rName" placeholder="Full Name (Login ID)">
+                    <input type="text" id="rPhone" placeholder="WhatsApp No">
+                    <select id="rClass">
+                        <option value="">ক্লাস সিলেক্ট করুন</option>
+                        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option>
+                    </select>
+                    <div style="margin: 10px 0;">
+                        <label><input type="radio" name="g" value="Male" checked> Male</label>
+                        <label><input type="radio" name="g" value="Female"> Female</label>
+                        <label><input type="radio" name="g" value="ZZ"> ZZ</label>
+                    </div>
+                    <div class="pass-wrapper">
+                        <input type="password" id="rPass" placeholder="Password">
+                        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('rPass', this)"></i>
+                    </div>
+                    <button class="apple-btn" style="width: 100%; margin-top: 10px;" onclick="handleRegister()">Submit Request</button>
+                    <p><a href="#" onclick="toggleAuth(false)">Back</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminPanel" class="hidden">
+        <button class="apple-btn" style="float: right; background: #c0392b;" onclick="location.reload()">Logout</button>
+        <h2>Admin Console.</h2>
+        
+        <div class="glass-card">
+            <h4>📩 Registration Approvals</h4>
+            <table id="approvalTable">
+                <thead><tr><th>Name</th><th>Pass</th><th>Class</th><th>Action</th></tr></thead>
+                <tbody id="approvalBody"></tbody>
+            </table>
+        </div>
+
+        <div class="glass-card">
+            <h4>📢 Moving Notice Board</h4>
+            <textarea id="noticeInput" rows="2" placeholder="Write announcement..."></textarea>
+            <button class="apple-btn" onclick="postNotice()">Update Notice</button>
+        </div>
+
+        <div class="glass-card">
+            <h4>📊 Upload Results & Notify (WhatsApp)</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                <select id="resClass" onchange="filterStudents()"><option value="">Class</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+                <select id="resUserSelect"><option value="">Select Student</option></select>
+                <select id="resSub"><option value="">Subject</option></select>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px;">
+                <input type="number" id="resOb" placeholder="Obtained" oninput="calcPerc()"><input type="number" id="resFull" placeholder="Total" oninput="calcPerc()"><input type="text" id="resPerc" placeholder="%" readonly>
+            </div>
+            <button class="apple-btn" onclick="uploadResult()">Upload & Send WhatsApp</button>
+        </div>
+
+        <div class="glass-card">
+            <h4>👥 Attendance & Master Control</h4>
+            <table id="adminMasterTable">
+                <thead><tr><th>Student Name</th><th>Class</th><th>P/T Stats</th><th>Mark</th><th>Action</th></tr></thead>
+                <tbody id="masterBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="studentPanel" class="hidden">
+        <button class="apple-btn" style="float: right; background: #c0392b;" onclick="location.reload()">Logout</button>
+        <h2>Welcome back, <span id="studentDisplayName"></span>!</h2>
+        <div class="marquee-box"><div class="moving-text" id="noticeDisplay"></div></div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 20px;">
+            <div class="glass-card" style="text-align: center;">
+                <p>Attendance</p><div id="attPerc" style="font-size: 3rem; font-weight: 800; color:var(--chakra-blue)">0%</div>
+            </div>
+            <div class="glass-card">
+                <h4>Academic Performance</h4>
+                <table id="resultTable">
+                    <thead><tr><th>Subject</th><th>Marks</th><th>%</th><th>Grade</th></tr></thead>
+                    <tbody id="studentBody"></tbody>
+                </table>
+                <button class="apple-btn" style="margin-top: 20px;" onclick="downloadPDF()">Download Marksheet (PDF)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let students = JSON.parse(localStorage.getItem('ps_students')) || { 'admin': { pw: '123', role: 'admin', approved: true } };
+    let results = JSON.parse(localStorage.getItem('ps_results')) || [];
+    let att = JSON.parse(localStorage.getItem('ps_att_session')) || {}; 
+    let currentNotice = localStorage.getItem('ps_notice') || "Welcome to Pathshala Portal!";
+
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
+    window.onload = renderRankList;
+
+    function togglePass(id, icon) { const input = document.getElementById(id); input.type = input.type === "password" ? "text" : "password"; icon.classList.toggle('fa-eye-slash'); }
+    function toggleAuth(show) { document.getElementById('loginForm').classList.toggle('hidden', show); document.getElementById('regForm').classList.toggle('hidden', !show); }
+
+    function handleLogin() {
+        let u = document.getElementById('lUser').value.trim();
+        let p = document.getElementById('lPass').value;
+        document.getElementById('pendingMsg').style.display = "none";
+
+        if(u.toLowerCase() === 'admin' && p === '123') {
+            window.currentUser = 'Admin';
+            document.getElementById('publicView').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            renderAdmin(); return;
+        }
+
+        if(students[u] && students[u].pw === p) {
+            if(!students[u].approved) { document.getElementById('pendingMsg').style.display = "block"; return; }
+            window.currentUser = u;
+            document.getElementById('publicView').classList.add('hidden');
+            document.getElementById('studentPanel').classList.remove('hidden');
+            document.getElementById('studentDisplayName').innerText = u;
+            document.getElementById('noticeDisplay').innerText = currentNotice;
+            renderStudentResults(); updateStudentAtt();
+        } else alert("Invalid username or password!");
+    }
+
+    function renderRankList() {
+        const cls = document.getElementById('rankClassSelect').value;
+        let data = [];
+        for (let u in students) {
+            if (students[u].role !== 'admin' && students[u].class === cls && students[u].approved) {
+                let res = results.filter(r => r.user === u);
+                if (res.length > 0) {
+                    let avg = res.reduce((sum, r) => sum + parseFloat(r.perc), 0) / res.length;
+                    data.push({ name: u, avg: avg });
+                }
+            }
+        }
+        data.sort((a, b) => b.avg - a.avg);
+        document.getElementById('rankListBody').innerHTML = data.map((s, i) => `
+            <tr class="${i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : ''}">
+                <td>${i + 1}</td><td>${s.name}</td><td>${s.avg.toFixed(2)}%</td>
+            </tr>`).join('') || "<tr><td colspan='3'>No data available.</td></tr>";
+    }
+
+    function renderAdmin() {
+        let appHtml = "", masterHtml = "";
+        const now = new Date(), date = now.toLocaleDateString(), session = now.getHours() < 12 ? "AM" : "PM";
+        for(let u in students) {
+            if(students[u].role === 'admin') continue;
+            if(!students[u].approved) {
+                appHtml += `<tr><td>${u}</td><td>${students[u].pw}</td><td>${students[u].class}</td>
+                <td><button onclick="approve('${u}')" class="apple-btn btn-approve">Approve</button></td></tr>`;
+            } else {
+                let r = att[u] || { lastD: "", lastS: "", p: 0, t: 0 };
+                let lock = (r.lastD === date && r.lastS === session);
+                masterHtml += `<tr><td>${u}</td><td>${students[u].class}</td><td>${r.p}/${r.t}</td>
+                <td><button onclick="markAtt('${u}','P')" class="apple-btn ${lock?'btn-disabled':''}">P</button></td>
+                <td><button onclick="removeS('${u}')" class="apple-btn" style="background:#e74c3c">Remove</button></td></tr>`;
+            }
+        }
+        document.getElementById('approvalBody').innerHTML = appHtml || "<tr><td colspan='4'>No requests.</td></tr>";
+        document.getElementById('masterBody').innerHTML = masterHtml;
+    }
+
+    function approve(u) { students[u].approved = true; localStorage.setItem('ps_students', JSON.stringify(students)); renderAdmin(); renderRankList(); }
+
+    function removeS(u) {
+        if(confirm("Confirm removal? All Attendance and Result data for " + u + " will be deleted.")) {
+            delete students[u]; delete att[u];
+            results = results.filter(r => r.user !== u);
+            localStorage.setItem('ps_students', JSON.stringify(students));
+            localStorage.setItem('ps_results', JSON.stringify(results));
+            localStorage.setItem('ps_att_session', JSON.stringify(att));
+            renderAdmin(); renderRankList();
+        }
+    }
+
+    function markAtt(u, status) {
+        const now = new Date(), h = now.getHours(), session = h < 12 ? "AM" : "PM", date = now.toLocaleDateString();
+        if(!att[u]) att[u] = { p: 0, t: 0, lastD: "", lastS: "" };
+        att[u].t += 1; if(status === 'P') att[u].p += 1;
+        att[u].lastD = date; att[u].lastS = session;
+        localStorage.setItem('ps_att_session', JSON.stringify(att)); renderAdmin();
+    }
+
+    function filterStudents() {
+        const cls = document.getElementById('resClass').value;
+        const sSelect = document.getElementById('resUserSelect');
+        sSelect.innerHTML = '<option value="">Student</option>';
+        for (let u in students) if(students[u].class === cls && students[u].approved) sSelect.innerHTML += `<option value="${u}">${u}</option>`;
+        let subs = (cls >= 6 && cls <= 8) ? ["Bengali", "English", "Math", "ENVS", "History", "Geography"] : ["Bengali", "English", "Math", "Phys Sci", "Life Sci", "History", "Geography"];
+        document.getElementById('resSub').innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    function calcPerc() {
+        let ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value;
+        if(ob && fl) document.getElementById('resPerc').value = ((ob/fl)*100).toFixed(2) + "%";
+    }
+
+    function uploadResult() {
+        let u = document.getElementById('resUserSelect').value, sub = document.getElementById('resSub').value, ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value;
+        if(!u || !sub || !ob || !fl) return alert("Fill all data!");
+        let p = (ob/fl)*100;
+        results.push({ user:u, sub, ob, fl, perc: p.toFixed(2), grade: p>=80?'A+':p>=60?'A':p>=40?'B':'F' });
+        localStorage.setItem('ps_results', JSON.stringify(results));
+        
+        let msg = p > 90 ? (students[u].gender === "Female" ? "Good Girl! 🌟" : "Good Boy! 🌟") : "পড়াশুনা তে ফাঁকি দিচ্ছ, পুরোনো পড়া রিভাইজ মারো!";
+        window.open(`https://wa.me/${students[u].phone}?text=${encodeURIComponent(`Result: ${sub}\nScore: ${ob}/${fl} (${p.toFixed(2)}%)\nGrade: ${p>=80?'A+':p>=60?'A':p>=40?'B':'F'}\n\n${msg}`)}`);
+        renderAdmin(); renderRankList();
+    }
+
+    function handleRegister() {
+        let n = document.getElementById('rName').value, ph = document.getElementById('rPhone').value, c = document.getElementById('rClass').value, pw = document.getElementById('rPass').value;
+        let g = document.querySelector('input[name="g"]:checked')?.value;
+        if(!n || !ph || !c) return alert("All fields are mandatory.");
+        students[n] = { pw, role: 'student', phone: ph, class: c, gender: g, approved: false };
+        localStorage.setItem('ps_students', JSON.stringify(students));
+        alert("Registration request submitted! Please wait for approval."); toggleAuth(false);
+    }
+
+    function postNotice() { localStorage.setItem('ps_notice', document.getElementById('noticeInput').value); alert("Notice Updated."); }
+    function renderStudentResults() { let myRes = results.filter(r => r.user === window.currentUser); document.getElementById('studentBody').innerHTML = myRes.map(r => `<tr><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td>${r.perc}%</td><td>${r.grade}</td></tr>`).join('') || "No records."; }
+    function updateStudentAtt() { let r = att[window.currentUser] || { p: 0, t: 0 }; document.getElementById('attPerc').innerText = (r.t === 0 ? 0 : Math.round((r.p/r.t)*100)) + "%"; }
+    async function downloadPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.text("Pathshala Report", 14, 20); doc.autoTable({ startY: 30, html: '#resultTable' }); doc.save("Result.pdf"); }
+</script>
+</body>
+</html>
