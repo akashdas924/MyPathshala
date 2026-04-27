@@ -138,7 +138,7 @@
         </div>
         <div class="glass-card">
             <h4>👥 Attendance & Control</h4>
-            <table><thead><tr><th>Name</th><th>Class</th><th>P/T</th><th>Mark</th><th>Action</th></tr></thead><tbody id="masterBody"></tbody></table>
+            <table><thead><tr><th>Name</th><th>Class</th><th>P/T</th><th>Action</th><th>Remove</th></tr></thead><tbody id="masterBody"></tbody></table>
         </div>
     </div>
 
@@ -252,21 +252,50 @@
         const session = new Date().getHours() < 12 ? "AM" : "PM";
         for(let u in students) {
             if(students[u].role === 'admin') continue;
+            
+            // Registration Approvals Section (Added Delete Button)
             if(!students[u].approved) {
-                appHtml += `<tr><td>${u}</td><td>${students[u].pw}</td><td>${students[u].class}</td><td><button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-approve">Approve</button></td></tr>`;
-            } else {
+                appHtml += `<tr>
+                    <td>${u}</td>
+                    <td>${students[u].pw}</td>
+                    <td>${students[u].class}</td>
+                    <td>
+                        <button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-approve">Approve</button>
+                        <button onclick="db.ref('students/${u}').remove()" class="apple-btn" style="background:#e74c3c; padding: 8px 15px; margin-left: 5px;">Delete</button>
+                    </td>
+                </tr>`;
+            } 
+            // Attendance & Control Section (Added Absent 'A' Button)
+            else {
                 let r = att[u] || { p: 0, t: 0, lastD: "", lastS: "" };
                 let lock = (r.lastD === date && r.lastS === session);
-                masterHtml += `<tr><td>${u}</td><td>${students[u].class}</td><td>${r.p}/${r.t}</td><td><button onclick="markAtt('${u}')" class="apple-btn ${lock?'btn-disabled':''}">P</button></td><td><button onclick="db.ref('students/${u}').remove()" class="apple-btn" style="background:#e74c3c">X</button></td></tr>`;
+                masterHtml += `<tr>
+                    <td>${u}</td>
+                    <td>${students[u].class}</td>
+                    <td>${r.p}/${r.t}</td>
+                    <td>
+                        <button onclick="markAtt('${u}', 'P')" class="apple-btn ${lock?'btn-disabled':''}" style="padding: 8px 12px;">P</button>
+                        <button onclick="markAtt('${u}', 'A')" class="apple-btn ${lock?'btn-disabled':''}" style="background:#e67e22; padding: 8px 12px; margin-left: 5px;">A</button>
+                    </td>
+                    <td><button onclick="db.ref('students/${u}').remove()" class="apple-btn" style="background:#e74c3c; padding: 8px 12px;">X</button></td>
+                </tr>`;
             }
         }
         document.getElementById('approvalBody').innerHTML = appHtml || "<tr><td colspan='4'>No requests.</td></tr>";
         document.getElementById('masterBody').innerHTML = masterHtml;
     }
 
-    function markAtt(u) {
+    function markAtt(u, status) {
         let r = att[u] || { p: 0, t: 0 };
-        db.ref('attendance/' + u).update({ p: r.p + 1, t: r.t + 1, lastD: new Date().toLocaleDateString(), lastS: new Date().getHours() < 12 ? "AM" : "PM" });
+        // If 'P' is clicked, increase present count. Total count increases for both 'P' and 'A'.
+        let newP = status === 'P' ? r.p + 1 : r.p;
+        
+        db.ref('attendance/' + u).update({ 
+            p: newP, 
+            t: r.t + 1, 
+            lastD: new Date().toLocaleDateString(), 
+            lastS: new Date().getHours() < 12 ? "AM" : "PM" 
+        });
     }
 
     function postNotice() { db.ref('notice').set(document.getElementById('noticeInput').value); alert("Notice Sent!"); }
@@ -307,5 +336,4 @@
     async function downloadPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.text("Pathshala Report", 14, 20); doc.autoTable({ startY: 30, html: '#resultTable' }); doc.save("Result.pdf"); }
 </script>
 </body>
-        </html>
-    
+</html>
