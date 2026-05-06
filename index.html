@@ -2,338 +2,1138 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>Pathshala - Ultimate All-in-One Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathshala - Premium Portal</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+        
         :root {
             --chakra-blue: #000080;
-            --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
-            --text-main: #1d1d1f;
-            --success: #27ae60;
+            --gold: linear-gradient(135deg, #FFDF00 0%, #D4AF37 100%);
+            --silver: linear-gradient(135deg, #E0E0E0 0%, #A9A9A9 100%);
+            --bronze: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
+            --text-main: #1d1d1f; --success: #27ae60; --warning: #f39c12; --danger: #e74c3c;
+            --bg-color: linear-gradient(180deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
+            --card-bg: rgba(255, 255, 255, 0.6);
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --border-color: rgba(255, 255, 255, 0.5);
         }
-        body { 
-            margin: 0; 
-            min-height: 100vh; 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(180deg, #FF9933 0%, #FFFFFF 50%, #138808 100%); 
-            background-attachment: fixed;
-            position: relative;
-            overflow-x: hidden;
+
+        body.dark-mode {
+            --chakra-blue: #4da8da;
+            --bg-color: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            --text-main: #e0e0e0;
+            --card-bg: rgba(0, 0, 0, 0.6);
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
         }
+        
+        body { margin: 0; min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg-color); background-attachment: fixed; transition: background 0.4s ease, color 0.4s ease; overflow-x: hidden; }
+        
         .chakra-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; z-index: -1; opacity: 0.15; animation: rotateChakra 20s linear infinite; }
         @keyframes rotateChakra { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        .container { max-width: 1200px; margin: 20px auto; padding: 30px; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative; z-index: 1; }
-        .glass-card { background: rgba(255, 255, 255, 0.6); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(255, 255, 255, 0.5); }
-        .apple-btn { background: var(--chakra-blue); color: white; padding: 12px 25px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-approve { background: var(--success) !important; color: white; border-radius: 8px; padding: 8px 15px; }
-        .btn-disabled { opacity: 0.2; cursor: not-allowed; pointer-events: none; }
-        .rank-1 { background: var(--gold) !important; font-weight: bold; }
-        .rank-2 { background: var(--silver) !important; }
-        .rank-3 { background: var(--bronze) !important; color: white; }
-        .marquee-box { overflow: hidden; background: rgba(0, 0, 128, 0.05); padding: 10px 0; border-radius: 10px; margin: 20px 0; }
-        .moving-text { display: inline-block; white-space: nowrap; animation: marquee 20s linear infinite; color: var(--chakra-blue); font-weight: 600; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .pass-wrapper { position: relative; width: 100%; }
-        .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--chakra-blue); }
-        input, select, textarea { background: rgba(255, 255, 255, 0.8); border: 1px solid #ddd; padding: 12px; border-radius: 10px; margin: 10px 0; width: 95%; }
-        .hidden { display: none; }
-        table { width: 100%; border-collapse: collapse; text-align: center; }
-        th { background: rgba(0, 0, 128, 0.1); padding: 12px; }
-        td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        #clock { font-size: 1.2rem; font-weight: bold; color: var(--chakra-blue); text-align: right; }
+        
+        .container { max-width: 1200px; margin: 20px auto; padding: 30px; background: var(--card-bg); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative; z-index: 1; transition: 0.3s;}
+        .glass-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-color); transition: 0.3s; color: var(--text-main); }
+        .glass-card h3, .glass-card h4 { color: var(--chakra-blue); }
+        
+        .apple-btn { background: var(--chakra-blue); color: white; padding: 12px 25px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: 'Poppins', sans-serif;}
+        .apple-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 128, 0.3); }
+        .btn-action { padding: 6px 12px; font-size: 12px; border-radius: 8px; margin: 2px; }
+        .tab-btn { flex: 1; padding: 12px; font-size: 14px; border-radius: 10px; opacity: 0.7; font-weight: 600; white-space: nowrap;}
+        .tab-btn.active { opacity: 1; background: var(--success); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4); }
+        
+        .avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid var(--chakra-blue); vertical-align: middle; background: white;}
+        .trophy-icon { font-size: 18px; margin-left: 5px; }
+
+        .premium-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; text-align: center; }
+        .premium-table th { background: rgba(0, 0, 128, 0.1); padding: 12px; border-radius: 5px; }
+        .premium-table tr.data-row { background: var(--input-bg); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; border-radius: 30px;}
+        .premium-table td:first-child { border-top-left-radius: 30px; border-bottom-left-radius: 30px; }
+        .premium-table td:last-child { border-top-right-radius: 30px; border-bottom-right-radius: 30px; }
+        .premium-table tr.data-row:hover { transform: scale(1.02); }
+        .premium-table td { padding: 12px 10px; border: none; vertical-align: middle; }
+
+        .rank-1 { background: var(--gold) !important; color: #000 !important; font-weight: 800; }
+        .rank-2 { background: var(--silver) !important; color: #000 !important; font-weight: 700; }
+        .rank-3 { background: var(--bronze) !important; color: #fff !important; font-weight: 700; }
+        
+        .marquee-box { overflow: hidden; white-space: nowrap; background: rgba(0, 0, 128, 0.05); padding: 10px 0; border-radius: 10px; margin: 20px 0; position: relative; width: 100%; }
+        .moving-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; color: var(--chakra-blue); font-weight: 600; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        
+        input, textarea, select { font-family: 'Poppins', sans-serif; background: var(--input-bg); color: var(--text-main); border: 1px solid #ddd; padding: 12px; border-radius: 10px; margin: 10px 0; width: 95%; transition: 0.3s; box-sizing: border-box; }
+        input:focus, select:focus { outline: none; border: 1px solid var(--chakra-blue); }
+        select { appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill="%23000080" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); background-repeat: no-repeat; background-position: right 10px center; cursor: pointer; }
+
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .btn-disabled { opacity: 0.4; pointer-events: none; }
+        .progress-circle { transition: stroke-dashoffset 1s ease-out, stroke 0.5s ease; }
+
+        .theme-switch { position: absolute; top: 30px; left: 30px; font-size: 24px; cursor: pointer; color: var(--chakra-blue); z-index: 10; transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
+        
+        .top-right-nav { position: absolute; top: 30px; right: 30px; display: flex; gap: 20px; align-items: center; z-index: 10; }
+        .nav-icon { font-size: 24px; cursor: pointer; color: var(--chakra-blue); transition: 0.3s; position: relative; }
+        .nav-icon:hover { transform: scale(1.1); }
+
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 100; top: 0; right: 0; background-color: var(--chakra-blue); overflow-x: hidden; transition: 0.4s; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); font-family: 'Poppins', sans-serif;}
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 16px; color: #fff; display: block; transition: 0.3s; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar a:hover { background-color: rgba(255,255,255,0.2); padding-left: 35px; }
+        .sidebar .closebtn { position: absolute; top: 10px; right: 25px; font-size: 36px; border-bottom: none; }
+        .sidebar i { margin-right: 10px; width: 20px; text-align: center; }
+
+        .radar-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: flex; justify-content: center; align-items: center; }
+        .radar-content { background: var(--card-bg); backdrop-filter: blur(25px); padding: 30px; border-radius: 20px; width: 90%; max-width: 550px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+
+        @media (max-width: 768px) { div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } table { display: block; overflow-x: auto; white-space: nowrap; } .tab-btn { font-size: 11px; padding: 10px; } }
     </style>
 </head>
 <body>
 
-<svg class="chakra-bg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="100" cy="100" r="95" fill="none" stroke="#000080" stroke-width="2"/>
-    <circle cx="100" cy="100" r="85" fill="none" stroke="#000080" stroke-width="1"/>
-    <circle cx="100" cy="100" r="8" fill="#000080"/>
-    <g id="spokes" stroke="#000080" stroke-width="2"></g>
-</svg>
+<svg class="chakra-bg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="95" fill="none" stroke="#000080" stroke-width="2"/><g id="spokes" stroke="#000080" stroke-width="2"></g></svg>
 
-<div class="container">
-    <div id="clock">00:00:00</div>
-    <h1 style="text-align: center; font-size: 3rem; margin: 0; background: linear-gradient(90deg, #FF9933, #000080, #138808); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pathshala.</h1>
+<div id="mySidebar" class="sidebar">
+  <a href="javascript:void(0)" class="closebtn" onclick="toggleSidebar(false)">&times;</a>
+  <h3 style="color: white; text-align: center; margin-bottom: 30px; font-weight: 700;">Menu</h3>
+  <a href="#" onclick="openMaterialsPage('Study Material')"><i class="fa-solid fa-book-open-reader"></i> Study Material</a>
+  <a href="#" onclick="openMaterialsPage('PYQ')"><i class="fa-solid fa-file-lines"></i> Previous Year Qs</a>
+  <a href="#" onclick="showHome()"><i class="fa-solid fa-house"></i> Home</a>
+</div>
 
-    <div id="publicView">
-        <div style="display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; margin-top: 20px;">
+<div class="container fade-in">
+    <i class="fa-solid fa-moon theme-switch" id="themeIcon" onclick="toggleTheme()"></i>
+    
+    <div class="top-right-nav" id="topNavArea">
+        <div class="nav-icon" onclick="showNotifications()">
+            <i class="fa-solid fa-bell"></i>
+            <span id="notifBadge" class="hidden" style="position:absolute; top:-4px; right:-4px; width:10px; height:10px; background:#e74c3c; border-radius:50%; border:2px solid var(--card-bg);"></span>
+        </div>
+        <i class="fa-solid fa-bars nav-icon" id="menuIcon" onclick="toggleSidebar(true)"></i>
+    </div>
+
+    <div id="clock" style="font-size: 1.2rem; font-weight: 700; color: var(--chakra-blue); text-align: center; margin-top: -10px;">00:00:00</div>
+    <h1 style="text-align: center; font-size: 3rem; margin: 5px 0; color: var(--chakra-blue); font-weight: 800;">Pathshala.</h1>
+
+    <div id="publicView" class="fade-in">
+        <div class="marquee-box"><div class="moving-text" id="publicNoticeDisplay">Welcome to Pathshala!</div></div>
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-top: 20px; align-items: start;">
             <div class="glass-card">
-                <h3 style="color: var(--chakra-blue); text-align: center;"><i class="fa-solid fa-trophy"></i> Public Rank List</h3>
-                <center>
-                    <select id="rankClassSelect" onchange="renderRankList()" style="width: 180px;">
-                        <option value="6">Class 6</option><option value="7">Class 7</option>
-                        <option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option>
-                    </select>
-                </center>
-                <table>
-                    <thead><tr><th>Rank</th><th>Name</th><th>Average (%)</th></tr></thead>
+                <h3 style="text-align: center; margin-top:0;"><i class="fa-solid fa-trophy"></i> Premium Rank List</h3>
+                <center><select id="rankClassSelect" onchange="renderRankList()" style="width: 180px;"><option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select></center>
+                <table class="premium-table">
+                    <thead><tr><th>Rank</th><th>Profile</th><th>Name</th><th>Average</th></tr></thead>
                     <tbody id="rankListBody"></tbody>
                 </table>
+                <div style="text-align:center; margin-top:10px;">
+                    <button class="apple-btn btn-action" onclick="changeRankPage(-1)"><i class="fa-solid fa-arrow-left"></i> Prev</button>
+                    <span id="rankPageIndicator" style="font-weight:bold; margin:0 10px;">Page 1</span>
+                    <button class="apple-btn btn-action" onclick="changeRankPage(1)">Next <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
             </div>
 
             <div class="glass-card" style="text-align: center;">
-                <div id="loginForm">
-                    <h3>Sign In</h3>
+                <div id="loginForm" class="fade-in">
+                    <h3 style="margin-top:0;">Sign In</h3>
                     <input type="text" id="lUser" placeholder="Full Name (Login ID)">
-                    <div class="pass-wrapper">
+                    <div style="position: relative; width: 100%;">
                         <input type="password" id="lPass" placeholder="Password">
-                        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('lPass', this)"></i>
+                        <i class="fa-solid fa-eye" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--chakra-blue);" onclick="togglePass('lPass', this)"></i>
                     </div>
                     <button class="apple-btn" style="width: 100%; margin-top: 15px;" onclick="handleLogin()">Login</button>
-                    <p id="pendingMsg" style="color:red; font-size:12px; display:none;">Waiting for Admin approval...</p>
-                    <p>নতুন? <a href="#" onclick="toggleAuth(true)">Registration করুন</a></p>
+                    <p id="pendingMsg" style="color:red; font-size:12px; display:none;"><i class="fa-solid fa-clock"></i> Waiting for Admin approval...</p>
+                    <p style="margin-top: 15px;">নতুন? <a href="#" onclick="toggleAuth(true)" style="color: var(--chakra-blue); font-weight: 600;">Registration করুন</a></p>
                 </div>
 
-                <div id="regForm" class="hidden">
-                    <h3>Registration</h3>
+                <div id="regForm" class="hidden fade-in">
+                    <h3 style="margin-top:0;">Registration</h3>
                     <input type="text" id="rName" placeholder="Full Name (Login ID)">
-                    <input type="text" id="rPhone" placeholder="WhatsApp No">
-                    <select id="rClass">
-                        <option value="">ক্লাস সিলেক্ট করুন</option>
-                        <option value="6">6</option><option value="7">7</option><option value="8">8</option>
-                        <option value="9">9</option><option value="10">10</option>
-                    </select>
-                    <div style="margin: 10px 0;">
-                        <label><input type="radio" name="g" value="Male" checked> Male</label>
-                        <label><input type="radio" name="g" value="Female"> Female</label>
-                    </div>
-                    <div class="pass-wrapper">
-                        <input type="password" id="rPass" placeholder="Password">
-                        <i class="fa-solid fa-eye toggle-password" onclick="togglePass('rPass', this)"></i>
+                    <input type="number" id="rPhone" placeholder="WhatsApp No (10 Digits)" oninput="validatePhone()">
+                    <span id="phoneError" style="color:red; font-size:12px; display:none; text-align:left;">* Exactly 10 digits required!</span>
+                    <select id="rClass"><option value="">ক্লাস সিলেক্ট করুন</option><option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select>
+                    <div style="margin: 15px 0;"> <label><input type="radio" name="g" value="Male" checked> Male</label> <label><input type="radio" name="g" value="Female"> Female</label> </div>
+                    <div style="position: relative; width: 100%;">
+                        <input type="password" id="rPass" placeholder="Create Password">
+                        <i class="fa-solid fa-eye" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--chakra-blue);" onclick="togglePass('rPass', this)"></i>
                     </div>
                     <button class="apple-btn" style="width: 100%; margin-top: 10px;" onclick="handleRegister()">Submit Request</button>
-                    <p><a href="#" onclick="toggleAuth(false)">Back</a></p>
+                    <p style="margin-top: 15px;"><a href="#" onclick="toggleAuth(false)" style="color: var(--danger); font-weight: 600;">Cancel</a></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="adminPanel" class="hidden">
-        <button class="apple-btn" style="float: right; background: #c0392b;" onclick="location.reload()">Logout</button>
-        <h2>Admin Console.</h2>
-        <div class="glass-card">
-            <h4>📩 Registration Approvals</h4>
-            <table><thead><tr><th>Name</th><th>Pass</th><th>Class</th><th>Action</th></tr></thead><tbody id="approvalBody"></tbody></table>
-        </div>
-        <div class="glass-card">
-            <h4>📢 Moving Notice Board</h4>
-            <textarea id="noticeInput" rows="2" placeholder="Write announcement..."></textarea>
-            <button class="apple-btn" onclick="postNotice()">Update Notice</button>
-        </div>
-        <div class="glass-card">
-            <h4>📊 Upload Results</h4>
-            <select id="resClass" onchange="filterStudents()"><option value="">Class</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
-            <select id="resUserSelect"><option value="">Select Student</option></select>
-            <select id="resSub"><option value="">Subject</option></select>
-            <input type="number" id="resOb" placeholder="Obtained" oninput="calcPerc()"><input type="number" id="resFull" placeholder="Total" oninput="calcPerc()"><input type="text" id="resPerc" placeholder="%" readonly>
-            <button class="apple-btn" onclick="uploadResult()">Upload & Send WhatsApp</button>
-        </div>
-        <div class="glass-card">
-            <h4>👥 Attendance & Control</h4>
-            <table><thead><tr><th>Name</th><th>Class</th><th>P/T</th><th>Action</th><th>Remove</th></tr></thead><tbody id="masterBody"></tbody></table>
+    <div id="materialsView" class="hidden fade-in">
+        <button class="apple-btn" style="float: right; background: var(--chakra-blue);" onclick="showHome()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <h2 id="materialsTitle" style="color: var(--chakra-blue);"><i class="fa-solid fa-book"></i> Materials</h2>
+        
+        <div class="glass-card" style="margin-top: 20px;">
+            <center>
+                <select id="publicQClassSelect" onchange="renderPublicQuestions()" style="width: 250px; font-size: 16px; font-weight: 600;">
+                    <option value="">-- Select Class --</option>
+                    <option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option>
+                    <option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option>
+                </select>
+            </center>
+            <table class="premium-table" style="margin-top: 20px;">
+                <thead><tr><th>Document Name</th><th>Action</th></tr></thead>
+                <tbody id="publicQuestionsBody"><tr><td colspan='2'>Select a class to view files</td></tr></tbody>
+            </table>
         </div>
     </div>
 
-    <div id="studentPanel" class="hidden">
-        <button class="apple-btn" style="float: right; background: #c0392b;" onclick="location.reload()">Logout</button>
-        <h2>Welcome, <span id="studentDisplayName"></span>!</h2>
-        <div class="marquee-box"><div class="moving-text" id="noticeDisplay"></div></div>
-        <div style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 20px;">
-            <div class="glass-card" style="text-align: center;"><p>Attendance</p><div id="attPerc" style="font-size: 3rem; font-weight: 800; color:var(--chakra-blue)">0%</div></div>
+    <div id="adminPanel" class="hidden fade-in">
+        <button class="apple-btn" style="float: right; background: var(--danger);" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        <h2 style="margin-bottom: 20px;">Admin Console.</h2>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+            <button id="tabDashboard" class="apple-btn tab-btn active" onclick="switchAdminTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
+            <button id="tabFees" class="apple-btn tab-btn" style="background: var(--warning);" onclick="switchAdminTab('fees')"><i class="fa-solid fa-money-check-dollar"></i> Fees Tracker</button>
+            <button id="tabMaterials" class="apple-btn tab-btn" style="background: #8e44ad;" onclick="switchAdminTab('materials')"><i class="fa-solid fa-file-arrow-up"></i> Upload Materials</button>
+        </div>
+
+        <div id="adminDashboardSection" class="fade-in">
             <div class="glass-card">
-                <h4>Performance</h4>
-                <table id="resultTable"><thead><tr><th>Subject</th><th>Marks</th><th>%</th><th>Grade</th></tr></thead><tbody id="studentBody"></tbody></table>
-                <button class="apple-btn" style="margin-top: 20px;" onclick="downloadPDF()">Download PDF</button>
+                <h4><i class="fa-solid fa-bullhorn"></i> Global Notice</h4>
+                <textarea id="noticeInput" rows="2" placeholder="Write announcement..."></textarea>
+                <button class="apple-btn" onclick="postNotice()">Update Notice</button>
+            </div>
+
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-square-poll-vertical"></i> Manage Results</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items:center;">
+                    <select id="resClass" onchange="filterStudents()" style="flex: 1;"><option value="">Class</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+                    <select id="resUserSelect" style="flex: 2;"><option value="">Select Student</option></select>
+                    <select id="resSub" style="flex: 1;"><option value="">Subject</option></select>
+                    <input type="number" id="resOb" placeholder="Obt." oninput="calcPerc()" style="flex: 1; width:60px;">
+                    <span style="font-weight: bold;">/</span>
+                    <input type="number" id="resFull" placeholder="Total" oninput="calcPerc()" style="flex: 1; width:60px;">
+                    <input type="text" id="resPerc" placeholder="%" readonly style="flex: 1; background: var(--input-bg);">
+                    <button class="apple-btn" onclick="uploadResult()"><i class="fa-solid fa-upload"></i> Upload</button>
+                </div>
+                
+                <h5 style="margin-top: 20px;">Recent Uploads (Last 3)</h5>
+                <table class="premium-table">
+                    <thead><tr><th>Student</th><th>Sub</th><th>Score</th><th>Action</th></tr></thead>
+                    <tbody id="adminResultsBody"></tbody>
+                </table>
+            </div>
+
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-users"></i> Students & Attendance Control</h4>
+                <table class="premium-table">
+                    <thead><tr><th>Name</th><th>Class</th><th>P/T</th><th>AM/PM Lock</th><th>Remove</th></tr></thead>
+                    <tbody id="masterBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="adminFeesSection" class="hidden fade-in">
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-money-check-dollar"></i> Fees Tracker</h4>
+                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Manage student payments easily from here. A WhatsApp message will be triggered automatically upon payment update.</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <select id="feeUser" style="flex: 2;"><option value="">Select Student</option></select>
+                    <select id="feeMonth" style="flex: 1;">
+                        <option value="January">January</option><option value="February">February</option>
+                        <option value="March">March</option><option value="April">April</option>
+                        <option value="May">May</option><option value="June">June</option>
+                        <option value="July">July</option><option value="August">August</option>
+                        <option value="September">September</option><option value="October">October</option>
+                        <option value="November">November</option><option value="December">December</option>
+                    </select>
+                    <input type="number" id="feeAmount" placeholder="Amount (₹)" style="flex: 1;">
+                </div>
+                <button class="apple-btn" style="margin-top: 15px; background: var(--success);" onclick="addFee()"><i class="fa-solid fa-plus"></i> Record Payment</button>
+            </div>
+        </div>
+
+        <div id="adminMaterialsSection" class="hidden fade-in">
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-file-pdf"></i> Upload Study Material / PYQ</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <input type="text" id="qTitle" placeholder="Document Name (e.g. History Ch 1)" style="flex: 2;">
+                    <select id="qType" style="flex: 1;"><option value="Study Material">Study Material</option><option value="PYQ">PYQ</option></select>
+                    <select id="qClass" style="flex: 1;"><option value="">Class</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+                    <input type="file" id="qFileInput" accept="application/pdf" style="flex: 2;">
+                    <button class="apple-btn" style="background: #8e44ad;" onclick="uploadQuestionPaper()">Upload</button>
+                </div>
+                <table class="premium-table" style="margin-top: 25px;">
+                    <thead><tr><th>Document Name</th><th>Type</th><th>Class</th><th>Delete</th></tr></thead>
+                    <tbody id="adminQuestionsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="studentPanel" class="hidden fade-in">
+        <button class="apple-btn" style="float: right; background: var(--danger);" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        <h2>Welcome, <span id="studentDisplayName"></span>! <span id="studentBadges"></span></h2>
+        
+        <div class="marquee-box"><div class="moving-text" id="noticeDisplay"></div></div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+            <button id="sTabDashboard" class="apple-btn tab-btn active" onclick="switchStudentTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
+            <button id="sTabProfile" class="apple-btn tab-btn" style="background: #8e44ad;" onclick="switchStudentTab('profile')"><i class="fa-solid fa-user-pen"></i> Profile</button>
+            <button id="sTabPerformance" class="apple-btn tab-btn" style="background: var(--chakra-blue);" onclick="switchStudentTab('performance')"><i class="fa-solid fa-chart-line"></i> Performance</button>
+            <button id="sTabFees" class="apple-btn tab-btn" style="background: var(--warning);" onclick="switchStudentTab('fees')"><i class="fa-solid fa-file-invoice-dollar"></i> Fees Tracker</button>
+        </div>
+        
+        <div id="studentDashboardSection" class="fade-in">
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+                <div class="glass-card" style="text-align: center; margin-bottom: 0;">
+                    <p style="font-weight: 600; margin:0;"><i class="fa-regular fa-calendar-check"></i> Attendance</p>
+                    <div style="display: flex; justify-content: center; align-items: center; height: 160px;">
+                        <svg width="150" height="150" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="#e6e6e6" stroke-width="10"></circle>
+                            <circle id="attProgressBar" class="progress-circle" cx="50" cy="50" r="40" fill="none" stroke="var(--danger)" stroke-width="10" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="round" transform="rotate(-90 50 50)"></circle>
+                            <text id="attPercText" x="50" y="55" text-anchor="middle" font-size="22" font-weight="800" fill="var(--chakra-blue)">0%</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-bottom:0;">
+                    <h4 style="margin-top: 0;"><i class="fa-solid fa-list-check"></i> Results</h4>
+                    <table id="resultTable" class="premium-table">
+                        <thead><tr><th>Date</th><th>Subject</th><th>Marks</th><th>%</th><th>Grade</th></tr></thead>
+                        <tbody id="studentBody"></tbody>
+                    </table>
+                    <button class="apple-btn" style="margin-top: 20px; background: var(--success);" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Download Result PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="studentProfileSection" class="hidden fade-in">
+            <div class="glass-card" style="text-align: center;">
+                <h4>Update Your Profile</h4>
+                <div style="position: relative; display: inline-block; margin-top: 15px;">
+                    <img id="profileImgDisplay" src="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--chakra-blue);">
+                    <label for="fileInput" style="position: absolute; bottom: 0; right: 0; background: var(--chakra-blue); color: white; width: 35px; height: 35px; line-height: 35px; border-radius: 50%; cursor: pointer;"><i class="fa-solid fa-camera"></i></label>
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="uploadProfilePic()">
+                </div>
+                <div style="margin-top: 10px;">
+                    <button class="apple-btn btn-action" onclick="setDefaultProfilePic()" style="background: var(--warning);"><i class="fa-solid fa-user-xmark"></i> Default Pic</button>
+                </div>
+                
+                <div style="margin-top: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                    <label style="font-weight: 600; font-size: 14px;">WhatsApp Number</label>
+                    <input type="text" id="updatePhoneInput" placeholder="WhatsApp No" style="text-align: center;">
+                    <button class="apple-btn" onclick="updatePhoneNumber()" style="width: 100%; padding: 10px; margin-top: 10px;">Update Phone</button>
+                </div>
+
+                <div style="margin-top: 30px; max-width: 300px; margin-left: auto; margin-right: auto; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                    <label style="font-weight: 600; font-size: 14px; color: var(--danger);"><i class="fa-solid fa-lock" id="classLockIcon"></i> Class Update (Only Dec 31)</label>
+                    <select id="updateClassInput" disabled style="text-align: center;">
+                        <option value="5">Class 5</option>
+                        <option value="6">Class 6</option>
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                    </select>
+                    <button class="apple-btn" id="updateClassBtn" onclick="updateStudentClass()" style="width: 100%; padding: 10px; margin-top: 10px;" disabled>Upgrade Class</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="studentPerformanceSection" class="hidden fade-in">
+            <div class="glass-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+                    <h4 style="margin: 0;"><i class="fa-solid fa-chart-line"></i> Performance Chart</h4>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="apple-btn btn-action" onclick="showRadarGraph()" style="background: #8e44ad; font-size: 14px; padding: 5px 15px;"><i class="fa-solid fa-bullseye"></i> রাডার গ্রাফ</button>
+                        <select id="chartType" onchange="updateChartData()" style="padding:5px; margin:0; border-radius:5px;">
+                            <option value="bar">Bar Graph</option>
+                            <option value="line">Line Graph (Stock)</option>
+                        </select>
+                        <select id="chartFilter" onchange="updateChartData()" style="padding:5px; margin:0; border-radius:5px;">
+                            <option value="overall">Overall Progress</option>
+                        </select>
+                    </div>
+                </div>
+                <canvas id="performanceChart" style="max-height: 350px;"></canvas>
+            </div>
+        </div>
+
+        <div id="studentFeesSection" class="hidden fade-in">
+            <div class="glass-card">
+                <h4 style="margin-top: 0;"><i class="fa-solid fa-file-invoice-dollar"></i> My Fees Tracker (12 Months)</h4>
+                <table id="feeTable" class="premium-table" style="font-size: 14px;">
+                    <thead><tr><th>Month</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead>
+                    <tbody id="studentFeesBody"></tbody>
+                </table>
+                <button class="apple-btn" style="margin-top: 20px; background: var(--success);" onclick="downloadFeePDF()"><i class="fa-solid fa-file-pdf"></i> Download Fees Statement</button>
             </div>
         </div>
     </div>
 </div>
 
+<div id="radarModal" class="radar-modal hidden">
+    <div class="radar-content fade-in">
+        <h3 style="color: var(--chakra-blue); margin-top:0;"><i class="fa-solid fa-bullseye"></i> Overall Subject Mastery</h3>
+        <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Your average performance based on all exams.</p>
+        <canvas id="radarChartCanvas" style="max-height: 350px;"></canvas>
+        <button class="apple-btn" style="width:100%; background:var(--danger); margin-top:20px;" onclick="document.getElementById('radarModal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i> Close</button>
+    </div>
+</div>
+
 <script>
-    // --- FIREBASE CONFIG ---
     const firebaseConfig = {
         apiKey: "AIzaSyB-x775vC8HW-juNWOkLyeU8KOTwMzd8Rg",
         authDomain: "pathshala-online-94c96.firebaseapp.com",
         databaseURL: "https://pathshala-online-94c96-default-rtdb.firebaseio.com",
         projectId: "pathshala-online-94c96",
-        storageBucket: "pathshala-online-94c96.firebasestorage.app",
+        storageBucket: "pathshala-online-94c96.firebasestorage.app", 
         messagingSenderId: "132374932318",
         appId: "1:132374932318:web:01faa07d92f367c90d3dcf"
     };
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
-    // Global variables
-    let students = {};
-    let results = [];
-    let att = {};
-    let currentNotice = "";
+    let students = {}, results = {}, att = {}, questionsMeta = {}, fees = {}, currentNotice = "", lastSysUpdate = null;
+    let studentChart, radarChartInstance; 
+    let rankPage = 1; const ranksPerPage = 10;
+    let currentMaterialType = ""; 
 
-    // REAL-TIME DATA SYNC
+    function triggerFlowers() {
+        var duration = 4 * 1000;
+        var animationEnd = Date.now() + duration;
+        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000, colors: ['#ffc0cb', '#ff69b4', '#ff1493', '#ff0000', '#ffd700'] };
+        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+        var interval = setInterval(function() {
+            var timeLeft = animationEnd - Date.now();
+            if (timeLeft <= 0) { return clearInterval(interval); }
+            var particleCount = 50 * (timeLeft / duration);
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }, shapes: ['circle'] }));
+        }, 250);
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDark);
+        const icon = document.getElementById('themeIcon');
+        icon.className = isDark ? "fa-solid fa-sun theme-switch" : "fa-solid fa-moon theme-switch";
+        icon.style.transform = isDark ? "rotate(360deg)" : "rotate(0deg)";
+        if(studentChart) updateChartData(); 
+        if(!document.getElementById('radarModal').classList.contains('hidden')) showRadarGraph();
+    }
+    
+    if(localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('themeIcon').className = "fa-solid fa-sun theme-switch";
+        document.getElementById('themeIcon').style.transform = "rotate(360deg)";
+    }
+
+    function toggleSidebar(show) { document.getElementById('mySidebar').style.width = show ? "250px" : "0"; }
+    
+    function hideAllViews() {
+        ['publicView', 'materialsView', 'adminPanel', 'studentPanel'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        document.getElementById('topNavArea').style.display = 'none';
+    }
+
+    function showHome() {
+        toggleSidebar(false);
+        hideAllViews();
+        document.getElementById('publicView').classList.remove('hidden');
+        document.getElementById('topNavArea').style.display = 'flex';
+    }
+
+    function openMaterialsPage(type) {
+        toggleSidebar(false);
+        hideAllViews();
+        currentMaterialType = type;
+        document.getElementById('materialsTitle').innerHTML = type === 'PYQ' ? '<i class="fa-solid fa-file-lines"></i> Previous Year Questions' : '<i class="fa-solid fa-book-open-reader"></i> Study Materials';
+        document.getElementById('materialsView').classList.remove('hidden');
+        document.getElementById('publicQClassSelect').value = ""; 
+        document.getElementById('publicQuestionsBody').innerHTML = "<tr><td colspan='2'>Select a class to view files</td></tr>";
+    }
+
+    function switchAdminTab(tab) {
+        ['Dashboard', 'Fees', 'Materials'].forEach(t => {
+            document.getElementById(`admin${t}Section`).classList.add('hidden');
+            document.getElementById(`tab${t}`).classList.remove('active');
+        });
+        document.getElementById(`admin${tab.charAt(0).toUpperCase() + tab.slice(1)}Section`).classList.remove('hidden');
+        document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+    }
+
+    function switchStudentTab(tab) {
+        ['Dashboard', 'Profile', 'Performance', 'Fees'].forEach(t => {
+            document.getElementById(`student${t}Section`).classList.add('hidden');
+            document.getElementById(`sTab${t}`).classList.remove('active');
+        });
+        document.getElementById(`student${tab.charAt(0).toUpperCase() + tab.slice(1)}Section`).classList.remove('hidden');
+        document.getElementById(`sTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+        if(tab === 'performance') updateChartData();
+    }
+
     db.ref('/').on('value', (snapshot) => {
         const data = snapshot.val() || {};
         students = data.students || { 'admin': { pw: '123', role: 'admin', approved: true } };
-        results = data.results || [];
+        results = data.results || {}; 
         att = data.attendance || {};
+        questionsMeta = data.questionsMeta || {}; 
+        fees = data.fees || {};
         currentNotice = data.notice || "Welcome to Pathshala!";
         
-        renderRankList();
-        if(window.currentUser === 'Admin') renderAdmin();
-        else if(window.currentUser) refreshStudentUI();
+        if(document.getElementById('publicNoticeDisplay')) document.getElementById('publicNoticeDisplay').innerText = currentNotice;
+        if(document.getElementById('noticeDisplay')) document.getElementById('noticeDisplay').innerText = currentNotice;
+
+        const savedUser = localStorage.getItem('pathshalaUser');
+        if (savedUser) window.currentUser = savedUser;
+        
+        renderRankList(); 
+        if(!document.getElementById('materialsView').classList.contains('hidden')) renderPublicQuestions();
+        
+        if(window.currentUser === 'Admin') {
+            if(document.getElementById('adminPanel').classList.contains('hidden')) {
+                hideAllViews();
+                document.getElementById('adminPanel').classList.remove('hidden');
+            }
+            renderAdmin();
+        } else if(window.currentUser && students[window.currentUser]) {
+            if(document.getElementById('studentPanel').classList.contains('hidden')){
+                hideAllViews();
+                document.getElementById('studentPanel').classList.remove('hidden'); 
+                switchStudentTab('dashboard');
+            }
+            refreshStudentUI();
+        } else {
+            if(document.getElementById('materialsView').classList.contains('hidden')){
+                showHome();
+            }
+        }
     });
 
-    // Clock & Spokes
+    db.ref('sysUpdate').on('value', snap => {
+        if(snap.exists()) {
+            lastSysUpdate = snap.val();
+            let localTime = localStorage.getItem('lastNotifSeen') || 0;
+            if(lastSysUpdate.time > localTime) {
+                document.getElementById('notifBadge').classList.remove('hidden');
+            }
+        }
+    });
+
+    function showNotifications() {
+        if(lastSysUpdate) {
+            Swal.fire({
+                title: 'New Update Available!',
+                text: lastSysUpdate.msg,
+                icon: 'info',
+                confirmButtonColor: '#000080'
+            });
+            localStorage.setItem('lastNotifSeen', Date.now());
+            document.getElementById('notifBadge').classList.add('hidden');
+        } else {
+            Swal.fire('Notifications', 'No new updates right now.', 'info');
+        }
+    }
+
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
     const spokes = document.getElementById('spokes');
     for (let i = 0; i < 24; i++) {
         const angle = i * 15 * Math.PI / 180;
-        const x2 = 100 + 85 * Math.cos(angle);
-        const y2 = 100 + 85 * Math.sin(angle);
-        spokes.innerHTML += `<line x1="100" y1="100" x2="${x2}" y2="${y2}" />`;
+        spokes.innerHTML += `<line x1="100" y1="100" x2="${100 + 85 * Math.cos(angle)}" y2="${100 + 85 * Math.sin(angle)}" />`;
     }
 
     function togglePass(id, icon) { const input = document.getElementById(id); input.type = input.type === "password" ? "text" : "password"; icon.classList.toggle('fa-eye-slash'); }
-    function toggleAuth(show) { document.getElementById('loginForm').classList.toggle('hidden', show); document.getElementById('regForm').classList.toggle('hidden', !show); }
+    
+    function toggleAuth(show) { 
+        document.getElementById('loginForm').classList.toggle('hidden', show); 
+        document.getElementById('regForm').classList.toggle('hidden', !show); 
+    }
+
+    function getAvatar(name, picUrl) {
+        if (picUrl && picUrl.startsWith('data:image')) return picUrl;
+        const colors = ['#e74c3c', '#8e44ad', '#3498db', '#e67e22', '#2ecc71'];
+        const char = name.charAt(0).toUpperCase(); const color = colors[char.charCodeAt(0) % colors.length];
+        return 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="${color}"/><text x="50" y="50" font-family="Arial" font-size="45" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="central">${char}</text></svg>`);
+    }
 
     function handleLogin() {
-        let u = document.getElementById('lUser').value.trim();
-        let p = document.getElementById('lPass').value;
-        if(u.toLowerCase() === 'admin' && p === '123') {
-            window.currentUser = 'Admin';
-            document.getElementById('publicView').classList.add('hidden');
-            document.getElementById('adminPanel').classList.remove('hidden');
-            renderAdmin();
-        } else if(students[u] && students[u].pw === p) {
+        let u = document.getElementById('lUser').value.trim(), p = document.getElementById('lPass').value;
+        if(u.toLowerCase() === 'admin' && p === '123') { window.currentUser = 'Admin'; localStorage.setItem('pathshalaUser', 'Admin'); hideAllViews(); document.getElementById('adminPanel').classList.remove('hidden'); renderAdmin(); } 
+        else if(students[u] && students[u].pw === p) {
             if(!students[u].approved) { document.getElementById('pendingMsg').style.display = "block"; return; }
-            window.currentUser = u;
-            document.getElementById('publicView').classList.add('hidden');
-            document.getElementById('studentPanel').classList.remove('hidden');
-            refreshStudentUI();
-        } else alert("Invalid Login!");
+            window.currentUser = u; localStorage.setItem('pathshalaUser', u); hideAllViews(); document.getElementById('studentPanel').classList.remove('hidden'); switchStudentTab('dashboard'); refreshStudentUI();
+        } else { Swal.fire({ icon: 'error', title: 'Oops...', text: 'Invalid Login ID/Password!' }); }
+    }
+    
+    // --- 100% SPA Logout Fix ---
+    function handleLogout() { 
+        localStorage.removeItem('pathshalaUser'); 
+        window.currentUser = null; 
+        
+        if(document.getElementById('lUser')) document.getElementById('lUser').value = "";
+        if(document.getElementById('lPass')) document.getElementById('lPass').value = "";
+        
+        toggleAuth(false);
+        hideAllViews();
+        document.getElementById('publicView').classList.remove('hidden');
+        document.getElementById('topNavArea').style.display = 'flex';
+        
+        toggleSidebar(false);
+        if(document.getElementById('radarModal')) document.getElementById('radarModal').classList.add('hidden');
+        
+        Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Logged Out Successfully',
+            showConfirmButton: false,
+            timer: 1500
+        });
+
+        renderRankList();
     }
 
+    function validatePhone() { let ph = document.getElementById('rPhone').value, err = document.getElementById('phoneError'); if(ph.length !== 10) { err.style.display = "block"; return false; } else { err.style.display = "none"; return true; } }
     function handleRegister() {
-        let n = document.getElementById('rName').value.trim(), ph = document.getElementById('rPhone').value, c = document.getElementById('rClass').value, pw = document.getElementById('rPass').value;
-        let g = document.querySelector('input[name="g"]:checked')?.value;
-        if(!n || !ph || !c || !pw) return alert("Fill all fields!");
-        db.ref('students/' + n).set({ pw, role: 'student', phone: ph, class: c, gender: g, approved: false })
-        .then(() => { alert("Requested! Wait for admin approval."); toggleAuth(false); });
+        let n = document.getElementById('rName').value.trim(), ph = document.getElementById('rPhone').value, c = document.getElementById('rClass').value, pw = document.getElementById('rPass').value, g = document.querySelector('input[name="g"]:checked')?.value;
+        if(!n || !ph || !c || !pw) return Swal.fire('Warning', 'Please fill all fields!', 'warning');
+        if(!validatePhone()) return Swal.fire('Error', 'WhatsApp number must be exactly 10 digits!', 'error');
+        db.ref('students/' + n).set({ pw, role: 'student', phone: ph, class: c, gender: g, approved: false }).then(() => { Swal.fire('Success', 'Requested! Wait for admin approval.', 'success'); toggleAuth(false); });
     }
 
+    function changeRankPage(dir) { rankPage += dir; if(rankPage < 1) rankPage = 1; renderRankList(); }
     function renderRankList() {
         const cls = document.getElementById('rankClassSelect').value;
         let data = [];
         for (let u in students) {
             if (students[u].role !== 'admin' && students[u].class === cls && students[u].approved) {
-                let res = results.filter(r => r.user === u);
-                if (res.length > 0) {
-                    let avg = res.reduce((sum, r) => sum + parseFloat(r.perc), 0) / res.length;
-                    data.push({ name: u, avg: avg });
+                let userRes = Object.values(results).filter(r => r.user === u);
+                if (userRes.length > 0) {
+                    let avg = userRes.reduce((sum, r) => sum + parseFloat(r.perc), 0) / userRes.length;
+                    data.push({ name: u, avg: avg, pic: getAvatar(u, students[u].profilePic) });
                 }
             }
         }
         data.sort((a, b) => b.avg - a.avg);
-        document.getElementById('rankListBody').innerHTML = data.map((s, i) => `
-            <tr class="${i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : ''}"><td>${i + 1}</td><td>${s.name}</td><td>${s.avg.toFixed(2)}%</td></tr>
-        `).join('') || "<tr><td colspan='3'>No data.</td></tr>";
+        let maxPages = Math.ceil(data.length / ranksPerPage) || 1;
+        if(rankPage > maxPages) rankPage = maxPages;
+        document.getElementById('rankPageIndicator').innerText = `Page ${rankPage}/${maxPages}`;
+        
+        let pagedData = data.slice((rankPage - 1) * ranksPerPage, rankPage * ranksPerPage);
+        
+        document.getElementById('rankListBody').innerHTML = pagedData.map((s, i) => {
+            let actualRank = (rankPage - 1) * ranksPerPage + i;
+            return `<tr class="data-row ${actualRank === 0 ? 'rank-1' : actualRank === 1 ? 'rank-2' : actualRank === 2 ? 'rank-3' : ''}">
+                <td>${actualRank === 0 ? '<i class="fa-solid fa-crown"></i> 1' : actualRank + 1}</td>
+                <td><img src="${s.pic}" class="avatar"></td><td>${s.name}</td><td>${s.avg.toFixed(2)}%</td></tr>`;
+        }).join('') || "<tr><td colspan='4'>No data found</td></tr>";
+    }
+
+    function renderPublicQuestions() {
+        const cls = document.getElementById('publicQClassSelect').value;
+        const tbody = document.getElementById('publicQuestionsBody');
+        if(!cls) { tbody.innerHTML = "<tr><td colspan='2'>Select a class</td></tr>"; return; }
+        
+        let qKeys = Object.keys(questionsMeta).filter(k => questionsMeta[k].class === cls && questionsMeta[k].type === currentMaterialType);
+        if(qKeys.length === 0) { tbody.innerHTML = "<tr><td colspan='2'>No files available for this class.</td></tr>"; return; }
+        
+        tbody.innerHTML = qKeys.map(k => `<tr class="data-row"><td style="font-weight: 600;">${questionsMeta[k].title}</td><td><button class="apple-btn btn-action" style="background: var(--success);" onclick="downloadQuestionPDF('${k}', '${questionsMeta[k].title}')"><i class="fa-solid fa-download"></i> Download</button></td></tr>`).join('');
+    }
+
+    function downloadQuestionPDF(qKey, title) {
+        Swal.fire({ title: 'Fetching PDF...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        db.ref('questionPDFs/' + qKey).once('value').then(snap => {
+            let pdfData = snap.val();
+            if(!pdfData) return Swal.fire('Error', 'File not found!', 'error');
+            const link = document.createElement('a'); link.href = pdfData; link.download = `${title.replace(/\s+/g, '_')}.pdf`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            Swal.close();
+        });
     }
 
     function renderAdmin() {
-        let appHtml = "", masterHtml = "";
-        const date = new Date().toLocaleDateString();
-        const session = new Date().getHours() < 12 ? "AM" : "PM";
+        let appHtml = "", masterHtml = "", resultHtml = "", qHtml = "";
+        const date = new Date().toLocaleDateString(), session = new Date().getHours() < 12 ? "AM" : "PM";
+        
+        let feeUserSel = document.getElementById('feeUser'); feeUserSel.innerHTML = '<option value="">Select Student</option>';
+
         for(let u in students) {
             if(students[u].role === 'admin') continue;
-            
-            // Registration Approvals Section (Added Delete Button)
             if(!students[u].approved) {
-                appHtml += `<tr>
-                    <td>${u}</td>
-                    <td>${students[u].pw}</td>
-                    <td>${students[u].class}</td>
-                    <td>
-                        <button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-approve">Approve</button>
-                        <button onclick="db.ref('students/${u}').remove()" class="apple-btn" style="background:#e74c3c; padding: 8px 15px; margin-left: 5px;">Delete</button>
-                    </td>
-                </tr>`;
-            } 
-            // Attendance & Control Section (Added Absent 'A' Button)
-            else {
+                appHtml += `<tr class="data-row"><td>${u}</td><td>${students[u].pw}</td><td>${students[u].class}</td>
+                    <td><button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-approve"><i class="fa-solid fa-check"></i></button>
+                    <button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            } else {
+                feeUserSel.innerHTML += `<option value="${u}">${u}</option>`;
                 let r = att[u] || { p: 0, t: 0, lastD: "", lastS: "" };
-                let lock = (r.lastD === date && r.lastS === session);
-                masterHtml += `<tr>
-                    <td>${u}</td>
+                let lock = (r.lastD === date && r.lastS === session); 
+                masterHtml += `<tr class="data-row">
+                    <td><div style="display:flex; align-items:center; gap:8px; justify-content:center;"><img src="${getAvatar(u, students[u].profilePic)}" class="avatar"> <span style="font-weight: 600;">${u}</span></div></td>
                     <td>${students[u].class}</td>
-                    <td>${r.p}/${r.t}</td>
-                    <td>
-                        <button onclick="markAtt('${u}', 'P')" class="apple-btn ${lock?'btn-disabled':''}" style="padding: 8px 12px;">P</button>
-                        <button onclick="markAtt('${u}', 'A')" class="apple-btn ${lock?'btn-disabled':''}" style="background:#e67e22; padding: 8px 12px; margin-left: 5px;">A</button>
-                    </td>
-                    <td><button onclick="db.ref('students/${u}').remove()" class="apple-btn" style="background:#e74c3c; padding: 8px 12px;">X</button></td>
-                </tr>`;
+                    <td style="font-weight:bold; color:var(--chakra-blue);">${r.p}/${r.t}</td>
+                    <td><button onclick="markAtt('${u}', 'P')" class="apple-btn btn-action ${lock?'btn-disabled':''}" style="background: var(--success);">P</button>
+                    <button onclick="markAtt('${u}', 'A')" class="apple-btn btn-action ${lock?'btn-disabled':''}" style="background:var(--warning);">A</button></td>
+                    <td><button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-user-xmark"></i></button></td></tr>`;
             }
         }
-        document.getElementById('approvalBody').innerHTML = appHtml || "<tr><td colspan='4'>No requests.</td></tr>";
-        document.getElementById('masterBody').innerHTML = masterHtml;
+        
+        let recentResKeys = Object.keys(results).slice(-3).reverse(); 
+        recentResKeys.forEach(k => {
+            let r = results[k];
+            resultHtml += `<tr class="data-row"><td>${r.user}</td><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td><button class="apple-btn btn-action" style="background:var(--danger);" onclick="deleteRecord('results/${k}')">❌</button></td></tr>`;
+        });
+
+        for(let k in questionsMeta) {
+            qHtml += `<tr class="data-row"><td>${questionsMeta[k].title}</td><td style="font-size:12px; color:var(--chakra-blue); font-weight:bold;">${questionsMeta[k].type||'PYQ'}</td><td>${questionsMeta[k].class}</td><td><button class="apple-btn btn-action" style="background:var(--danger);" onclick="deleteQuestion('${k}')">❌</button></td></tr>`;
+        }
+
+        if(document.getElementById('approvalBody')) document.getElementById('approvalBody').innerHTML = appHtml || "<tr><td colspan='4'>No pending requests.</td></tr>";
+        document.getElementById('masterBody').innerHTML = masterHtml || "<tr><td colspan='5'>No students found.</td></tr>";
+        document.getElementById('adminResultsBody').innerHTML = resultHtml || "<tr><td colspan='4'>No recent results.</td></tr>";
+        document.getElementById('adminQuestionsBody').innerHTML = qHtml || "<tr><td colspan='4'>No materials uploaded.</td></tr>";
+    }
+
+    function deleteRecord(path) {
+        Swal.fire({ title: 'Are you sure?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c' }).then((res) => {
+            if(res.isConfirmed) db.ref(path).remove();
+        });
     }
 
     function markAtt(u, status) {
         let r = att[u] || { p: 0, t: 0 };
-        // If 'P' is clicked, increase present count. Total count increases for both 'P' and 'A'.
-        let newP = status === 'P' ? r.p + 1 : r.p;
+        db.ref('attendance/' + u).update({ p: status==='P'?r.p+1:r.p, t: r.t + 1, lastD: new Date().toLocaleDateString(), lastS: new Date().getHours() < 12 ? "AM" : "PM" });
+    }
+    function postNotice() { 
+        let t = document.getElementById('noticeInput').value; if(!t) return;
+        db.ref('notice').set(t).then(() => { 
+            db.ref('sysUpdate').set({ msg: 'A new global notice has been posted!', time: Date.now() });
+            Swal.fire('Updated!', 'Notice updated.', 'success'); 
+            document.getElementById('noticeInput').value = ""; 
+        });
+    }
+    function filterStudents() {
+        const cls = document.getElementById('resClass').value, sSelect = document.getElementById('resUserSelect'); sSelect.innerHTML = '<option value="">Select Student</option>';
+        for (let u in students) { if(students[u].class === cls && students[u].approved) sSelect.innerHTML += `<option value="${u}">${u}</option>`; }
+        let subs = (cls >= 5 && cls <= 8) ? ["Bengali", "English", "Math", "ENVS", "History", "Geography"] : ["Bengali", "English", "Math", "Phys Sci", "Life Sci", "History", "Geography"];
+        document.getElementById('resSub').innerHTML = '<option value="">Select Subject</option>' + subs.map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+    function calcPerc() { let ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value; document.getElementById('resPerc').value = (ob&&fl) ? ((ob/fl)*100).toFixed(2)+"%" : ""; }
+    
+    function uploadResult() {
+        let u = document.getElementById('resUserSelect').value, sub = document.getElementById('resSub').value, ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value;
+        if(!u || !sub || !ob || !fl) return Swal.fire('Warning', 'Fill all fields!', 'warning');
         
-        db.ref('attendance/' + u).update({ 
-            p: newP, 
-            t: r.t + 1, 
-            lastD: new Date().toLocaleDateString(), 
-            lastS: new Date().getHours() < 12 ? "AM" : "PM" 
+        let p = (ob/fl)*100;
+        let grade = p>=80?'A+':p>=60?'A':p>=40?'B':'F';
+        let obj = { user:u, sub, ob, fl, perc: p.toFixed(2), grade: grade, date: new Date().toLocaleDateString('en-GB'), timestamp: Date.now() };
+        
+        db.ref('results').push(obj).then(() => { 
+            Swal.fire('Success', 'Result Uploaded!', 'success'); 
+            
+            let sPhone = students[u]?.phone;
+            if(sPhone && sPhone.length === 10) {
+                let msg = `Hello ${u},\n\nYour new result for *${sub}* is uploaded!\n\n*Marks:* ${ob}/${fl}\n*Percentage:* ${p.toFixed(2)}%\n*Grade:* ${grade}\n\nCheck details: https://akashdas924.github.io/MyPathshala/`;
+                window.open(`https://wa.me/91${sPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
         });
     }
 
-    function postNotice() { db.ref('notice').set(document.getElementById('noticeInput').value); alert("Notice Sent!"); }
-
-    function filterStudents() {
-        const cls = document.getElementById('resClass').value;
-        const sSelect = document.getElementById('resUserSelect');
-        sSelect.innerHTML = '<option value="">Student</option>';
-        for (let u in students) if(students[u].class === cls && students[u].approved) sSelect.innerHTML += `<option value="${u}">${u}</option>`;
-        let subs = (cls >= 6 && cls <= 8) ? ["Bengali", "English", "Math", "ENVS", "History", "Geography"] : ["Bengali", "English", "Math", "Phys Sci", "Life Sci", "History", "Geography"];
-        document.getElementById('resSub').innerHTML = subs.map(s => `<option value="${s}">${s}</option>`).join('');
+    function deleteQuestion(k) {
+        Swal.fire({ title: 'Delete Document?', icon: 'warning', showCancelButton: true }).then((res) => {
+            if(res.isConfirmed) { db.ref('questionsMeta/' + k).remove(); db.ref('questionPDFs/' + k).remove(); }
+        });
     }
 
-    function calcPerc() {
-        let ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value;
-        if(ob && fl) document.getElementById('resPerc').value = ((ob/fl)*100).toFixed(2) + "%";
+    function addFee() {
+        let u = document.getElementById('feeUser').value, m = document.getElementById('feeMonth').value, a = document.getElementById('feeAmount').value;
+        if(!u || !m || !a) return Swal.fire('Warning', 'Fill all fee details!', 'warning');
+        
+        let sPhone = students[u]?.phone; 
+        
+        db.ref(`fees/${u}/${m}`).set({ amount: a, date: new Date().toLocaleDateString(), status: 'Paid' }).then(()=>{
+            Swal.fire('Success', 'Payment Recorded!', 'success');
+            
+            if(sPhone && sPhone.length === 10) {
+                let msg = `Hello ${u},\n\nYour fee payment of Rs.${a} for the month of *${m}* has been successfully recorded at *Pathshala*.\n\nCheck details: https://akashdas924.github.io/MyPathshala/\n\nThank you!`;
+                window.open(`https://wa.me/91${sPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+        });
     }
 
-    function uploadResult() {
-        let u = document.getElementById('resUserSelect').value, sub = document.getElementById('resSub').value, ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value;
-        if(!u || !sub || !ob || !fl) return alert("Empty fields!");
-        let p = (ob/fl)*100;
-        let newRes = [...results, { user:u, sub, ob, fl, perc: p.toFixed(2), grade: p>=80?'A+':p>=60?'A':p>=40?'B':'F' }];
-        db.ref('results').set(newRes).then(() => {
-            window.open(`https://wa.me/${students[u].phone}?text=Result: ${sub} Score: ${ob}/${fl} Grade: ${p>=80?'A+':'B'}`);
+    function uploadQuestionPaper() {
+        let title = document.getElementById('qTitle').value.trim(), cls = document.getElementById('qClass').value, type = document.getElementById('qType').value, file = document.getElementById('qFileInput').files[0];
+        
+        if(!title || !cls || !file || file.type !== "application/pdf") return Swal.fire('Error', 'Valid PDF required!', 'error');
+        if(file.size > 2 * 1024 * 1024) return Swal.fire('Error', 'PDF must be under 2MB!', 'error'); 
+
+        Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        
+        const reader = new FileReader(); 
+        reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            let newRef = db.ref('questionsMeta').push();
+            newRef.set({ title, class: cls, type: type }).then(() => {
+                return db.ref('questionPDFs/' + newRef.key).set(e.target.result);
+            }).then(() => { 
+                db.ref('sysUpdate').set({ msg: `New ${type} added for Class ${cls}!`, time: Date.now() });
+                Swal.fire('Success!', 'Document uploaded.', 'success'); 
+                document.getElementById('qTitle').value = ""; document.getElementById('qFileInput').value = "";
+            }).catch(error => {
+                Swal.fire('Error', 'Upload failed: ' + error.message, 'error');
+            });
+        };
+    }
+
+    function canUpdateProfile() {
+        let sData = students[window.currentUser];
+        if(!sData) return false;
+        let lastUp = sData.lastProfileUpdate || 0;
+        let days3 = 3 * 24 * 60 * 60 * 1000;
+        if(Date.now() - lastUp < days3) {
+            let left = Math.ceil((days3 - (Date.now() - lastUp))/(1000*60*60*24));
+            Swal.fire('Locked', `You recently updated your profile. Please wait ${left} day(s).`, 'warning');
+            return false;
+        }
+        return true;
+    }
+
+    function uploadProfilePic() {
+        if(!canUpdateProfile()) return;
+        const file = document.getElementById('fileInput').files[0]; if (!file) return;
+        Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            const img = new Image(); img.src = e.target.result;
+            img.onload = function() {
+                const cvs = document.createElement('canvas'), scale = 200 / img.width; cvs.width = 200; cvs.height = img.height * scale;
+                cvs.getContext('2d').drawImage(img, 0, 0, cvs.width, cvs.height);
+                db.ref('students/' + window.currentUser).update({ profilePic: cvs.toDataURL('image/jpeg', 0.7), lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success!', 'Updated.', 'success'));
+            }
+        };
+    }
+
+    function setDefaultProfilePic() {
+        if(!canUpdateProfile()) return;
+        Swal.fire({ title: 'Set Default?', icon: 'question', showCancelButton: true }).then((res) => {
+            if(res.isConfirmed) {
+                db.ref('students/' + window.currentUser).update({ profilePic: "", lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success', 'Profile picture reset to default.', 'success'));
+            }
+        });
+    }
+
+    function updatePhoneNumber() {
+        if(!canUpdateProfile()) return;
+        const ph = document.getElementById('updatePhoneInput').value.trim();
+        if (ph.length !== 10) return Swal.fire('Error', 'Exactly 10 digits.', 'error');
+        db.ref('students/' + window.currentUser).update({ phone: ph, lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success', 'Updated.', 'success'));
+    }
+
+    function updateStudentClass() {
+        let newCls = document.getElementById('updateClassInput').value;
+        Swal.fire({ title: `Upgrade to Class ${newCls}?`, text: "You can only do this once a year!", icon: 'warning', showCancelButton: true }).then((res) => {
+            if(res.isConfirmed) {
+                db.ref('students/' + window.currentUser).update({ class: newCls }).then(()=>{
+                    Swal.fire('Success', 'Class Upgraded Successfully! Your ranking list has been updated.', 'success');
+                    document.getElementById('updateClassInput').value = newCls;
+                });
+            }
         });
     }
 
     function refreshStudentUI() {
+        const sData = students[window.currentUser] || {};
+        document.getElementById('profileImgDisplay').src = getAvatar(window.currentUser, sData.profilePic);
+        document.getElementById('updatePhoneInput').value = sData.phone || "";
+        document.getElementById('updateClassInput').value = sData.class || "";
+
+        let d = new Date();
+        if(d.getMonth() === 11 && d.getDate() === 31) {
+            document.getElementById('updateClassInput').disabled = false;
+            document.getElementById('updateClassBtn').disabled = false;
+            document.getElementById('classLockIcon').className = "fa-solid fa-lock-open";
+        } else {
+            document.getElementById('updateClassInput').disabled = true;
+            document.getElementById('updateClassBtn').disabled = true;
+            document.getElementById('classLockIcon').className = "fa-solid fa-lock";
+        }
+        
+        let userRes = Object.values(results).filter(r => r.user === window.currentUser);
+        document.getElementById('studentBody').innerHTML = userRes.map(r => `<tr class="data-row"><td>${r.date||'-'}</td><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td>${r.perc}%</td><td style="font-weight:bold; color:${r.grade==='F'?'var(--danger)':'var(--success)'};">${r.grade}</td></tr>`).join('') || "<tr><td colspan='5'>No results</td></tr>";
+        
+        let r = att[window.currentUser] || { p: 0, t: 0 }, perc = r.t === 0 ? 0 : Math.round((r.p / r.t) * 100);
+        document.getElementById('attPercText').textContent = perc + "%";
+        document.getElementById('attProgressBar').style.strokeDashoffset = 251.3 - (perc / 100) * 251.3;
+        document.getElementById('attProgressBar').style.stroke = perc > 80 ? "var(--success)" : perc >= 50 ? "var(--warning)" : "var(--danger)";
+
+        let badgesHtml = "";
+        let totalAvg = userRes.length ? userRes.reduce((s,x)=>s+parseFloat(x.perc),0)/userRes.length : 0;
+        if(perc >= 90) badgesHtml += `<i class="fa-solid fa-star trophy-icon" style="color:var(--gold);" title="90%+ Attendance"></i>`;
+        if(totalAvg >= 90) badgesHtml += `<i class="fa-solid fa-trophy trophy-icon" style="color:var(--gold);" title="Top Scholar"></i>`;
+        else if(totalAvg >= 80) badgesHtml += `<i class="fa-solid fa-medal trophy-icon" style="color:var(--silver);" title="Great Performer"></i>`;
         document.getElementById('studentDisplayName').innerText = window.currentUser;
-        document.getElementById('noticeDisplay').innerText = currentNotice;
-        let myRes = results.filter(r => r.user === window.currentUser);
-        document.getElementById('studentBody').innerHTML = myRes.map(r => `<tr><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td>${r.perc}%</td><td>${r.grade}</td></tr>`).join('');
-        let r = att[window.currentUser] || { p: 0, t: 0 };
-        document.getElementById('attPerc').innerText = (r.t === 0 ? 0 : Math.round((r.p/r.t)*100)) + "%";
+        document.getElementById('studentBadges').innerHTML = badgesHtml;
+
+        let myFees = fees[window.currentUser] || {};
+        let feeHtml = "";
+        const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        allMonths.forEach(m => {
+            if(myFees[m]) {
+                feeHtml += `<tr class="data-row">
+                    <td>${m}</td><td>₹${myFees[m].amount}</td><td style="color:var(--success); font-weight:bold;">Paid</td>
+                    <td><button class="apple-btn btn-action" style="background:var(--chakra-blue); padding:4px 8px; font-size:11px;" onclick="downloadReceipt('${m}', ${myFees[m].amount})"><i class="fa-solid fa-download"></i> Receipt</button></td>
+                </tr>`;
+            } else {
+                feeHtml += `<tr class="data-row"><td>${m}</td><td>-</td><td style="color:var(--danger); font-weight:bold;">Due</td><td>-</td></tr>`;
+            }
+        });
+        document.getElementById('studentFeesBody').innerHTML = feeHtml;
+
+        let subs = [...new Set(userRes.map(x => x.sub))];
+        let filterVal = document.getElementById('chartFilter').value;
+        let filterHtml = '<option value="overall">Overall Progress</option>';
+        subs.forEach(s => {
+            filterHtml += `<option value="${s}">${s}</option>`;
+        });
+        document.getElementById('chartFilter').innerHTML = filterHtml;
+        if(subs.includes(filterVal)) document.getElementById('chartFilter').value = filterVal;
+
+        if(!document.getElementById('studentPerformanceSection').classList.contains('hidden')) updateChartData();
     }
 
-    async function downloadPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.text("Pathshala Report", 14, 20); doc.autoTable({ startY: 30, html: '#resultTable' }); doc.save("Result.pdf"); }
+    const targetLinePlugin = {
+        id: 'targetLine',
+        beforeDraw: chart => {
+            if(chart.config.type !== 'bar') return;
+            const {ctx, chartArea: {top, right, bottom, left, width, height}, scales: {y}} = chart;
+            ctx.save();
+            const yPos = y.getPixelForValue(80);
+            ctx.beginPath();
+            ctx.moveTo(left, yPos);
+            ctx.lineTo(right, yPos);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(39, 174, 96, 0.6)';
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.restore();
+        }
+    };
+
+    function updateChartData() {
+        if(!window.currentUser) return;
+        let myRes = Object.values(results).filter(r => r.user === window.currentUser).sort((a,b) => (a.timestamp||0)-(b.timestamp||0));
+        const type = document.getElementById('chartType').value;
+        const filter = document.getElementById('chartFilter').value;
+        let labels = [], dataPts = [], bgColors = [];
+        const isDark = document.body.classList.contains('dark-mode');
+        const textColor = isDark ? '#e0e0e0' : '#1d1d1f';
+
+        let hasHighscore = false;
+
+        if(filter === 'overall') {
+            let grouped = {};
+            myRes.forEach(r => {
+                if(!grouped[r.sub]) grouped[r.sub] = [];
+                grouped[r.sub].push(parseFloat(r.perc));
+            });
+            for(let sub in grouped) {
+                labels.push(sub);
+                let avg = grouped[sub].reduce((a,b) => a+b, 0) / grouped[sub].length;
+                dataPts.push(avg.toFixed(2));
+                if(avg >= 80) { bgColors.push('#27ae60'); hasHighscore = true; }
+                else if(avg >= 40) { bgColors.push('#f39c12'); }
+                else { bgColors.push('#e74c3c'); }
+            }
+        } else {
+            let subjectRes = myRes.filter(r => r.sub === filter);
+            subjectRes.forEach((r, i) => { 
+                labels.push(`${r.sub} (${i+1})`);
+                let p = parseFloat(r.perc);
+                dataPts.push(p.toFixed(2)); 
+                if(p >= 80) { bgColors.push('#27ae60'); hasHighscore = true; } 
+                else if(p >= 40) { bgColors.push('#f39c12'); } 
+                else { bgColors.push('#e74c3c'); } 
+            });
+        }
+
+        if(hasHighscore && !sessionStorage.getItem('flowerShowTriggered')) {
+            Swal.fire({
+                title: 'Congratulations! 🎉',
+                text: 'You crossed 80% in your exams! Keep it up!',
+                icon: 'success',
+                confirmButtonColor: '#000080'
+            });
+            triggerFlowers();
+            sessionStorage.setItem('flowerShowTriggered', 'true');
+        }
+
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        if(studentChart) studentChart.destroy();
+        
+        let chartConfig = {
+            type: type,
+            data: { 
+                labels: labels, 
+                datasets: [{ 
+                    label: filter === 'overall' ? 'Average Marks (%)' : `${filter} Progression (%)`, 
+                    data: dataPts, 
+                    backgroundColor: type === 'line' ? 'transparent' : bgColors, 
+                    borderColor: type === 'line' ? '#27ae60' : bgColors, 
+                    borderWidth: type === 'line' ? 3 : 1, 
+                    borderRadius: type === 'line' ? 0 : 5,
+                    barPercentage: 0.6,
+                    tension: 0.3,
+                    pointBackgroundColor: bgColors,
+                    pointRadius: type === 'line' ? 5 : 0
+                }] 
+            },
+            options: { 
+                responsive: true, 
+                plugins: { legend: { labels: { color: textColor } } }, 
+                scales: { 
+                    y: { beginAtZero: true, max: 100, ticks:{color: textColor} }, 
+                    x:{ticks:{color: textColor}} 
+                } 
+            },
+            plugins: [targetLinePlugin]
+        };
+
+        if(type === 'line') {
+            chartConfig.data.datasets[0].segment = {
+                borderColor: ctx => {
+                    if(!ctx.p0 || !ctx.p1) return '#27ae60';
+                    return ctx.p0.parsed.y > ctx.p1.parsed.y ? '#e74c3c' : '#27ae60';
+                }
+            };
+        }
+
+        studentChart = new Chart(ctx, chartConfig);
+    }
+
+    function showRadarGraph() {
+        document.getElementById('radarModal').classList.remove('hidden');
+        let myRes = Object.values(results).filter(r => r.user === window.currentUser);
+        let sData = students[window.currentUser];
+        let cls = parseInt(sData.class) || 5;
+        
+        let coreSubjects = (cls >= 9) 
+            ? ['Bengali', 'English', 'Math', 'Phys Sci', 'Life Sci', 'History', 'Geography'] 
+            : ['Bengali', 'English', 'Math', 'ENVS', 'History', 'Geography'];
+            
+        let radarData = [];
+
+        coreSubjects.forEach(sub => {
+            let subRes = myRes.filter(r => r.sub === sub);
+            if(subRes.length > 0) {
+                let avg = subRes.reduce((s,x)=>s+parseFloat(x.perc),0)/subRes.length;
+                radarData.push(avg.toFixed(2));
+            } else {
+                radarData.push(0);
+            }
+        });
+
+        const isDark = document.body.classList.contains('dark-mode');
+        const textColor = isDark ? '#e0e0e0' : '#1d1d1f';
+        const ctx = document.getElementById('radarChartCanvas').getContext('2d');
+        
+        if(radarChartInstance) radarChartInstance.destroy();
+
+        let gradient = ctx.createRadialGradient(250, 175, 0, 250, 175, 200);
+        gradient.addColorStop(0, 'rgba(0, 0, 128, 0.8)');
+        gradient.addColorStop(1, 'rgba(0, 0, 128, 0.2)');
+        
+        radarChartInstance = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: coreSubjects,
+                datasets: [{
+                    label: 'Overall Mastery (%)',
+                    data: radarData,
+                    backgroundColor: gradient,
+                    borderColor: '#FFDF00',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#FFDF00',
+                    pointBorderColor: '#000',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#FFDF00',
+                    pointRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        angleLines: { color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)', lineWidth: 1.5 },
+                        grid: { color: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)', lineWidth: 1.5 },
+                        pointLabels: { color: textColor, font: { size: 14, family: 'Poppins', weight: 'bold' } },
+                        ticks: { min: 0, max: 100, stepSize: 20, backdropColor: 'transparent', color: textColor, font: { weight: 'bold' } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    async function downloadReceipt(month, amount) {
+        const { jsPDF } = window.jspdf; 
+        const doc = new jsPDF();
+        
+        doc.setLineWidth(0.5); doc.rect(10, 10, 190, 100); 
+        
+        doc.setFontSize(24); doc.setTextColor(0, 0, 128); 
+        doc.text("Pathshala.", 105, 25, null, null, "center");
+        
+        doc.setFontSize(14); doc.setTextColor(0, 0, 0);
+        doc.text("Official Payment Receipt", 105, 35, null, null, "center");
+        
+        doc.setLineWidth(0.2); doc.line(15, 40, 195, 40); 
+        
+        doc.setFontSize(12);
+        doc.text(`Student Name: ${window.currentUser}`, 20, 55);
+        doc.text(`Fee Month: ${month}`, 20, 65);
+        doc.text(`Amount Paid: Rs. ${amount}`, 20, 75);
+        doc.text(`Date of Issue: ${new Date().toLocaleDateString('en-GB')}`, 20, 85);
+        
+        doc.setTextColor(39, 174, 96); 
+        doc.setFontSize(16); doc.text("STATUS: PAID", 140, 75);
+        
+        doc.setTextColor(100, 100, 100); doc.setFontSize(10);
+        doc.text("This is a system generated receipt.", 105, 100, null, null, "center");
+        
+        doc.save(`Pathshala_Receipt_${window.currentUser}_${month}.pdf`);
+    }
+
+    async function downloadPDF() { 
+        const { jsPDF } = window.jspdf; const doc = new jsPDF(); 
+        doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Report", 14, 20);
+        doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30);
+        doc.autoTable({ startY: 40, html: '#resultTable', theme: 'grid' }); 
+        doc.save(`${window.currentUser}_Report.pdf`); 
+    }
+
+    async function downloadFeePDF() { 
+        const { jsPDF } = window.jspdf; const doc = new jsPDF(); 
+        doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Fees Report", 14, 20);
+        doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30);
+        
+        let tempTable = document.getElementById('feeTable').cloneNode(true);
+        for(let i=0; i<tempTable.rows.length; i++) tempTable.rows[i].deleteCell(-1);
+
+        doc.autoTable({ startY: 40, html: tempTable, theme: 'grid' }); 
+        doc.save(`${window.currentUser}_Fees_Report.pdf`); 
+    }
 </script>
 </body>
 </html>
