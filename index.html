@@ -100,7 +100,15 @@
         .radar-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: flex; justify-content: center; align-items: center; }
         .radar-content { background: var(--card-bg); backdrop-filter: blur(25px); padding: 30px; border-radius: 20px; width: 90%; max-width: 550px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
 
-        @media (max-width: 768px) { div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } table { display: block; overflow-x: auto; white-space: nowrap; } .tab-btn { font-size: 11px; padding: 10px; } }
+        /* Fees Bar Styling */
+        .fee-bar-wrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--input-bg); padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .fee-bar-container { display: flex; gap: 3px; width: 100%; max-width: 250px; height: 18px; background: rgba(0,0,0,0.1); border-radius: 5px; overflow: hidden; }
+        .fee-block { flex: 1; height: 100%; transition: 0.3s; }
+        .fee-paid { background: var(--success); }
+        .fee-unpaid { background: var(--danger); }
+        .fee-bar-name { font-weight: 600; font-size: 14px; width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
+
+        @media (max-width: 768px) { div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } table { display: block; overflow-x: auto; white-space: nowrap; } .tab-btn { font-size: 11px; padding: 10px; } .fee-bar-wrapper { flex-direction: column; align-items: flex-start; gap: 5px; } .fee-bar-container { max-width: 100%; } }
     </style>
 </head>
 <body>
@@ -156,7 +164,12 @@
                     </div>
                     <button class="apple-btn" style="width: 100%; margin-top: 15px;" onclick="handleLogin()">Login</button>
                     <p id="pendingMsg" style="color:red; font-size:12px; display:none;"><i class="fa-solid fa-clock"></i> Waiting for Admin approval...</p>
-                    <p style="margin-top: 15px;">নতুন? <a href="#" onclick="toggleAuth(true)" style="color: var(--chakra-blue); font-weight: 600;">Registration করুন</a></p>
+                    
+                    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 15px; font-size: 14px;">
+                        <a href="#" onclick="toggleAuth('register')" style="color: var(--chakra-blue); font-weight: 600;">Registration করুন</a>
+                        <span style="color: #ccc;">|</span>
+                        <a href="#" onclick="toggleAuth('forgot')" style="color: var(--danger); font-weight: 600;">Forgot Password?</a>
+                    </div>
                 </div>
 
                 <div id="regForm" class="hidden fade-in">
@@ -171,7 +184,18 @@
                         <i class="fa-solid fa-eye" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--chakra-blue);" onclick="togglePass('rPass', this)"></i>
                     </div>
                     <button class="apple-btn" style="width: 100%; margin-top: 10px;" onclick="handleRegister()">Submit Request</button>
-                    <p style="margin-top: 15px;"><a href="#" onclick="toggleAuth(false)" style="color: var(--danger); font-weight: 600;">Cancel</a></p>
+                    <p style="margin-top: 15px;"><a href="#" onclick="toggleAuth('login')" style="color: var(--danger); font-weight: 600;">Cancel</a></p>
+                </div>
+
+                <div id="forgotForm" class="hidden fade-in">
+                    <h3 style="margin-top:0;">Reset Password</h3>
+                    <input type="text" id="fUser" placeholder="Full Name (Registered ID)">
+                    <div style="position: relative; width: 100%;">
+                        <input type="password" id="fPass" placeholder="Enter New Password">
+                        <i class="fa-solid fa-eye" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--chakra-blue);" onclick="togglePass('fPass', this)"></i>
+                    </div>
+                    <button class="apple-btn" style="width: 100%; margin-top: 10px; background: var(--danger);" onclick="requestPasswordReset()">Request Reset</button>
+                    <p style="margin-top: 15px;"><a href="#" onclick="toggleAuth('login')" style="color: var(--chakra-blue); font-weight: 600;">Back to Login</a></p>
                 </div>
             </div>
         </div>
@@ -202,6 +226,7 @@
         
         <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
             <button id="tabDashboard" class="apple-btn tab-btn active" onclick="switchAdminTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
+            <button id="tabStudents" class="apple-btn tab-btn" style="background: #e67e22;" onclick="switchAdminTab('students')"><i class="fa-solid fa-users-gear"></i> Student Management</button>
             <button id="tabFees" class="apple-btn tab-btn" style="background: var(--warning);" onclick="switchAdminTab('fees')"><i class="fa-solid fa-money-check-dollar"></i> Fees Tracker</button>
             <button id="tabMaterials" class="apple-btn tab-btn" style="background: #8e44ad;" onclick="switchAdminTab('materials')"><i class="fa-solid fa-file-arrow-up"></i> Upload Materials</button>
         </div>
@@ -232,6 +257,16 @@
                     <tbody id="adminResultsBody"></tbody>
                 </table>
             </div>
+        </div>
+
+        <div id="adminStudentsSection" class="hidden fade-in">
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-user-plus"></i> Pending Approvals (Registration & Password)</h4>
+                <table class="premium-table">
+                    <thead><tr><th>Name</th><th>Type</th><th>Class / New Pass</th><th>Action</th></tr></thead>
+                    <tbody id="approvalBody"></tbody>
+                </table>
+            </div>
 
             <div class="glass-card">
                 <h4><i class="fa-solid fa-users"></i> Students & Attendance Control</h4>
@@ -259,6 +294,13 @@
                     <input type="number" id="feeAmount" placeholder="Amount (₹)" style="flex: 1;">
                 </div>
                 <button class="apple-btn" style="margin-top: 15px; background: var(--success);" onclick="addFee()"><i class="fa-solid fa-plus"></i> Record Payment</button>
+            </div>
+
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-bars-progress"></i> 12-Month Fees Progress</h4>
+                <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Green = Paid, Red = Unpaid (Jan to Dec)</p>
+                <div id="adminFeesVisuals" style="display: flex; flex-direction: column; gap: 10px;">
+                </div>
             </div>
         </div>
 
@@ -338,12 +380,8 @@
                 <div style="margin-top: 30px; max-width: 300px; margin-left: auto; margin-right: auto; padding-top: 20px; border-top: 1px solid var(--border-color);">
                     <label style="font-weight: 600; font-size: 14px; color: var(--danger);"><i class="fa-solid fa-lock" id="classLockIcon"></i> Class Update (Only Dec 31)</label>
                     <select id="updateClassInput" disabled style="text-align: center;">
-                        <option value="5">Class 5</option>
-                        <option value="6">Class 6</option>
-                        <option value="7">Class 7</option>
-                        <option value="8">Class 8</option>
-                        <option value="9">Class 9</option>
-                        <option value="10">Class 10</option>
+                        <option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option>
+                        <option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option>
                     </select>
                     <button class="apple-btn" id="updateClassBtn" onclick="updateStudentClass()" style="width: 100%; padding: 10px; margin-top: 10px;" disabled>Upgrade Class</button>
                 </div>
@@ -404,7 +442,7 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
-    let students = {}, results = {}, att = {}, questionsMeta = {}, fees = {}, currentNotice = "", lastSysUpdate = null;
+    let students = {}, results = {}, att = {}, questionsMeta = {}, fees = {}, passRequests = {}, currentNotice = "", lastSysUpdate = null;
     let studentChart, radarChartInstance; 
     let rankPage = 1; const ranksPerPage = 10;
     let currentMaterialType = ""; 
@@ -466,7 +504,7 @@
     }
 
     function switchAdminTab(tab) {
-        ['Dashboard', 'Fees', 'Materials'].forEach(t => {
+        ['Dashboard', 'Students', 'Fees', 'Materials'].forEach(t => {
             document.getElementById(`admin${t}Section`).classList.add('hidden');
             document.getElementById(`tab${t}`).classList.remove('active');
         });
@@ -491,6 +529,7 @@
         att = data.attendance || {};
         questionsMeta = data.questionsMeta || {}; 
         fees = data.fees || {};
+        passRequests = data.passwordRequests || {};
         currentNotice = data.notice || "Welcome to Pathshala!";
         
         if(document.getElementById('publicNoticeDisplay')) document.getElementById('publicNoticeDisplay').innerText = currentNotice;
@@ -556,9 +595,10 @@
 
     function togglePass(id, icon) { const input = document.getElementById(id); input.type = input.type === "password" ? "text" : "password"; icon.classList.toggle('fa-eye-slash'); }
     
-    function toggleAuth(show) { 
-        document.getElementById('loginForm').classList.toggle('hidden', show); 
-        document.getElementById('regForm').classList.toggle('hidden', !show); 
+    function toggleAuth(state) { 
+        document.getElementById('loginForm').classList.toggle('hidden', state !== 'login'); 
+        document.getElementById('regForm').classList.toggle('hidden', state !== 'register'); 
+        document.getElementById('forgotForm').classList.toggle('hidden', state !== 'forgot'); 
     }
 
     function getAvatar(name, picUrl) {
@@ -577,40 +617,57 @@
         } else { Swal.fire({ icon: 'error', title: 'Oops...', text: 'Invalid Login ID/Password!' }); }
     }
     
-    // --- 100% SPA Logout Fix ---
     function handleLogout() { 
         localStorage.removeItem('pathshalaUser'); 
         window.currentUser = null; 
         
-        if(document.getElementById('lUser')) document.getElementById('lUser').value = "";
-        if(document.getElementById('lPass')) document.getElementById('lPass').value = "";
+        document.getElementById('lUser').value = "";
+        document.getElementById('lPass').value = "";
         
-        toggleAuth(false);
-        hideAllViews();
-        document.getElementById('publicView').classList.remove('hidden');
-        document.getElementById('topNavArea').style.display = 'flex';
-        
-        toggleSidebar(false);
-        if(document.getElementById('radarModal')) document.getElementById('radarModal').classList.add('hidden');
-        
-        Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Logged Out Successfully',
-            showConfirmButton: false,
-            timer: 1500
-        });
+        if(studentChart) studentChart.destroy();
+        if(radarChartInstance) radarChartInstance.destroy();
 
-        renderRankList();
+        toggleAuth('login');
+        showHome(); 
+        
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Logged Out Successfully', showConfirmButton: false, timer: 1500 });
     }
 
     function validatePhone() { let ph = document.getElementById('rPhone').value, err = document.getElementById('phoneError'); if(ph.length !== 10) { err.style.display = "block"; return false; } else { err.style.display = "none"; return true; } }
+    
     function handleRegister() {
         let n = document.getElementById('rName').value.trim(), ph = document.getElementById('rPhone').value, c = document.getElementById('rClass').value, pw = document.getElementById('rPass').value, g = document.querySelector('input[name="g"]:checked')?.value;
         if(!n || !ph || !c || !pw) return Swal.fire('Warning', 'Please fill all fields!', 'warning');
         if(!validatePhone()) return Swal.fire('Error', 'WhatsApp number must be exactly 10 digits!', 'error');
-        db.ref('students/' + n).set({ pw, role: 'student', phone: ph, class: c, gender: g, approved: false }).then(() => { Swal.fire('Success', 'Requested! Wait for admin approval.', 'success'); toggleAuth(false); });
+        if(students[n]) return Swal.fire('Error', 'Name already exists. Try adding surname.', 'error');
+        
+        db.ref('students/' + n).set({ pw, role: 'student', phone: ph, class: c, gender: g, approved: false }).then(() => { 
+            Swal.fire('Success', 'Requested! Wait for admin approval.', 'success'); 
+            toggleAuth('login'); 
+        });
+    }
+
+    function requestPasswordReset() {
+        let u = document.getElementById('fUser').value.trim();
+        let p = document.getElementById('fPass').value;
+        if(!u || !p) return Swal.fire('Error', 'Please fill all fields!', 'error');
+        if(!students[u]) return Swal.fire('Error', 'Student Name not found in system!', 'error');
+        
+        db.ref('passwordRequests/' + u).set({ newPw: p }).then(() => {
+            Swal.fire('Success', 'Password reset requested to Admin. Wait for approval.', 'success');
+            document.getElementById('fUser').value = ""; document.getElementById('fPass').value = "";
+            toggleAuth('login');
+        });
+    }
+
+    function approvePassword(u, newPw) {
+        db.ref('students/' + u).update({ pw: newPw }).then(() => {
+            db.ref('passwordRequests/' + u).remove();
+            Swal.fire('Approved', `${u}'s password has been updated.`, 'success');
+        });
+    }
+    function rejectPassword(u) {
+        db.ref('passwordRequests/' + u).remove();
     }
 
     function changeRankPage(dir) { rankPage += dir; if(rankPage < 1) rankPage = 1; renderRankList(); }
@@ -664,19 +721,21 @@
     }
 
     function renderAdmin() {
-        let appHtml = "", masterHtml = "", resultHtml = "", qHtml = "";
+        let appHtml = "", masterHtml = "", resultHtml = "", qHtml = "", feesVisualHtml = "";
         const date = new Date().toLocaleDateString(), session = new Date().getHours() < 12 ? "AM" : "PM";
         
         let feeUserSel = document.getElementById('feeUser'); feeUserSel.innerHTML = '<option value="">Select Student</option>';
+        const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
         for(let u in students) {
             if(students[u].role === 'admin') continue;
             if(!students[u].approved) {
-                appHtml += `<tr class="data-row"><td>${u}</td><td>${students[u].pw}</td><td>${students[u].class}</td>
-                    <td><button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-approve"><i class="fa-solid fa-check"></i></button>
-                    <button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+                appHtml += `<tr class="data-row"><td>${u}</td><td style="color:var(--chakra-blue); font-weight:bold;">New Reg</td><td>Class ${students[u].class}</td>
+                    <td><button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-approve" style="background:var(--success); margin:2px;"><i class="fa-solid fa-check"></i></button>
+                    <button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger); margin:2px;"><i class="fa-solid fa-xmark"></i></button></td></tr>`;
             } else {
                 feeUserSel.innerHTML += `<option value="${u}">${u}</option>`;
+                
                 let r = att[u] || { p: 0, t: 0, lastD: "", lastS: "" };
                 let lock = (r.lastD === date && r.lastS === session); 
                 masterHtml += `<tr class="data-row">
@@ -686,7 +745,25 @@
                     <td><button onclick="markAtt('${u}', 'P')" class="apple-btn btn-action ${lock?'btn-disabled':''}" style="background: var(--success);">P</button>
                     <button onclick="markAtt('${u}', 'A')" class="apple-btn btn-action ${lock?'btn-disabled':''}" style="background:var(--warning);">A</button></td>
                     <td><button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-user-xmark"></i></button></td></tr>`;
+                
+                let sFees = fees[u] || {};
+                let barsHtml = "";
+                allMonths.forEach(m => {
+                    let isPaid = sFees[m] && sFees[m].status === 'Paid';
+                    barsHtml += `<div class="fee-block ${isPaid ? 'fee-paid' : 'fee-unpaid'}" title="${m}: ${isPaid ? 'Paid' : 'Unpaid'}"></div>`;
+                });
+                feesVisualHtml += `
+                <div class="fee-bar-wrapper">
+                    <span class="fee-bar-name">${u}</span>
+                    <div class="fee-bar-container">${barsHtml}</div>
+                </div>`;
             }
+        }
+
+        for(let u in passRequests) {
+            appHtml += `<tr class="data-row"><td>${u}</td><td style="color:var(--warning); font-weight:bold;">Pass Reset</td><td>${passRequests[u].newPw}</td>
+            <td><button onclick="approvePassword('${u}', '${passRequests[u].newPw}')" class="apple-btn btn-action" style="background:var(--success); margin:2px;"><i class="fa-solid fa-check"></i></button>
+            <button onclick="rejectPassword('${u}')" class="apple-btn btn-action" style="background:var(--danger); margin:2px;"><i class="fa-solid fa-xmark"></i></button></td></tr>`;
         }
         
         let recentResKeys = Object.keys(results).slice(-3).reverse(); 
@@ -699,10 +776,11 @@
             qHtml += `<tr class="data-row"><td>${questionsMeta[k].title}</td><td style="font-size:12px; color:var(--chakra-blue); font-weight:bold;">${questionsMeta[k].type||'PYQ'}</td><td>${questionsMeta[k].class}</td><td><button class="apple-btn btn-action" style="background:var(--danger);" onclick="deleteQuestion('${k}')">❌</button></td></tr>`;
         }
 
-        if(document.getElementById('approvalBody')) document.getElementById('approvalBody').innerHTML = appHtml || "<tr><td colspan='4'>No pending requests.</td></tr>";
+        document.getElementById('approvalBody').innerHTML = appHtml || "<tr><td colspan='4'>No pending requests.</td></tr>";
         document.getElementById('masterBody').innerHTML = masterHtml || "<tr><td colspan='5'>No students found.</td></tr>";
         document.getElementById('adminResultsBody').innerHTML = resultHtml || "<tr><td colspan='4'>No recent results.</td></tr>";
         document.getElementById('adminQuestionsBody').innerHTML = qHtml || "<tr><td colspan='4'>No materials uploaded.</td></tr>";
+        document.getElementById('adminFeesVisuals').innerHTML = feesVisualHtml || "<p style='text-align:center;'>No approved students yet.</p>";
     }
 
     function deleteRecord(path) {
@@ -715,6 +793,7 @@
         let r = att[u] || { p: 0, t: 0 };
         db.ref('attendance/' + u).update({ p: status==='P'?r.p+1:r.p, t: r.t + 1, lastD: new Date().toLocaleDateString(), lastS: new Date().getHours() < 12 ? "AM" : "PM" });
     }
+    
     function postNotice() { 
         let t = document.getElementById('noticeInput').value; if(!t) return;
         db.ref('notice').set(t).then(() => { 
@@ -723,30 +802,32 @@
             document.getElementById('noticeInput').value = ""; 
         });
     }
+    
     function filterStudents() {
         const cls = document.getElementById('resClass').value, sSelect = document.getElementById('resUserSelect'); sSelect.innerHTML = '<option value="">Select Student</option>';
         for (let u in students) { if(students[u].class === cls && students[u].approved) sSelect.innerHTML += `<option value="${u}">${u}</option>`; }
         let subs = (cls >= 5 && cls <= 8) ? ["Bengali", "English", "Math", "ENVS", "History", "Geography"] : ["Bengali", "English", "Math", "Phys Sci", "Life Sci", "History", "Geography"];
         document.getElementById('resSub').innerHTML = '<option value="">Select Subject</option>' + subs.map(s => `<option value="${s}">${s}</option>`).join('');
     }
+    
     function calcPerc() { let ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value; document.getElementById('resPerc').value = (ob&&fl) ? ((ob/fl)*100).toFixed(2)+"%" : ""; }
     
+    // Updated Marks Upload WhatsApp Logic
     function uploadResult() {
         let u = document.getElementById('resUserSelect').value, sub = document.getElementById('resSub').value, ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value;
         if(!u || !sub || !ob || !fl) return Swal.fire('Warning', 'Fill all fields!', 'warning');
-        
         let p = (ob/fl)*100;
-        let grade = p>=80?'A+':p>=60?'A':p>=40?'B':'F';
-        let obj = { user:u, sub, ob, fl, perc: p.toFixed(2), grade: grade, date: new Date().toLocaleDateString('en-GB'), timestamp: Date.now() };
-        
+        let obj = { user:u, sub, ob, fl, perc: p.toFixed(2), grade: p>=80?'A+':p>=60?'A':p>=40?'B':'F', date: new Date().toLocaleDateString('en-GB'), timestamp: Date.now() };
         db.ref('results').push(obj).then(() => { 
             Swal.fire('Success', 'Result Uploaded!', 'success'); 
             
             let sPhone = students[u]?.phone;
             if(sPhone && sPhone.length === 10) {
-                let msg = `Hello ${u},\n\nYour new result for *${sub}* is uploaded!\n\n*Marks:* ${ob}/${fl}\n*Percentage:* ${p.toFixed(2)}%\n*Grade:* ${grade}\n\nCheck details: https://akashdas924.github.io/MyPathshala/`;
+                let msg = `Hello ${u},\n\nYour result for *${sub}* has been uploaded to Pathshala.\nMarks: ${ob}/${fl} (${p.toFixed(2)}%)\nGrade: ${obj.grade}\n\nCheck Details: https://akashdas924.github.io/MyPathshala/#`;
                 window.open(`https://wa.me/91${sPhone}?text=${encodeURIComponent(msg)}`, '_blank');
             }
+            
+            document.getElementById('resOb').value = ""; document.getElementById('resFull').value = ""; document.getElementById('resPerc').value = "";
         });
     }
 
@@ -756,6 +837,7 @@
         });
     }
 
+    // Updated Fees WhatsApp Logic
     function addFee() {
         let u = document.getElementById('feeUser').value, m = document.getElementById('feeMonth').value, a = document.getElementById('feeAmount').value;
         if(!u || !m || !a) return Swal.fire('Warning', 'Fill all fee details!', 'warning');
@@ -766,7 +848,7 @@
             Swal.fire('Success', 'Payment Recorded!', 'success');
             
             if(sPhone && sPhone.length === 10) {
-                let msg = `Hello ${u},\n\nYour fee payment of Rs.${a} for the month of *${m}* has been successfully recorded at *Pathshala*.\n\nCheck details: https://akashdas924.github.io/MyPathshala/\n\nThank you!`;
+                let msg = `Hello ${u},\n\nYour fee payment of Rs.${a} for the month of *${m}* has been successfully recorded at *Pathshala*.\n\nCheck Details: https://akashdas924.github.io/MyPathshala/#`;
                 window.open(`https://wa.me/91${sPhone}?text=${encodeURIComponent(msg)}`, '_blank');
             }
         });
