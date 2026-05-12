@@ -23,6 +23,7 @@
             --gold: linear-gradient(135deg, #FFDF00 0%, #D4AF37 100%);
             --silver: linear-gradient(135deg, #E0E0E0 0%, #A9A9A9 100%);
             --bronze: linear-gradient(135deg, #CD7F32 0%, #8B4513 100%);
+            --premium-gradient: linear-gradient(135deg, #ff00cc 0%, #333399 100%);
             --text-main: #1d1d1f; --success: #27ae60; --warning: #f39c12; --danger: #e74c3c;
             --bg-color: linear-gradient(180deg, #FF9933 0%, #FFFFFF 50%, #138808 100%);
             --card-bg: rgba(255, 255, 255, 0.6);
@@ -41,34 +42,63 @@
         }
         
         body { margin: 0; min-height: 100vh; font-family: 'Poppins', sans-serif; background: var(--bg-color); background-attachment: fixed; transition: background 0.4s ease, color 0.4s ease; overflow-x: hidden; }
-        
         .chakra-bg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; height: 400px; z-index: -1; opacity: 0.15; animation: rotateChakra 20s linear infinite; }
         @keyframes rotateChakra { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
         
         .container { max-width: 1200px; margin: 20px auto; padding: 30px; background: var(--card-bg); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative; z-index: 1; transition: 0.3s;}
-        .glass-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-color); transition: 0.3s; color: var(--text-main); }
-        .glass-card h3, .glass-card h4 { color: var(--chakra-blue); }
         
-        .apple-btn { background: var(--chakra-blue); color: white; padding: 12px 25px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: 0.3s; font-family: 'Poppins', sans-serif;}
+        .glass-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-color); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); color: var(--text-main); }
+        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); animation: floatCard 3s ease-in-out infinite alternate; }
+        body.dark-mode .glass-card:hover { box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
+        .glass-card h3, .glass-card h4 { color: var(--chakra-blue); }
+        @keyframes floatCard { 0% { transform: translateY(-8px); } 100% { transform: translateY(-12px); } }
+        
+        .apple-btn { background: var(--chakra-blue); color: white; padding: 12px 25px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: 'Poppins', sans-serif;}
         .apple-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 128, 0.3); }
+        .apple-btn:active, .quiz-option:active, .tab-btn:active, .gift-box:active { transform: scale(0.95) !important; transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
         .btn-action { padding: 6px 12px; font-size: 12px; border-radius: 8px; margin: 2px; }
-        .tab-btn { flex: 1; padding: 12px; font-size: 14px; border-radius: 10px; opacity: 0.7; font-weight: 600; white-space: nowrap;}
+        .btn-transparent { opacity: 0.3 !important; pointer-events: none !important; }
+        
+        .tab-btn { position: relative; flex: 1; padding: 12px; font-size: 14px; border-radius: 10px; opacity: 0.7; font-weight: 600; white-space: nowrap; transition: 0.3s ease;}
         .tab-btn.active { opacity: 1; background: var(--success); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4); }
         
+        .premium-quiz-btn { background: var(--premium-gradient); color: white; box-shadow: 0 5px 15px rgba(255, 0, 204, 0.4); border-radius: 10px; font-weight: 800; border: none; position: relative; overflow: hidden; }
+        .shiny-effect { position: relative; overflow: hidden; } 
+        .premium-quiz-btn:hover { transform: scale(1.05); }
+        .premium-quiz-btn::before, .shiny-effect::before { content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-25deg); animation: shinySweep 3s infinite; }
+        @keyframes shinySweep { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
         .avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 2px solid var(--chakra-blue); vertical-align: middle; background: white;}
         .trophy-icon { font-size: 18px; margin-left: 5px; }
 
         .premium-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; text-align: center; }
         .premium-table th { background: rgba(0, 0, 128, 0.1); padding: 12px; border-radius: 5px; }
-        .premium-table tr.data-row { background: var(--input-bg); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; border-radius: 30px;}
+        .premium-table tr.data-row { background: var(--input-bg); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.3s ease; border-radius: 30px; position: relative; z-index: 1;}
+        .premium-table tr.data-row:hover { transform: scale(1.02) !important; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        body.dark-mode .premium-table tr.data-row:hover { box-shadow: 0 10px 25px rgba(255,255,255,0.1); background-color: rgba(255,255,255,0.15); }
         .premium-table td:first-child { border-top-left-radius: 30px; border-bottom-left-radius: 30px; }
         .premium-table td:last-child { border-top-right-radius: 30px; border-bottom-right-radius: 30px; }
-        .premium-table tr.data-row:hover { transform: scale(1.02); }
         .premium-table td { padding: 12px 10px; border: none; vertical-align: middle; }
 
-        .rank-1 { background: var(--gold) !important; color: #000 !important; font-weight: 800; }
-        .rank-2 { background: var(--silver) !important; color: #000 !important; font-weight: 700; }
-        .rank-3 { background: var(--bronze) !important; color: #fff !important; font-weight: 700; }
+        /* Staggered Row Entrance Animation (BUG FIXED) */
+        tbody tr.data-row { opacity: 0; transform: translateY(15px); animation: fadeInUpRow 0.6s ease forwards; }
+        tbody tr.data-row:nth-child(1) { animation-delay: 0.1s; }
+        tbody tr.data-row:nth-child(2) { animation-delay: 0.15s; }
+        tbody tr.data-row:nth-child(3) { animation-delay: 0.2s; }
+        tbody tr.data-row:nth-child(4) { animation-delay: 0.25s; }
+        tbody tr.data-row:nth-child(5) { animation-delay: 0.3s; }
+        tbody tr.data-row:nth-child(n+6) { animation-delay: 0.35s; }
+        @keyframes fadeInUpRow { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Rank Highlight Animations - COMBINED PROPERLY SO THEY DON'T GO INVISIBLE */
+        .rank-1 { background: linear-gradient(110deg, #FFDF00 25%, rgba(255,255,255,0.9) 50%, #FFDF00 75%) !important; background-size: 200% auto !important; color: #000 !important; font-weight: 800; animation: fadeInUpRow 0.6s ease 0.1s forwards, rankSweep 3s linear infinite, goldGlow 2s ease-in-out infinite alternate !important; z-index: 3 !important; }
+        .rank-2 { background: linear-gradient(110deg, #E0E0E0 25%, rgba(255,255,255,0.9) 50%, #E0E0E0 75%) !important; background-size: 200% auto !important; color: #000 !important; font-weight: 700; animation: fadeInUpRow 0.6s ease 0.15s forwards, rankSweep 3s linear infinite, silverGlow 2s ease-in-out infinite alternate !important; z-index: 2 !important; }
+        .rank-3 { background: linear-gradient(110deg, #CD7F32 25%, rgba(255,255,255,0.9) 50%, #CD7F32 75%) !important; background-size: 200% auto !important; color: #fff !important; font-weight: 600; animation: fadeInUpRow 0.6s ease 0.2s forwards, rankSweep 3s linear infinite, bronzeGlow 2s ease-in-out infinite alternate !important; z-index: 2 !important; }
+        
+        @keyframes rankSweep { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+        @keyframes goldGlow { 0% { box-shadow: 0 0 5px rgba(255, 223, 0, 0.2); } 100% { box-shadow: 0 0 25px rgba(255, 223, 0, 0.95); } }
+        @keyframes silverGlow { 0% { box-shadow: 0 0 5px rgba(224, 224, 224, 0.2); } 100% { box-shadow: 0 0 20px rgba(224, 224, 224, 0.85); } }
+        @keyframes bronzeGlow { 0% { box-shadow: 0 0 5px rgba(205, 127, 50, 0.2); } 100% { box-shadow: 0 0 20px rgba(205, 127, 50, 0.85); } }
         
         .marquee-box { overflow: hidden; white-space: nowrap; background: rgba(0, 0, 128, 0.05); padding: 10px 0; border-radius: 10px; margin: 20px 0; position: relative; width: 100%; }
         .moving-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; color: var(--chakra-blue); font-weight: 600; }
@@ -76,39 +106,61 @@
         
         input, textarea, select { font-family: 'Poppins', sans-serif; background: var(--input-bg); color: var(--text-main); border: 1px solid #ddd; padding: 12px; border-radius: 10px; margin: 10px 0; width: 95%; transition: 0.3s; box-sizing: border-box; }
         input:focus, select:focus { outline: none; border: 1px solid var(--chakra-blue); }
-        select { appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill="%23000080" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); background-repeat: no-repeat; background-position: right 10px center; cursor: pointer; }
 
         .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .btn-disabled { opacity: 0.4; pointer-events: none; }
-        .progress-circle { transition: stroke-dashoffset 1s ease-out, stroke 0.5s ease; }
-
+        .fade-in { animation: slideFade 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+        @keyframes slideFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .theme-switch { position: absolute; top: 30px; left: 30px; font-size: 24px; cursor: pointer; color: var(--chakra-blue); z-index: 10; transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); }
-        
         .top-right-nav { position: absolute; top: 30px; right: 30px; display: flex; gap: 20px; align-items: center; z-index: 10; }
         .nav-icon { font-size: 24px; cursor: pointer; color: var(--chakra-blue); transition: 0.3s; position: relative; }
-        .nav-icon:hover { transform: scale(1.1); }
+        
+        .coin-box { background: var(--gold); padding: 5px 12px; border-radius: 20px; font-weight: bold; color: black; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .gift-box { font-size: 26px; cursor: pointer; animation: bounceGift 2s infinite; }
+        @keyframes bounceGift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 
-        .sidebar { height: 100%; width: 0; position: fixed; z-index: 100; top: 0; right: 0; background-color: var(--chakra-blue); overflow-x: hidden; transition: 0.4s; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); font-family: 'Poppins', sans-serif;}
-        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 16px; color: #fff; display: block; transition: 0.3s; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar a:hover { background-color: rgba(255,255,255,0.2); padding-left: 35px; }
+        .quiz-option { background: var(--input-bg); border: 2px solid var(--border-color); padding: 15px; border-radius: 10px; margin: 10px 0; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
+        .quiz-option.selected { background: var(--success); color: white; border-color: var(--success); }
+        .quiz-circle { display: inline-block; width: 15px; height: 15px; border-radius: 50%; margin: 0 3px; background: #ddd; }
+        .quiz-circle.correct { background: var(--success); }
+        .quiz-circle.wrong { background: var(--danger); }
+
+        .redeem-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
+        .redeem-card { background: var(--input-bg); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 5px 15px rgba(0,0,0,0.05); position: relative; transition: all 0.3s ease;}
+        .redeem-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .redeem-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 100; top: 0; right: 0; background-color: var(--chakra-blue); overflow-x: hidden; transition: 0.4s; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 16px; color: #fff; display: block; }
         .sidebar .closebtn { position: absolute; top: 10px; right: 25px; font-size: 36px; border-bottom: none; }
-        .sidebar i { margin-right: 10px; width: 20px; text-align: center; }
+        
+        .radar-modal, .quiz-modal, .redeem-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; justify-content: center; align-items: center; overflow-y: auto;}
+        
+        /* Modal Pop-in Effect */
+        .modal-content { background: var(--card-bg); backdrop-filter: blur(25px); padding: 30px; border-radius: 20px; width: 90%; max-width: 600px; text-align: center; border: 1px solid var(--border-color); transform: scale(0.8); opacity: 0; animation: popInModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
+        @keyframes popInModal { to { transform: scale(1); opacity: 1; } }
 
-        .radar-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-        .radar-content { background: var(--card-bg); backdrop-filter: blur(25px); padding: 30px; border-radius: 20px; width: 90%; max-width: 550px; text-align: center; border: 1px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
-
-        /* Fees Bar Styling */
-        .fee-bar-wrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--input-bg); padding: 10px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .fee-bar-wrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--input-bg); padding: 10px; border-radius: 10px; }
         .fee-bar-container { display: flex; gap: 3px; width: 100%; max-width: 250px; height: 18px; background: rgba(0,0,0,0.1); border-radius: 5px; overflow: hidden; }
         .fee-block { flex: 1; height: 100%; transition: 0.3s; }
         .fee-paid { background: var(--success); }
         .fee-unpaid { background: var(--danger); }
-        .fee-bar-name { font-weight: 600; font-size: 14px; width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
+        .fee-bar-name { font-weight: 600; font-size: 14px; width: 120px; overflow: hidden; text-overflow: ellipsis; }
+        
+        .streak-container { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; background: rgba(0,0,0,0.05); padding: 8px 12px; border-radius: 10px; }
+        .streak-label { font-weight: 700; font-size: 14px; width: 30px; color: var(--chakra-blue); }
+        .streak-circles { display: flex; gap: 6px; }
+        .streak-circle { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border-color); background: #ddd; transition: 0.3s; }
+        .streak-p { background: var(--success); border-color: var(--success); box-shadow: 0 0 5px rgba(39, 174, 96, 0.5); }
+        .streak-a { background: var(--danger); border-color: var(--danger); }
 
-        @media (max-width: 768px) { div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } table { display: block; overflow-x: auto; white-space: nowrap; } .tab-btn { font-size: 11px; padding: 10px; } .fee-bar-wrapper { flex-direction: column; align-items: flex-start; gap: 5px; } .fee-bar-container { max-width: 100%; } }
+        /* Radar Ping Animation */
+        .red-dot { position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; background-color: var(--danger); border-radius: 50%; border: 2px solid white; z-index: 10; }
+        .red-dot::after { content: ''; position: absolute; top: -2px; left: -2px; width: 100%; height: 100%; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--danger); animation: radarPing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; z-index: -1; }
+        @keyframes radarPing { 75%, 100% { transform: scale(2.5); opacity: 0; } }
+
+        @media (max-width: 768px) { div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } table { display: block; overflow-x: auto; white-space: nowrap; } }
     </style>
 </head>
 <body>
@@ -127,9 +179,14 @@
     <i class="fa-solid fa-moon theme-switch" id="themeIcon" onclick="toggleTheme()"></i>
     
     <div class="top-right-nav" id="topNavArea">
+        <div id="studentCoinNav" class="hidden" style="display:flex; align-items:center; gap:15px;">
+            <div class="coin-box shiny-effect" onclick="showCoinRules()"><i class="fa-solid fa-coins"></i> <span id="navCoinDisplay">0</span></div>
+            <div class="gift-box" onclick="openRedeemStore()">🎁</div>
+        </div>
+
         <div class="nav-icon" onclick="showNotifications()">
             <i class="fa-solid fa-bell"></i>
-            <span id="notifBadge" class="hidden" style="position:absolute; top:-4px; right:-4px; width:10px; height:10px; background:#e74c3c; border-radius:50%; border:2px solid var(--card-bg);"></span>
+            <span id="notifBadge" class="hidden red-dot"></span>
         </div>
         <i class="fa-solid fa-bars nav-icon" id="menuIcon" onclick="toggleSidebar(true)"></i>
     </div>
@@ -164,7 +221,6 @@
                     </div>
                     <button class="apple-btn" style="width: 100%; margin-top: 15px;" onclick="handleLogin()">Login</button>
                     <p id="pendingMsg" style="color:red; font-size:12px; display:none;"><i class="fa-solid fa-clock"></i> Waiting for Admin approval...</p>
-                    
                     <div style="margin-top: 15px; display: flex; justify-content: center; gap: 15px; font-size: 14px;">
                         <a href="#" onclick="toggleAuth('register')" style="color: var(--chakra-blue); font-weight: 600;">Registration করুন</a>
                         <span style="color: #ccc;">|</span>
@@ -179,6 +235,7 @@
                     <span id="phoneError" style="color:red; font-size:12px; display:none; text-align:left;">* Exactly 10 digits required!</span>
                     <select id="rClass"><option value="">ক্লাস সিলেক্ট করুন</option><option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select>
                     <div style="margin: 15px 0;"> <label><input type="radio" name="g" value="Male" checked> Male</label> <label><input type="radio" name="g" value="Female"> Female</label> </div>
+                    <input type="date" id="rDob" title="Date of Birth" style="cursor: pointer;">
                     <div style="position: relative; width: 100%;">
                         <input type="password" id="rPass" placeholder="Create Password">
                         <i class="fa-solid fa-eye" style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--chakra-blue);" onclick="togglePass('rPass', this)"></i>
@@ -204,13 +261,11 @@
     <div id="materialsView" class="hidden fade-in">
         <button class="apple-btn" style="float: right; background: var(--chakra-blue);" onclick="showHome()"><i class="fa-solid fa-arrow-left"></i> Back</button>
         <h2 id="materialsTitle" style="color: var(--chakra-blue);"><i class="fa-solid fa-book"></i> Materials</h2>
-        
         <div class="glass-card" style="margin-top: 20px;">
             <center>
                 <select id="publicQClassSelect" onchange="renderPublicQuestions()" style="width: 250px; font-size: 16px; font-weight: 600;">
                     <option value="">-- Select Class --</option>
-                    <option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option>
-                    <option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option>
+                    <option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option>
                 </select>
             </center>
             <table class="premium-table" style="margin-top: 20px;">
@@ -226,9 +281,11 @@
         
         <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
             <button id="tabDashboard" class="apple-btn tab-btn active" onclick="switchAdminTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
-            <button id="tabStudents" class="apple-btn tab-btn" style="background: #e67e22;" onclick="switchAdminTab('students')"><i class="fa-solid fa-users-gear"></i> Student Management</button>
+            <button id="tabStudents" class="apple-btn tab-btn" style="background: #e67e22;" onclick="switchAdminTab('students')"><i class="fa-solid fa-users-gear"></i> Students <span class="red-dot hidden"></span></button>
             <button id="tabFees" class="apple-btn tab-btn" style="background: var(--warning);" onclick="switchAdminTab('fees')"><i class="fa-solid fa-money-check-dollar"></i> Fees Tracker</button>
-            <button id="tabMaterials" class="apple-btn tab-btn" style="background: #8e44ad;" onclick="switchAdminTab('materials')"><i class="fa-solid fa-file-arrow-up"></i> Upload Materials</button>
+            <button id="tabMaterials" class="apple-btn tab-btn" style="background: #8e44ad;" onclick="switchAdminTab('materials')"><i class="fa-solid fa-file-arrow-up"></i> Materials</button>
+            <button id="tabQuiz" class="apple-btn tab-btn" style="background: var(--premium-gradient);" onclick="switchAdminTab('quiz')"><i class="fa-solid fa-gamepad"></i> Quiz <span class="red-dot hidden"></span></button>
+            <button id="tabRedeem" class="apple-btn tab-btn" style="background: var(--danger);" onclick="switchAdminTab('redeem')"><i class="fa-solid fa-gift"></i> Redeem</button>
         </div>
 
         <div id="adminDashboardSection" class="fade-in">
@@ -237,7 +294,6 @@
                 <textarea id="noticeInput" rows="2" placeholder="Write announcement..."></textarea>
                 <button class="apple-btn" onclick="postNotice()">Update Notice</button>
             </div>
-
             <div class="glass-card">
                 <h4><i class="fa-solid fa-square-poll-vertical"></i> Manage Results</h4>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items:center;">
@@ -250,7 +306,6 @@
                     <input type="text" id="resPerc" placeholder="%" readonly style="flex: 1; background: var(--input-bg);">
                     <button class="apple-btn" onclick="uploadResult()"><i class="fa-solid fa-upload"></i> Upload</button>
                 </div>
-                
                 <h5 style="margin-top: 20px;">Recent Uploads (Last 3)</h5>
                 <table class="premium-table">
                     <thead><tr><th>Student</th><th>Sub</th><th>Score</th><th>Action</th></tr></thead>
@@ -267,7 +322,6 @@
                     <tbody id="approvalBody"></tbody>
                 </table>
             </div>
-
             <div class="glass-card">
                 <h4><i class="fa-solid fa-users"></i> Students & Attendance Control</h4>
                 <table class="premium-table">
@@ -280,27 +334,18 @@
         <div id="adminFeesSection" class="hidden fade-in">
             <div class="glass-card">
                 <h4><i class="fa-solid fa-money-check-dollar"></i> Fees Tracker</h4>
-                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Manage student payments easily from here. A WhatsApp message will be triggered automatically upon payment update.</p>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <select id="feeUser" style="flex: 2;"><option value="">Select Student</option></select>
                     <select id="feeMonth" style="flex: 1;">
-                        <option value="January">January</option><option value="February">February</option>
-                        <option value="March">March</option><option value="April">April</option>
-                        <option value="May">May</option><option value="June">June</option>
-                        <option value="July">July</option><option value="August">August</option>
-                        <option value="September">September</option><option value="October">October</option>
-                        <option value="November">November</option><option value="December">December</option>
+                        <option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option>
                     </select>
                     <input type="number" id="feeAmount" placeholder="Amount (₹)" style="flex: 1;">
                 </div>
-                <button class="apple-btn" style="margin-top: 15px; background: var(--success);" onclick="addFee()"><i class="fa-solid fa-plus"></i> Record Payment</button>
+                <button class="apple-btn" style="margin-top: 15px; background: var(--success);" onclick="addFee()">Record Payment</button>
             </div>
-
             <div class="glass-card">
-                <h4><i class="fa-solid fa-bars-progress"></i> 12-Month Fees Progress</h4>
-                <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Green = Paid, Red = Unpaid (Jan to Dec)</p>
-                <div id="adminFeesVisuals" style="display: flex; flex-direction: column; gap: 10px;">
-                </div>
+                <h4><i class="fa-solid fa-bars-progress"></i> 12-Month Progress</h4>
+                <div id="adminFeesVisuals" style="display: flex; flex-direction: column; gap: 10px;"></div>
             </div>
         </div>
 
@@ -308,7 +353,7 @@
             <div class="glass-card">
                 <h4><i class="fa-solid fa-file-pdf"></i> Upload Study Material / PYQ</h4>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                    <input type="text" id="qTitle" placeholder="Document Name (e.g. History Ch 1)" style="flex: 2;">
+                    <input type="text" id="qTitle" placeholder="Document Name" style="flex: 2;">
                     <select id="qType" style="flex: 1;"><option value="Study Material">Study Material</option><option value="PYQ">PYQ</option></select>
                     <select id="qClass" style="flex: 1;"><option value="">Class</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
                     <input type="file" id="qFileInput" accept="application/pdf" style="flex: 2;">
@@ -320,6 +365,34 @@
                 </table>
             </div>
         </div>
+
+        <div id="adminQuizSection" class="hidden fade-in">
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-upload"></i> Bulk Quiz Upload (100 Qs for 20 Weeks)</h4>
+                <p style="font-size:12px; color:#666;">Format: Question\nA) Option\nB) Option\nC) Option\nD) Option\nAns: A\n\n(Leave blank line between questions)</p>
+                <textarea id="quizBulkInput" rows="10" placeholder="Paste questions here..."></textarea>
+                <button class="apple-btn" style="width:100%; margin-top:10px; background:var(--premium-gradient);" onclick="uploadBulkQuiz()">Upload 100 Questions</button>
+                
+                <h5 style="margin-top: 30px;">Usage Statistics</h5>
+                <div style="max-width: 300px; margin: auto;">
+                    <canvas id="quizPieChart"></canvas>
+                </div>
+                <button class="apple-btn btn-action" style="background:var(--danger); margin-top:20px;" onclick="resetQuizData()">Reset All Quiz Data</button>
+            </div>
+        </div>
+
+        <div id="adminRedeemSection" class="hidden fade-in">
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-gift"></i> Update Redeem Store</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; align-items:center;">
+                    <select id="redeemSlot" style="flex:1;"><option value="200">200 Coins Slot</option><option value="500">500 Coins Slot</option><option value="1000">1000 Coins Slot</option></select>
+                    <input type="text" id="redeemItemName" placeholder="Item Name (e.g., Geometry Box)" style="flex:2;">
+                    <input type="file" id="redeemItemImg" accept="image/*" style="flex:1;">
+                    <button class="apple-btn" style="background: #e67e22;" onclick="uploadRedeemItem()">Update Slot</button>
+                </div>
+                <div class="redeem-grid" id="adminRedeemPreview"></div>
+            </div>
+        </div>
     </div>
 
     <div id="studentPanel" class="hidden fade-in">
@@ -329,22 +402,38 @@
         <div class="marquee-box"><div class="moving-text" id="noticeDisplay"></div></div>
 
         <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
-            <button id="sTabDashboard" class="apple-btn tab-btn active" onclick="switchStudentTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard</button>
+            <button id="sTabDashboard" class="apple-btn tab-btn active" onclick="switchStudentTab('dashboard')"><i class="fa-solid fa-table-columns"></i> Dashboard <span class="red-dot hidden"></span></button>
             <button id="sTabProfile" class="apple-btn tab-btn" style="background: #8e44ad;" onclick="switchStudentTab('profile')"><i class="fa-solid fa-user-pen"></i> Profile</button>
-            <button id="sTabPerformance" class="apple-btn tab-btn" style="background: var(--chakra-blue);" onclick="switchStudentTab('performance')"><i class="fa-solid fa-chart-line"></i> Performance</button>
-            <button id="sTabFees" class="apple-btn tab-btn" style="background: var(--warning);" onclick="switchStudentTab('fees')"><i class="fa-solid fa-file-invoice-dollar"></i> Fees Tracker</button>
+            <button id="sTabPerformance" class="apple-btn tab-btn" style="background: var(--chakra-blue);" onclick="switchStudentTab('performance')"><i class="fa-solid fa-chart-line"></i> Performance <span class="red-dot hidden"></span></button>
+            <button id="sTabFees" class="apple-btn tab-btn" style="background: var(--warning);" onclick="switchStudentTab('fees')"><i class="fa-solid fa-file-invoice-dollar"></i> Fees Tracker <span class="red-dot hidden"></span></button>
+            <button id="sTabQuiz" class="apple-btn tab-btn premium-quiz-btn" onclick="switchStudentTab('quiz')"><i class="fa-solid fa-bolt"></i> Quiz <span class="red-dot hidden"></span></button>
         </div>
         
         <div id="studentDashboardSection" class="fade-in">
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-                <div class="glass-card" style="text-align: center; margin-bottom: 0;">
-                    <p style="font-weight: 600; margin:0;"><i class="fa-regular fa-calendar-check"></i> Attendance</p>
-                    <div style="display: flex; justify-content: center; align-items: center; height: 160px;">
-                        <svg width="150" height="150" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="40" fill="none" stroke="#e6e6e6" stroke-width="10"></circle>
-                            <circle id="attProgressBar" class="progress-circle" cx="50" cy="50" r="40" fill="none" stroke="var(--danger)" stroke-width="10" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="round" transform="rotate(-90 50 50)"></circle>
-                            <text id="attPercText" x="50" y="55" text-anchor="middle" font-size="22" font-weight="800" fill="var(--chakra-blue)">0%</text>
-                        </svg>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="glass-card" style="text-align: center; margin-bottom: 0;">
+                        <p style="font-weight: 600; margin:0;"><i class="fa-regular fa-calendar-check"></i> Overall Attendance</p>
+                        <div style="display: flex; justify-content: center; align-items: center; height: 160px; position: relative;">
+                            <svg width="150" height="150" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="#e6e6e6" stroke-width="10"></circle>
+                                <circle id="attProgressBar" class="progress-circle" cx="50" cy="50" r="40" fill="none" stroke="var(--danger)" stroke-width="10" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="round" transform="rotate(-90 50 50)"></circle>
+                                <text id="attPercText" x="50" y="55" text-anchor="middle" font-size="22" font-weight="800" fill="var(--chakra-blue)">0%</text>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" style="margin-bottom: 0; padding: 15px;">
+                        <h4 style="margin:0 0 10px 0; text-align:center; font-size:14px;"><i class="fa-solid fa-fire" style="color:var(--danger);"></i> Weekly Streak (Mon-Sat)</h4>
+                        <div class="streak-container">
+                            <span class="streak-label">AM</span>
+                            <div class="streak-circles" id="streakAmContainer"></div>
+                        </div>
+                        <div class="streak-container">
+                            <span class="streak-label">PM</span>
+                            <div class="streak-circles" id="streakPmContainer"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -377,12 +466,15 @@
                     <button class="apple-btn" onclick="updatePhoneNumber()" style="width: 100%; padding: 10px; margin-top: 10px;">Update Phone</button>
                 </div>
 
+                <div style="margin-top: 20px; max-width: 300px; margin-left: auto; margin-right: auto;">
+                    <label style="font-weight: 600; font-size: 14px; color: var(--danger);"><i class="fa-solid fa-calendar" id="dobLockIcon"></i> Date of Birth (3 Months Lock)</label>
+                    <input type="date" id="updateDobInput" style="text-align: center;">
+                    <button class="apple-btn" id="updateDobBtn" onclick="updateDOB()" style="width: 100%; padding: 10px; margin-top: 10px; background:#e67e22;">Update DOB</button>
+                </div>
+
                 <div style="margin-top: 30px; max-width: 300px; margin-left: auto; margin-right: auto; padding-top: 20px; border-top: 1px solid var(--border-color);">
                     <label style="font-weight: 600; font-size: 14px; color: var(--danger);"><i class="fa-solid fa-lock" id="classLockIcon"></i> Class Update (Only Dec 31)</label>
-                    <select id="updateClassInput" disabled style="text-align: center;">
-                        <option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option>
-                        <option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option>
-                    </select>
+                    <select id="updateClassInput" disabled style="text-align: center;"><option value="5">Class 5</option><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select>
                     <button class="apple-btn" id="updateClassBtn" onclick="updateStudentClass()" style="width: 100%; padding: 10px; margin-top: 10px;" disabled>Upgrade Class</button>
                 </div>
             </div>
@@ -394,13 +486,8 @@
                     <h4 style="margin: 0;"><i class="fa-solid fa-chart-line"></i> Performance Chart</h4>
                     <div style="display:flex; gap:10px; align-items:center;">
                         <button class="apple-btn btn-action" onclick="showRadarGraph()" style="background: #8e44ad; font-size: 14px; padding: 5px 15px;"><i class="fa-solid fa-bullseye"></i> রাডার গ্রাফ</button>
-                        <select id="chartType" onchange="updateChartData()" style="padding:5px; margin:0; border-radius:5px;">
-                            <option value="bar">Bar Graph</option>
-                            <option value="line">Line Graph (Stock)</option>
-                        </select>
-                        <select id="chartFilter" onchange="updateChartData()" style="padding:5px; margin:0; border-radius:5px;">
-                            <option value="overall">Overall Progress</option>
-                        </select>
+                        <select id="chartType" onchange="updateChartData()" style="padding:5px; margin:0; border-radius:5px;"><option value="bar">Bar Graph</option><option value="line">Line Graph</option></select>
+                        <select id="chartFilter" onchange="updateChartData()" style="padding:5px; margin:0; border-radius:5px;"><option value="overall">Overall Progress</option></select>
                     </div>
                 </div>
                 <canvas id="performanceChart" style="max-height: 350px;"></canvas>
@@ -408,25 +495,74 @@
         </div>
 
         <div id="studentFeesSection" class="hidden fade-in">
-            <div class="glass-card">
-                <h4 style="margin-top: 0;"><i class="fa-solid fa-file-invoice-dollar"></i> My Fees Tracker (12 Months)</h4>
-                <table id="feeTable" class="premium-table" style="font-size: 14px;">
-                    <thead><tr><th>Month</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead>
-                    <tbody id="studentFeesBody"></tbody>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                <div class="glass-card" style="margin-bottom:0;">
+                    <h4 style="margin-top: 0;"><i class="fa-solid fa-file-invoice-dollar"></i> My Fees Tracker (12 Months)</h4>
+                    <table id="feeTable" class="premium-table" style="font-size: 14px;">
+                        <thead><tr><th>Month</th><th>Amount</th><th>Status</th><th>Receipt</th></tr></thead>
+                        <tbody id="studentFeesBody"></tbody>
+                    </table>
+                    <button class="apple-btn" style="margin-top: 20px; background: var(--success);" onclick="downloadFeePDF()"><i class="fa-solid fa-file-pdf"></i> Download Statement</button>
+                </div>
+
+                <div class="glass-card" style="margin-bottom:0; text-align:center;">
+                    <h4 style="margin-top: 0;"><i class="fa-solid fa-chart-pie"></i> Payment Overview</h4>
+                    <div style="max-width: 250px; margin: 0 auto;">
+                        <canvas id="feesPieChartCanvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="studentQuizSection" class="hidden fade-in">
+            <div class="glass-card" style="text-align: center;">
+                <h3 style="background: var(--premium-gradient); -webkit-background-clip: text; color: transparent; font-size: 28px; margin-bottom:5px;">Sunday's Special Quiz</h3>
+                <p style="font-size:14px; font-weight:600; color:var(--text-main); margin-bottom: 20px;">Play & Win Coins 🪙</p>
+                <button class="apple-btn" style="background: var(--success); font-size: 18px; padding: 15px 40px;" onclick="startWeeklyQuiz()">Start Quiz 🚀</button>
+
+                <h4 style="margin-top: 40px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Last 10 Quiz History</h4>
+                <table class="premium-table">
+                    <thead><tr><th>Date</th><th>Performance (Q1-Q5)</th></tr></thead>
+                    <tbody id="quizHistoryBody"></tbody>
                 </table>
-                <button class="apple-btn" style="margin-top: 20px; background: var(--success);" onclick="downloadFeePDF()"><i class="fa-solid fa-file-pdf"></i> Download Fees Statement</button>
             </div>
         </div>
     </div>
 </div>
 
 <div id="radarModal" class="radar-modal hidden">
-    <div class="radar-content fade-in">
+    <div class="modal-content fade-in">
         <h3 style="color: var(--chakra-blue); margin-top:0;"><i class="fa-solid fa-bullseye"></i> Overall Subject Mastery</h3>
         <p style="font-size: 12px; color: #666; margin-bottom: 20px;">Your average performance based on all exams.</p>
         <canvas id="radarChartCanvas" style="max-height: 350px;"></canvas>
         <button class="apple-btn" style="width:100%; background:var(--danger); margin-top:20px;" onclick="document.getElementById('radarModal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i> Close</button>
     </div>
+</div>
+
+<div id="redeemModal" class="redeem-modal hidden">
+    <div class="modal-content fade-in" style="max-width: 800px;">
+        <h2 style="color: var(--chakra-blue); margin-top:0;"><i class="fa-solid fa-gift"></i> Coin Redeem Store</h2>
+        <div class="redeem-grid" id="studentRedeemGrid"></div>
+        <button class="apple-btn" style="width:100%; background:var(--danger); margin-top:20px;" onclick="document.getElementById('redeemModal').classList.add('hidden');"><i class="fa-solid fa-xmark"></i> Close Store</button>
+    </div>
+</div>
+
+<div id="quizLiveModal" class="quiz-modal hidden">
+    <div class="modal-content fade-in" style="text-align: left; position:relative;">
+        <div style="display:flex; justify-content:space-between; font-weight:bold; color:var(--danger); margin-bottom: 15px;">
+            <span id="quizQNum">Question 1/5</span>
+            <span><i class="fa-solid fa-clock"></i> <span id="quizTimer">30</span>s</span>
+        </div>
+        <h3 id="quizQuestionText" style="color: var(--chakra-blue); margin-bottom:20px;"></h3>
+        <div id="quizOptionsContainer"></div>
+        <button id="quizNextBtn" class="apple-btn hidden" style="width:100%; background:var(--success); margin-top:20px;" onclick="quizNextQuestion()">Next</button>
+        <button id="quizExitBtn" class="apple-btn btn-action" style="background:var(--danger); position:absolute; bottom: -50px; left:50%; transform:translateX(-50%);" onclick="exitQuiz()">Exit Quiz</button>
+    </div>
+</div>
+
+<div id="quizLoadingScreen" class="quiz-modal hidden" style="flex-direction: column; color:white;">
+    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 50px; margin-bottom:20px; color:var(--success);"></i>
+    <h2>Checking your answers...</h2>
 </div>
 
 <script>
@@ -442,24 +578,82 @@
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
     const db = firebase.database();
 
-    let students = {}, results = {}, att = {}, questionsMeta = {}, fees = {}, passRequests = {}, currentNotice = "", lastSysUpdate = null;
-    let studentChart, radarChartInstance; 
+    const baseHistoricalAttendance = {
+        "Abhiram Mandal": { p: 126, t: 141 }, "Anwesha Das": { p: 108, t: 141 }, "Osmi Rana": { p: 133, t: 141 },
+        "P P": { p: 8, t: 16 }, "Ramija Khatun": { p: 110, t: 141 }, "Riya Dhal": { p: 127, t: 141 },
+        "Said": { p: 119, t: 141 }, "Sayani Jana": { p: 132, t: 141 }, "Sujoy Dolai": { p: 110, t: 141 }
+    };
+
+    let students = {}, results = {}, attendanceData = {}, questionsMeta = {}, fees = {}, passRequests = {};
+    let quizBank = [], quizMeta = { usedCount: 0, currentWeek: 0 }, quizHistories = {};
+    let redeemStore = { "200": null, "500": null, "1000": null }, redeemRequests = {};
+    let coinHistories = {}; 
+    let currentNotice = "", lastSysUpdate = null;
+    let studentChart, radarChartInstance, adminPieChart, feesPieInstance; 
     let rankPage = 1; const ranksPerPage = 10;
     let currentMaterialType = ""; 
 
+    let liveQuizIndex = 0, liveQuizQs = [], liveQuizAnswers = [], liveQuizTimer;
+    let quizStartTime = 0;
+
+    function animateCounter(elementId, targetValue) {
+        let el = document.getElementById(elementId);
+        if(!el) return;
+        targetValue = parseInt(targetValue) || 0;
+        let current = parseInt(el.innerText) || 0;
+        if (current === targetValue) return;
+        
+        if (el.counterInterval) clearInterval(el.counterInterval);
+        
+        let diff = targetValue - current;
+        let stepTime = Math.abs(Math.floor(1000 / (diff === 0 ? 1 : diff)));
+        if (stepTime < 10) stepTime = 10;
+        
+        let step = Math.sign(diff);
+        if (Math.abs(diff) > 50) step = Math.sign(diff) * Math.ceil(Math.abs(diff) / 50);
+
+        el.counterInterval = setInterval(function() {
+            current += step;
+            if ((step > 0 && current >= targetValue) || (step < 0 && current <= targetValue)) {
+                current = targetValue;
+                clearInterval(el.counterInterval);
+            }
+            el.innerText = current;
+        }, stepTime);
+    }
+
+    function triggerPushNotification(title, body) {
+        if ("Notification" in window && Notification.permission === "granted") {
+            new Notification(title, { body: body, icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png" });
+        }
+    }
+    
+    setInterval(() => {
+        let d = new Date(); let h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+        if ((h === 8 || h === 18) && m === 0 && s === 0) {
+            triggerPushNotification("Attendance Alert!", `Please mark your attendance for the ${h===8?"AM":"PM"} session.`);
+        }
+    }, 1000);
+
     function triggerFlowers() {
-        var duration = 4 * 1000;
-        var animationEnd = Date.now() + duration;
+        var duration = 4 * 1000; var animationEnd = Date.now() + duration;
         var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000, colors: ['#ffc0cb', '#ff69b4', '#ff1493', '#ff0000', '#ffd700'] };
-        function randomInRange(min, max) { return Math.random() * (max - min) + min; }
         var interval = setInterval(function() {
-            var timeLeft = animationEnd - Date.now();
-            if (timeLeft <= 0) { return clearInterval(interval); }
+            var timeLeft = animationEnd - Date.now(); if (timeLeft <= 0) return clearInterval(interval);
             var particleCount = 50 * (timeLeft / duration);
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.9), y: Math.random() - 0.2 }, shapes: ['circle'] }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random() * (0.9 - 0.1) + 0.1, y: Math.random() - 0.2 }, shapes: ['circle'] }));
         }, 250);
     }
 
+    function giveCoins(u, amount, reason) {
+        if(!students[u]) return;
+        let currentCoins = parseInt(students[u].coins || 0);
+        db.ref('students/'+u+'/coins').set(currentCoins + amount);
+        if(amount > 0) {
+            db.ref('coinHistory/'+u).push({ date: new Date().toLocaleDateString('en-GB'), amount: amount, reason: reason, timestamp: Date.now() });
+        }
+    }
+    
     function toggleTheme() {
         document.body.classList.toggle('dark-mode');
         const isDark = document.body.classList.contains('dark-mode');
@@ -469,56 +663,58 @@
         icon.style.transform = isDark ? "rotate(360deg)" : "rotate(0deg)";
         if(studentChart) updateChartData(); 
         if(!document.getElementById('radarModal').classList.contains('hidden')) showRadarGraph();
+        if(adminPieChart) renderPieChart();
     }
-    
     if(localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-        document.getElementById('themeIcon').className = "fa-solid fa-sun theme-switch";
-        document.getElementById('themeIcon').style.transform = "rotate(360deg)";
+        document.body.classList.add('dark-mode'); document.getElementById('themeIcon').className = "fa-solid fa-sun theme-switch"; document.getElementById('themeIcon').style.transform = "rotate(360deg)";
     }
 
     function toggleSidebar(show) { document.getElementById('mySidebar').style.width = show ? "250px" : "0"; }
-    
     function hideAllViews() {
-        ['publicView', 'materialsView', 'adminPanel', 'studentPanel'].forEach(id => {
-            document.getElementById(id).classList.add('hidden');
-        });
+        ['publicView', 'materialsView', 'adminPanel', 'studentPanel'].forEach(id => document.getElementById(id).classList.add('hidden'));
         document.getElementById('topNavArea').style.display = 'none';
+        document.getElementById('studentCoinNav').classList.add('hidden');
     }
-
     function showHome() {
-        toggleSidebar(false);
-        hideAllViews();
-        document.getElementById('publicView').classList.remove('hidden');
-        document.getElementById('topNavArea').style.display = 'flex';
+        toggleSidebar(false); hideAllViews(); document.getElementById('publicView').classList.remove('hidden'); document.getElementById('topNavArea').style.display = 'flex';
+    }
+    function openMaterialsPage(type) {
+        toggleSidebar(false); hideAllViews(); currentMaterialType = type;
+        document.getElementById('materialsTitle').innerHTML = type === 'PYQ' ? '<i class="fa-solid fa-file-lines"></i> Previous Year Questions' : '<i class="fa-solid fa-book-open-reader"></i> Study Materials';
+        document.getElementById('materialsView').classList.remove('hidden'); document.getElementById('publicQClassSelect').value = ""; document.getElementById('publicQuestionsBody').innerHTML = "<tr><td colspan='2'>Select a class to view files</td></tr>";
     }
 
-    function openMaterialsPage(type) {
-        toggleSidebar(false);
-        hideAllViews();
-        currentMaterialType = type;
-        document.getElementById('materialsTitle').innerHTML = type === 'PYQ' ? '<i class="fa-solid fa-file-lines"></i> Previous Year Questions' : '<i class="fa-solid fa-book-open-reader"></i> Study Materials';
-        document.getElementById('materialsView').classList.remove('hidden');
-        document.getElementById('publicQClassSelect').value = ""; 
-        document.getElementById('publicQuestionsBody').innerHTML = "<tr><td colspan='2'>Select a class to view files</td></tr>";
+    function setRedDot(btnId, show) {
+        let dot = document.querySelector(`#${btnId} .red-dot`);
+        if(dot) { if(show) dot.classList.remove('hidden'); else dot.classList.add('hidden'); }
     }
 
     function switchAdminTab(tab) {
-        ['Dashboard', 'Students', 'Fees', 'Materials'].forEach(t => {
-            document.getElementById(`admin${t}Section`).classList.add('hidden');
-            document.getElementById(`tab${t}`).classList.remove('active');
+        ['Dashboard', 'Students', 'Fees', 'Materials', 'Quiz', 'Redeem'].forEach(t => {
+            document.getElementById(`admin${t}Section`).classList.add('hidden'); document.getElementById(`tab${t}`).classList.remove('active');
         });
-        document.getElementById(`admin${tab.charAt(0).toUpperCase() + tab.slice(1)}Section`).classList.remove('hidden');
-        document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+        document.getElementById(`admin${tab.charAt(0).toUpperCase() + tab.slice(1)}Section`).classList.remove('hidden'); 
+        let activeTabBtn = document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+        activeTabBtn.classList.add('active');
+        
+        setRedDot(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`, false);
+        db.ref(`adminNotifications/${tab}`).remove();
+
+        if(tab === 'quiz') renderPieChart();
     }
 
     function switchStudentTab(tab) {
-        ['Dashboard', 'Profile', 'Performance', 'Fees'].forEach(t => {
-            document.getElementById(`student${t}Section`).classList.add('hidden');
-            document.getElementById(`sTab${t}`).classList.remove('active');
+        ['Dashboard', 'Profile', 'Performance', 'Fees', 'Quiz'].forEach(t => {
+            document.getElementById(`student${t}Section`).classList.add('hidden'); document.getElementById(`sTab${t}`).classList.remove('active');
         });
-        document.getElementById(`student${tab.charAt(0).toUpperCase() + tab.slice(1)}Section`).classList.remove('hidden');
-        document.getElementById(`sTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+        document.getElementById(`student${tab.charAt(0).toUpperCase() + tab.slice(1)}Section`).classList.remove('hidden'); 
+        let activeTabBtn = document.getElementById(`sTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+        activeTabBtn.classList.add('active');
+        
+        setRedDot(`sTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`, false);
+        if(window.currentUser) db.ref(`studentNotifications/${window.currentUser}/tabs/${tab}`).remove();
+
+        if(tab === 'dashboard' && window.currentAttPerc !== undefined) { animatePercentage(window.currentAttPerc); }
         if(tab === 'performance') updateChartData();
     }
 
@@ -526,280 +722,257 @@
         const data = snapshot.val() || {};
         students = data.students || { 'admin': { pw: '123', role: 'admin', approved: true } };
         results = data.results || {}; 
-        att = data.attendance || {};
+        attendanceData = data.attendance || {};
         questionsMeta = data.questionsMeta || {}; 
         fees = data.fees || {};
         passRequests = data.passwordRequests || {};
+        quizBank = data.quizBank || [];
+        quizMeta = data.quizMeta || { usedCount: 0, currentWeek: 0 };
+        quizHistories = data.quizHistories || {};
+        redeemStore = data.redeemStore || { "200": null, "500": null, "1000": null };
+        redeemRequests = data.redeemRequests || {};
+        coinHistories = data.coinHistory || {}; 
         currentNotice = data.notice || "Welcome to Pathshala!";
         
         if(document.getElementById('publicNoticeDisplay')) document.getElementById('publicNoticeDisplay').innerText = currentNotice;
         if(document.getElementById('noticeDisplay')) document.getElementById('noticeDisplay').innerText = currentNotice;
 
+        let isSunday = new Date().getDay() === 0;
+        let showSundayNotif = isSunday && (!localStorage.getItem('sundayQuizSeen') || localStorage.getItem('sundayQuizSeen') != new Date().toLocaleDateString());
+        let pendingRedeems = Object.keys(redeemRequests).length > 0;
+
+        if(lastSysUpdate || showSundayNotif || (window.currentUser === 'Admin' && pendingRedeems)) {
+            document.getElementById('notifBadge').classList.remove('hidden');
+        } else {
+            document.getElementById('notifBadge').classList.add('hidden');
+        }
+
         const savedUser = localStorage.getItem('pathshalaUser');
         if (savedUser) window.currentUser = savedUser;
+
+        if (window.currentUser && window.currentUser !== 'Admin') {
+            let myNotifs = (data.studentNotifications && data.studentNotifications[window.currentUser]) ? data.studentNotifications[window.currentUser].tabs : {};
+            if(myNotifs) {
+                setRedDot('sTabDashboard', myNotifs.dashboard);
+                setRedDot('sTabPerformance', myNotifs.performance);
+                setRedDot('sTabFees', myNotifs.fees);
+                setRedDot('sTabQuiz', myNotifs.quiz);
+            }
+        }
+
+        if(window.currentUser === 'Admin') {
+            let adminNotifs = data.adminNotifications || {};
+            if(adminNotifs.students) setRedDot('tabStudents', true);
+            if(adminNotifs.quiz) setRedDot('tabQuiz', true);
+        }
         
         renderRankList(); 
         if(!document.getElementById('materialsView').classList.contains('hidden')) renderPublicQuestions();
         
         if(window.currentUser === 'Admin') {
             if(document.getElementById('adminPanel').classList.contains('hidden')) {
-                hideAllViews();
+                hideAllViews(); document.getElementById('topNavArea').style.display = 'flex';
                 document.getElementById('adminPanel').classList.remove('hidden');
             }
             renderAdmin();
         } else if(window.currentUser && students[window.currentUser]) {
             if(document.getElementById('studentPanel').classList.contains('hidden')){
-                hideAllViews();
-                document.getElementById('studentPanel').classList.remove('hidden'); 
-                switchStudentTab('dashboard');
+                hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; document.getElementById('studentCoinNav').classList.remove('hidden');
+                document.getElementById('studentPanel').classList.remove('hidden'); switchStudentTab('dashboard');
             }
+            checkCoinsReset(); checkBirthday(); checkApprovedRedeem();
             refreshStudentUI();
         } else {
-            if(document.getElementById('materialsView').classList.contains('hidden')){
-                showHome();
-            }
+            if(document.getElementById('materialsView').classList.contains('hidden')){ showHome(); }
         }
     });
 
-    db.ref('sysUpdate').on('value', snap => {
-        if(snap.exists()) {
-            lastSysUpdate = snap.val();
-            let localTime = localStorage.getItem('lastNotifSeen') || 0;
-            if(lastSysUpdate.time > localTime) {
-                document.getElementById('notifBadge').classList.remove('hidden');
-            }
-        }
+    let localPushTime = parseInt(localStorage.getItem('lastPushTime') || "0");
+    db.ref('pushSignals').on('value', snap => {
+        if(!window.currentUser || window.currentUser === 'Admin') return;
+        let sig = snap.val() || {}; let mySig = sig[window.currentUser]; let allSig = sig['all'];
+
+        if(mySig && mySig.time > localPushTime) { triggerPushNotification(mySig.title, mySig.msg); localPushTime = mySig.time; localStorage.setItem('lastPushTime', localPushTime); }
+        if(allSig && allSig.time > localPushTime) { triggerPushNotification(allSig.title, allSig.msg); localPushTime = allSig.time; localStorage.setItem('lastPushTime', localPushTime); }
     });
+
+    function firePush(u, title, msg) { db.ref(`pushSignals/${u}`).set({ title, msg, time: Date.now() }); }
+    function firePushAll(title, msg) { db.ref('pushSignals/all').set({ title, msg, time: Date.now() }); }
 
     function showNotifications() {
-        if(lastSysUpdate) {
-            Swal.fire({
-                title: 'New Update Available!',
-                text: lastSysUpdate.msg,
-                icon: 'info',
-                confirmButtonColor: '#000080'
-            });
+        let isSunday = new Date().getDay() === 0;
+        if(window.currentUser === 'Admin' && Object.keys(redeemRequests).length > 0) {
+            let reqs = Object.keys(redeemRequests).map(k => `${redeemRequests[k].student} wants ${redeemRequests[k].itemName}`).join('<br>');
+            Swal.fire({ title: 'Pending Redeems', html: reqs, confirmButtonText: 'Check Admin Panel' });
+            document.getElementById('notifBadge').classList.add('hidden');
+        } else if(isSunday && (!localStorage.getItem('sundayQuizSeen') || localStorage.getItem('sundayQuizSeen') != new Date().toLocaleDateString())) {
+            Swal.fire({ title: 'Sunday Special Quiz Arrived! 🚀', icon: 'info', confirmButtonColor: '#000080' });
+            localStorage.setItem('sundayQuizSeen', new Date().toLocaleDateString());
+            document.getElementById('notifBadge').classList.add('hidden');
+        } else if(lastSysUpdate) {
+            Swal.fire({ title: 'New Update Available!', text: lastSysUpdate.msg, icon: 'info', confirmButtonColor: '#000080' });
             localStorage.setItem('lastNotifSeen', Date.now());
             document.getElementById('notifBadge').classList.add('hidden');
-        } else {
-            Swal.fire('Notifications', 'No new updates right now.', 'info');
-        }
+        } else { Swal.fire('Notifications', 'No new updates.', 'info'); }
     }
 
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
     const spokes = document.getElementById('spokes');
-    for (let i = 0; i < 24; i++) {
-        const angle = i * 15 * Math.PI / 180;
-        spokes.innerHTML += `<line x1="100" y1="100" x2="${100 + 85 * Math.cos(angle)}" y2="${100 + 85 * Math.sin(angle)}" />`;
-    }
+    for (let i = 0; i < 24; i++) { const angle = i * 15 * Math.PI / 180; spokes.innerHTML += `<line x1="100" y1="100" x2="${100 + 85 * Math.cos(angle)}" y2="${100 + 85 * Math.sin(angle)}" />`; }
 
     function togglePass(id, icon) { const input = document.getElementById(id); input.type = input.type === "password" ? "text" : "password"; icon.classList.toggle('fa-eye-slash'); }
-    
     function toggleAuth(state) { 
         document.getElementById('loginForm').classList.toggle('hidden', state !== 'login'); 
         document.getElementById('regForm').classList.toggle('hidden', state !== 'register'); 
         document.getElementById('forgotForm').classList.toggle('hidden', state !== 'forgot'); 
     }
-
     function getAvatar(name, picUrl) {
         if (picUrl && picUrl.startsWith('data:image')) return picUrl;
-        const colors = ['#e74c3c', '#8e44ad', '#3498db', '#e67e22', '#2ecc71'];
-        const char = name.charAt(0).toUpperCase(); const color = colors[char.charCodeAt(0) % colors.length];
+        const colors = ['#e74c3c', '#8e44ad', '#3498db', '#e67e22', '#2ecc71']; const char = name.charAt(0).toUpperCase(); const color = colors[char.charCodeAt(0) % colors.length];
         return 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="${color}"/><text x="50" y="50" font-family="Arial" font-size="45" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="central">${char}</text></svg>`);
     }
 
     function handleLogin() {
+        if ("Notification" in window && Notification.permission !== "denied" && Notification.permission !== "granted") { Notification.requestPermission(); }
         let u = document.getElementById('lUser').value.trim(), p = document.getElementById('lPass').value;
-        if(u.toLowerCase() === 'admin' && p === '123') { window.currentUser = 'Admin'; localStorage.setItem('pathshalaUser', 'Admin'); hideAllViews(); document.getElementById('adminPanel').classList.remove('hidden'); renderAdmin(); } 
+        if(u.toLowerCase() === 'admin' && p === '123') { window.currentUser = 'Admin'; localStorage.setItem('pathshalaUser', 'Admin'); hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; document.getElementById('adminPanel').classList.remove('hidden'); renderAdmin(); } 
         else if(students[u] && students[u].pw === p) {
             if(!students[u].approved) { document.getElementById('pendingMsg').style.display = "block"; return; }
-            window.currentUser = u; localStorage.setItem('pathshalaUser', u); hideAllViews(); document.getElementById('studentPanel').classList.remove('hidden'); switchStudentTab('dashboard'); refreshStudentUI();
+            window.currentUser = u; localStorage.setItem('pathshalaUser', u); hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; document.getElementById('studentCoinNav').classList.remove('hidden'); document.getElementById('studentPanel').classList.remove('hidden'); switchStudentTab('dashboard'); refreshStudentUI();
         } else { Swal.fire({ icon: 'error', title: 'Oops...', text: 'Invalid Login ID/Password!' }); }
     }
     
     function handleLogout() { 
-        localStorage.removeItem('pathshalaUser'); 
-        window.currentUser = null; 
-        
-        document.getElementById('lUser').value = "";
-        document.getElementById('lPass').value = "";
-        
-        if(studentChart) studentChart.destroy();
-        if(radarChartInstance) radarChartInstance.destroy();
-
-        toggleAuth('login');
-        showHome(); 
-        
-        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Logged Out Successfully', showConfirmButton: false, timer: 1500 });
+        localStorage.removeItem('pathshalaUser'); window.currentUser = null; document.getElementById('lUser').value = ""; document.getElementById('lPass').value = "";
+        if(studentChart) studentChart.destroy(); if(radarChartInstance) radarChartInstance.destroy(); if(feesPieInstance) feesPieInstance.destroy();
+        document.getElementById('navCoinDisplay').innerText = "0";
+        document.getElementById('attPercText').innerText = "0%";
+        document.getElementById('attProgressBar').style.strokeDashoffset = 251.3;
+        window.currentAttPerc = 0;
+        if(window.attInterval) clearInterval(window.attInterval);
+        toggleAuth('login'); showHome(); Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Logged Out Successfully', showConfirmButton: false, timer: 1500 });
     }
 
     function validatePhone() { let ph = document.getElementById('rPhone').value, err = document.getElementById('phoneError'); if(ph.length !== 10) { err.style.display = "block"; return false; } else { err.style.display = "none"; return true; } }
     
     function handleRegister() {
-        let n = document.getElementById('rName').value.trim(), ph = document.getElementById('rPhone').value, c = document.getElementById('rClass').value, pw = document.getElementById('rPass').value, g = document.querySelector('input[name="g"]:checked')?.value;
-        if(!n || !ph || !c || !pw) return Swal.fire('Warning', 'Please fill all fields!', 'warning');
+        let n = document.getElementById('rName').value.trim(), ph = document.getElementById('rPhone').value, c = document.getElementById('rClass').value, pw = document.getElementById('rPass').value, g = document.querySelector('input[name="g"]:checked')?.value, dob = document.getElementById('rDob').value;
+        if(!n || !ph || !c || !pw || !dob) return Swal.fire('Warning', 'Please fill all fields including DOB!', 'warning');
         if(!validatePhone()) return Swal.fire('Error', 'WhatsApp number must be exactly 10 digits!', 'error');
         if(students[n]) return Swal.fire('Error', 'Name already exists. Try adding surname.', 'error');
         
-        db.ref('students/' + n).set({ pw, role: 'student', phone: ph, class: c, gender: g, approved: false }).then(() => { 
-            Swal.fire('Success', 'Requested! Wait for admin approval.', 'success'); 
-            toggleAuth('login'); 
+        db.ref('students/' + n).set({ pw, role: 'student', phone: ph, class: c, gender: g, dob: dob, coins: 0, approved: false }).then(() => { 
+            db.ref('adminNotifications/students').set(true);
+            Swal.fire('Success', 'Requested! Wait for admin approval.', 'success'); toggleAuth('login'); 
         });
     }
 
     function requestPasswordReset() {
-        let u = document.getElementById('fUser').value.trim();
-        let p = document.getElementById('fPass').value;
+        let u = document.getElementById('fUser').value.trim(), p = document.getElementById('fPass').value;
         if(!u || !p) return Swal.fire('Error', 'Please fill all fields!', 'error');
         if(!students[u]) return Swal.fire('Error', 'Student Name not found in system!', 'error');
-        
-        db.ref('passwordRequests/' + u).set({ newPw: p }).then(() => {
-            Swal.fire('Success', 'Password reset requested to Admin. Wait for approval.', 'success');
-            document.getElementById('fUser').value = ""; document.getElementById('fPass').value = "";
-            toggleAuth('login');
+        db.ref('passwordRequests/' + u).set({ newPw: p }).then(() => { 
+            db.ref('adminNotifications/students').set(true);
+            Swal.fire('Success', 'Password reset requested to Admin.', 'success'); document.getElementById('fUser').value = ""; document.getElementById('fPass').value = ""; toggleAuth('login'); 
         });
     }
-
-    function approvePassword(u, newPw) {
-        db.ref('students/' + u).update({ pw: newPw }).then(() => {
-            db.ref('passwordRequests/' + u).remove();
-            Swal.fire('Approved', `${u}'s password has been updated.`, 'success');
-        });
-    }
-    function rejectPassword(u) {
-        db.ref('passwordRequests/' + u).remove();
-    }
+    function approvePassword(u, newPw) { db.ref('students/' + u).update({ pw: newPw }).then(() => { db.ref('passwordRequests/' + u).remove(); Swal.fire('Approved', `${u}'s password updated.`, 'success'); }); }
+    function rejectPassword(u) { db.ref('passwordRequests/' + u).remove(); }
 
     function changeRankPage(dir) { rankPage += dir; if(rankPage < 1) rankPage = 1; renderRankList(); }
     function renderRankList() {
-        const cls = document.getElementById('rankClassSelect').value;
-        let data = [];
+        const cls = document.getElementById('rankClassSelect').value; let data = [];
         for (let u in students) {
             if (students[u].role !== 'admin' && students[u].class === cls && students[u].approved) {
                 let userRes = Object.values(results).filter(r => r.user === u);
-                if (userRes.length > 0) {
-                    let avg = userRes.reduce((sum, r) => sum + parseFloat(r.perc), 0) / userRes.length;
-                    data.push({ name: u, avg: avg, pic: getAvatar(u, students[u].profilePic) });
-                }
+                if (userRes.length > 0) { let avg = userRes.reduce((sum, r) => sum + parseFloat(r.perc), 0) / userRes.length; data.push({ name: u, avg: avg, pic: getAvatar(u, students[u].profilePic) }); }
             }
         }
-        data.sort((a, b) => b.avg - a.avg);
-        let maxPages = Math.ceil(data.length / ranksPerPage) || 1;
-        if(rankPage > maxPages) rankPage = maxPages;
+        data.sort((a, b) => b.avg - a.avg); let maxPages = Math.ceil(data.length / ranksPerPage) || 1; if(rankPage > maxPages) rankPage = maxPages;
         document.getElementById('rankPageIndicator').innerText = `Page ${rankPage}/${maxPages}`;
-        
         let pagedData = data.slice((rankPage - 1) * ranksPerPage, rankPage * ranksPerPage);
-        
         document.getElementById('rankListBody').innerHTML = pagedData.map((s, i) => {
-            let actualRank = (rankPage - 1) * ranksPerPage + i;
-            return `<tr class="data-row ${actualRank === 0 ? 'rank-1' : actualRank === 1 ? 'rank-2' : actualRank === 2 ? 'rank-3' : ''}">
-                <td>${actualRank === 0 ? '<i class="fa-solid fa-crown"></i> 1' : actualRank + 1}</td>
-                <td><img src="${s.pic}" class="avatar"></td><td>${s.name}</td><td>${s.avg.toFixed(2)}%</td></tr>`;
+            let actualRank = (rankPage - 1) * ranksPerPage + i; let rankDisplay = actualRank + 1;
+            if(actualRank === 0) rankDisplay = '<i class="fa-solid fa-crown" style="color: #000;"></i> 1'; else if(actualRank === 1) rankDisplay = '<i class="fa-solid fa-medal badge-medium" style="color: #4a4a4a; font-size:16px;"></i> 2'; else if(actualRank === 2) rankDisplay = '<i class="fa-solid fa-award badge-small" style="color: #fff; font-size:14px;"></i> 3';
+            return `<tr class="data-row ${actualRank === 0 ? 'rank-1' : actualRank === 1 ? 'rank-2' : actualRank === 2 ? 'rank-3' : ''}"><td>${rankDisplay}</td><td><img src="${s.pic}" class="avatar"></td><td>${s.name}</td><td>${s.avg.toFixed(2)}%</td></tr>`;
         }).join('') || "<tr><td colspan='4'>No data found</td></tr>";
     }
 
     function renderPublicQuestions() {
-        const cls = document.getElementById('publicQClassSelect').value;
-        const tbody = document.getElementById('publicQuestionsBody');
+        const cls = document.getElementById('publicQClassSelect').value; const tbody = document.getElementById('publicQuestionsBody');
         if(!cls) { tbody.innerHTML = "<tr><td colspan='2'>Select a class</td></tr>"; return; }
-        
         let qKeys = Object.keys(questionsMeta).filter(k => questionsMeta[k].class === cls && questionsMeta[k].type === currentMaterialType);
         if(qKeys.length === 0) { tbody.innerHTML = "<tr><td colspan='2'>No files available for this class.</td></tr>"; return; }
-        
         tbody.innerHTML = qKeys.map(k => `<tr class="data-row"><td style="font-weight: 600;">${questionsMeta[k].title}</td><td><button class="apple-btn btn-action" style="background: var(--success);" onclick="downloadQuestionPDF('${k}', '${questionsMeta[k].title}')"><i class="fa-solid fa-download"></i> Download</button></td></tr>`).join('');
     }
 
     function downloadQuestionPDF(qKey, title) {
         Swal.fire({ title: 'Fetching PDF...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
         db.ref('questionPDFs/' + qKey).once('value').then(snap => {
-            let pdfData = snap.val();
-            if(!pdfData) return Swal.fire('Error', 'File not found!', 'error');
-            const link = document.createElement('a'); link.href = pdfData; link.download = `${title.replace(/\s+/g, '_')}.pdf`;
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            Swal.close();
+            let pdfData = snap.val(); if(!pdfData) return Swal.fire('Error', 'File not found!', 'error');
+            const link = document.createElement('a'); link.href = pdfData; link.download = `${title.replace(/\s+/g, '_')}.pdf`; document.body.appendChild(link); link.click(); document.body.removeChild(link); Swal.close();
         });
     }
 
     function renderAdmin() {
         let appHtml = "", masterHtml = "", resultHtml = "", qHtml = "", feesVisualHtml = "";
-        const date = new Date().toLocaleDateString(), session = new Date().getHours() < 12 ? "AM" : "PM";
-        
         let feeUserSel = document.getElementById('feeUser'); feeUserSel.innerHTML = '<option value="">Select Student</option>';
         const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        let d = new Date(); let dateStr = d.toLocaleDateString('en-GB').replace(/\//g, '-'); let currentSession = d.getHours() < 12 ? 'AM' : 'PM';
 
         for(let u in students) {
             if(students[u].role === 'admin') continue;
             if(!students[u].approved) {
-                appHtml += `<tr class="data-row"><td>${u}</td><td style="color:var(--chakra-blue); font-weight:bold;">New Reg</td><td>Class ${students[u].class}</td>
-                    <td><button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-approve" style="background:var(--success); margin:2px;"><i class="fa-solid fa-check"></i></button>
-                    <button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger); margin:2px;"><i class="fa-solid fa-xmark"></i></button></td></tr>`;
+                appHtml += `<tr class="data-row"><td>${u}</td><td style="color:var(--chakra-blue); font-weight:bold;">New Reg</td><td>Class ${students[u].class}<br><span style="font-size:11px; color:var(--danger);">Pass: ${students[u].pw}</span></td><td><button onclick="db.ref('students/${u}/approved').set(true)" class="apple-btn btn-action" style="background:var(--success);"><i class="fa-solid fa-check"></i></button><button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-xmark"></i></button></td></tr>`;
             } else {
                 feeUserSel.innerHTML += `<option value="${u}">${u}</option>`;
-                
-                let r = att[u] || { p: 0, t: 0, lastD: "", lastS: "" };
-                let lock = (r.lastD === date && r.lastS === session); 
+                let uAtt = attendanceData[u] || {}; let todayVal = uAtt[dateStr + '_' + currentSession]; let btnDisabledClass = todayVal ? 'btn-transparent' : '';
+                let totP = baseHistoricalAttendance[u] ? baseHistoricalAttendance[u].p : 0; let totClasses = baseHistoricalAttendance[u] ? baseHistoricalAttendance[u].t : 0;
+                for(let key in uAtt) { totClasses++; if(uAtt[key] === 'P') totP++; }
+                let ptString = `${totP}/${totClasses}`;
+
                 masterHtml += `<tr class="data-row">
                     <td><div style="display:flex; align-items:center; gap:8px; justify-content:center;"><img src="${getAvatar(u, students[u].profilePic)}" class="avatar"> <span style="font-weight: 600;">${u}</span></div></td>
-                    <td>${students[u].class}</td>
-                    <td style="font-weight:bold; color:var(--chakra-blue);">${r.p}/${r.t}</td>
-                    <td><button onclick="markAtt('${u}', 'P')" class="apple-btn btn-action ${lock?'btn-disabled':''}" style="background: var(--success);">P</button>
-                    <button onclick="markAtt('${u}', 'A')" class="apple-btn btn-action ${lock?'btn-disabled':''}" style="background:var(--warning);">A</button></td>
+                    <td>${students[u].class}</td><td style="color: var(--chakra-blue); font-weight: bold;">${ptString}</td>
+                    <td><button onclick="markAttendance('${u}', 'P')" class="apple-btn btn-action ${btnDisabledClass}" style="background: var(--success);">P</button><button onclick="markAttendance('${u}', 'A')" class="apple-btn btn-action ${btnDisabledClass}" style="background:var(--warning);">A</button></td>
                     <td><button onclick="db.ref('students/${u}').remove()" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-user-xmark"></i></button></td></tr>`;
                 
-                let sFees = fees[u] || {};
-                let barsHtml = "";
-                allMonths.forEach(m => {
-                    let isPaid = sFees[m] && sFees[m].status === 'Paid';
-                    barsHtml += `<div class="fee-block ${isPaid ? 'fee-paid' : 'fee-unpaid'}" title="${m}: ${isPaid ? 'Paid' : 'Unpaid'}"></div>`;
-                });
-                feesVisualHtml += `
-                <div class="fee-bar-wrapper">
-                    <span class="fee-bar-name">${u}</span>
-                    <div class="fee-bar-container">${barsHtml}</div>
-                </div>`;
+                let sFees = fees[u] || {}; let barsHtml = "";
+                allMonths.forEach(m => { let isPaid = sFees[m] && sFees[m].status === 'Paid'; barsHtml += `<div class="fee-block ${isPaid ? 'fee-paid' : 'fee-unpaid'}" title="${m}"></div>`; });
+                feesVisualHtml += `<div class="fee-bar-wrapper"><span class="fee-bar-name">${u}</span><div class="fee-bar-container">${barsHtml}</div></div>`;
             }
         }
 
-        for(let u in passRequests) {
-            appHtml += `<tr class="data-row"><td>${u}</td><td style="color:var(--warning); font-weight:bold;">Pass Reset</td><td>${passRequests[u].newPw}</td>
-            <td><button onclick="approvePassword('${u}', '${passRequests[u].newPw}')" class="apple-btn btn-action" style="background:var(--success); margin:2px;"><i class="fa-solid fa-check"></i></button>
-            <button onclick="rejectPassword('${u}')" class="apple-btn btn-action" style="background:var(--danger); margin:2px;"><i class="fa-solid fa-xmark"></i></button></td></tr>`;
-        }
-        
-        let recentResKeys = Object.keys(results).slice(-3).reverse(); 
-        recentResKeys.forEach(k => {
-            let r = results[k];
-            resultHtml += `<tr class="data-row"><td>${r.user}</td><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td><button class="apple-btn btn-action" style="background:var(--danger);" onclick="deleteRecord('results/${k}')">❌</button></td></tr>`;
-        });
+        for(let u in passRequests) { appHtml += `<tr class="data-row"><td>${u}</td><td style="color:var(--warning); font-weight:bold;">Pass Reset</td><td>${passRequests[u].newPw}</td><td><button onclick="approvePassword('${u}', '${passRequests[u].newPw}')" class="apple-btn btn-action" style="background:var(--success);"><i class="fa-solid fa-check"></i></button><button onclick="rejectPassword('${u}')" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-xmark"></i></button></td></tr>`; }
+        for(let k in redeemRequests) { let r = redeemRequests[k]; appHtml += `<tr class="data-row"><td>${r.student}</td><td style="color:var(--premium-gradient); font-weight:bold;">Redeem</td><td>${r.itemName} (${r.cost}🪙)</td><td><button onclick="approveRedeem('${k}', '${r.student}', '${r.itemName}', ${r.cost})" class="apple-btn btn-action" style="background:var(--success);"><i class="fa-solid fa-check"></i></button><button onclick="db.ref('redeemRequests/${k}').remove()" class="apple-btn btn-action" style="background:var(--danger);"><i class="fa-solid fa-xmark"></i></button></td></tr>`; }
 
-        for(let k in questionsMeta) {
-            qHtml += `<tr class="data-row"><td>${questionsMeta[k].title}</td><td style="font-size:12px; color:var(--chakra-blue); font-weight:bold;">${questionsMeta[k].type||'PYQ'}</td><td>${questionsMeta[k].class}</td><td><button class="apple-btn btn-action" style="background:var(--danger);" onclick="deleteQuestion('${k}')">❌</button></td></tr>`;
-        }
+        let recentResKeys = Object.keys(results).slice(-3).reverse(); 
+        recentResKeys.forEach(k => { let r = results[k]; resultHtml += `<tr class="data-row"><td>${r.user}</td><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td><button class="apple-btn btn-action" style="background:var(--danger);" onclick="deleteRecord('results/${k}')">❌</button></td></tr>`; });
+
+        for(let k in questionsMeta) { qHtml += `<tr class="data-row"><td>${questionsMeta[k].title}</td><td style="font-size:12px; color:var(--chakra-blue); font-weight:bold;">${questionsMeta[k].type||'PYQ'}</td><td>${questionsMeta[k].class}</td><td><button class="apple-btn btn-action" style="background:var(--danger);" onclick="deleteQuestion('${k}')">❌</button></td></tr>`; }
 
         document.getElementById('approvalBody').innerHTML = appHtml || "<tr><td colspan='4'>No pending requests.</td></tr>";
         document.getElementById('masterBody').innerHTML = masterHtml || "<tr><td colspan='5'>No students found.</td></tr>";
         document.getElementById('adminResultsBody').innerHTML = resultHtml || "<tr><td colspan='4'>No recent results.</td></tr>";
         document.getElementById('adminQuestionsBody').innerHTML = qHtml || "<tr><td colspan='4'>No materials uploaded.</td></tr>";
         document.getElementById('adminFeesVisuals').innerHTML = feesVisualHtml || "<p style='text-align:center;'>No approved students yet.</p>";
+
+        renderAdminRedeemPreview();
     }
 
-    function deleteRecord(path) {
-        Swal.fire({ title: 'Are you sure?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c' }).then((res) => {
-            if(res.isConfirmed) db.ref(path).remove();
-        });
+    function deleteRecord(path) { Swal.fire({ title: 'Are you sure?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#e74c3c' }).then((res) => { if(res.isConfirmed) db.ref(path).remove(); }); }
+
+    function markAttendance(u, status) {
+        let d = new Date(); let dateStr = d.toLocaleDateString('en-GB').replace(/\//g, '-'); let session = d.getHours() < 12 ? 'AM' : 'PM';
+        db.ref('attendance/' + u + '/' + dateStr + '_' + session).set(status);
     }
 
-    function markAtt(u, status) {
-        let r = att[u] || { p: 0, t: 0 };
-        db.ref('attendance/' + u).update({ p: status==='P'?r.p+1:r.p, t: r.t + 1, lastD: new Date().toLocaleDateString(), lastS: new Date().getHours() < 12 ? "AM" : "PM" });
-    }
-    
     function postNotice() { 
         let t = document.getElementById('noticeInput').value; if(!t) return;
         db.ref('notice').set(t).then(() => { 
-            db.ref('sysUpdate').set({ msg: 'A new global notice has been posted!', time: Date.now() });
-            Swal.fire('Updated!', 'Notice updated.', 'success'); 
-            document.getElementById('noticeInput').value = ""; 
+            db.ref('sysUpdate').set({ msg: 'A new global notice has been posted!', time: Date.now() }); 
+            firePushAll("New Global Notice", t);
+            Swal.fire('Updated!', 'Notice updated.', 'success'); document.getElementById('noticeInput').value = ""; 
         });
     }
     
@@ -812,41 +985,35 @@
     
     function calcPerc() { let ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value; document.getElementById('resPerc').value = (ob&&fl) ? ((ob/fl)*100).toFixed(2)+"%" : ""; }
     
-    // Updated Marks Upload WhatsApp Logic
     function uploadResult() {
         let u = document.getElementById('resUserSelect').value, sub = document.getElementById('resSub').value, ob = document.getElementById('resOb').value, fl = document.getElementById('resFull').value;
         if(!u || !sub || !ob || !fl) return Swal.fire('Warning', 'Fill all fields!', 'warning');
-        let p = (ob/fl)*100;
-        let obj = { user:u, sub, ob, fl, perc: p.toFixed(2), grade: p>=80?'A+':p>=60?'A':p>=40?'B':'F', date: new Date().toLocaleDateString('en-GB'), timestamp: Date.now() };
+        let p = (ob/fl)*100; let obj = { user:u, sub, ob, fl, perc: p.toFixed(2), grade: p>=80?'A+':p>=60?'A':p>=40?'B':'F', date: new Date().toLocaleDateString('en-GB'), timestamp: Date.now() };
         db.ref('results').push(obj).then(() => { 
-            Swal.fire('Success', 'Result Uploaded!', 'success'); 
+            if(p >= 90) { giveCoins(u, 100, `Exam Score 90%+ in ${sub}`); }
+            db.ref(`studentNotifications/${u}/tabs/dashboard`).set(true);
+            db.ref(`studentNotifications/${u}/tabs/performance`).set(true);
+            firePush(u, "Result Uploaded", `Your marks for ${sub} are out!`);
             
+            Swal.fire('Success', 'Result Uploaded!', 'success'); 
             let sPhone = students[u]?.phone;
             if(sPhone && sPhone.length === 10) {
-                let msg = `Hello ${u},\n\nYour result for *${sub}* has been uploaded to Pathshala.\nMarks: ${ob}/${fl} (${p.toFixed(2)}%)\nGrade: ${obj.grade}\n\nCheck Details: https://akashdas924.github.io/MyPathshala/#`;
+                let msg = `Hello ${u},\nYour result for *${sub}* is out!\nMarks: ${ob}/${fl} (${p.toFixed(2)}%)\nGrade: ${obj.grade}\nCheck: https://akashdas924.github.io/MyPathshala/`;
                 window.open(`https://wa.me/91${sPhone}?text=${encodeURIComponent(msg)}`, '_blank');
             }
-            
             document.getElementById('resOb').value = ""; document.getElementById('resFull').value = ""; document.getElementById('resPerc').value = "";
         });
     }
 
-    function deleteQuestion(k) {
-        Swal.fire({ title: 'Delete Document?', icon: 'warning', showCancelButton: true }).then((res) => {
-            if(res.isConfirmed) { db.ref('questionsMeta/' + k).remove(); db.ref('questionPDFs/' + k).remove(); }
-        });
-    }
-
-    // Updated Fees WhatsApp Logic
     function addFee() {
         let u = document.getElementById('feeUser').value, m = document.getElementById('feeMonth').value, a = document.getElementById('feeAmount').value;
         if(!u || !m || !a) return Swal.fire('Warning', 'Fill all fee details!', 'warning');
-        
         let sPhone = students[u]?.phone; 
-        
         db.ref(`fees/${u}/${m}`).set({ amount: a, date: new Date().toLocaleDateString(), status: 'Paid' }).then(()=>{
+            db.ref(`studentNotifications/${u}/tabs/fees`).set(true);
+            firePush(u, "Fee Payment", `Payment successful for ${m}`);
+
             Swal.fire('Success', 'Payment Recorded!', 'success');
-            
             if(sPhone && sPhone.length === 10) {
                 let msg = `Hello ${u},\n\nYour fee payment of Rs.${a} for the month of *${m}* has been successfully recorded at *Pathshala*.\n\nCheck Details: https://akashdas924.github.io/MyPathshala/#`;
                 window.open(`https://wa.me/91${sPhone}?text=${encodeURIComponent(msg)}`, '_blank');
@@ -856,82 +1023,154 @@
 
     function uploadQuestionPaper() {
         let title = document.getElementById('qTitle').value.trim(), cls = document.getElementById('qClass').value, type = document.getElementById('qType').value, file = document.getElementById('qFileInput').files[0];
-        
         if(!title || !cls || !file || file.type !== "application/pdf") return Swal.fire('Error', 'Valid PDF required!', 'error');
         if(file.size > 2 * 1024 * 1024) return Swal.fire('Error', 'PDF must be under 2MB!', 'error'); 
-
-        Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-        
-        const reader = new FileReader(); 
-        reader.readAsDataURL(file);
-        reader.onload = function(e) {
-            let newRef = db.ref('questionsMeta').push();
-            newRef.set({ title, class: cls, type: type }).then(() => {
-                return db.ref('questionPDFs/' + newRef.key).set(e.target.result);
-            }).then(() => { 
-                db.ref('sysUpdate').set({ msg: `New ${type} added for Class ${cls}!`, time: Date.now() });
-                Swal.fire('Success!', 'Document uploaded.', 'success'); 
-                document.getElementById('qTitle').value = ""; document.getElementById('qFileInput').value = "";
-            }).catch(error => {
-                Swal.fire('Error', 'Upload failed: ' + error.message, 'error');
-            });
-        };
-    }
-
-    function canUpdateProfile() {
-        let sData = students[window.currentUser];
-        if(!sData) return false;
-        let lastUp = sData.lastProfileUpdate || 0;
-        let days3 = 3 * 24 * 60 * 60 * 1000;
-        if(Date.now() - lastUp < days3) {
-            let left = Math.ceil((days3 - (Date.now() - lastUp))/(1000*60*60*24));
-            Swal.fire('Locked', `You recently updated your profile. Please wait ${left} day(s).`, 'warning');
-            return false;
-        }
-        return true;
-    }
-
-    function uploadProfilePic() {
-        if(!canUpdateProfile()) return;
-        const file = document.getElementById('fileInput').files[0]; if (!file) return;
         Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
         const reader = new FileReader(); reader.readAsDataURL(file);
         reader.onload = function(e) {
-            const img = new Image(); img.src = e.target.result;
-            img.onload = function() {
-                const cvs = document.createElement('canvas'), scale = 200 / img.width; cvs.width = 200; cvs.height = img.height * scale;
-                cvs.getContext('2d').drawImage(img, 0, 0, cvs.width, cvs.height);
-                db.ref('students/' + window.currentUser).update({ profilePic: cvs.toDataURL('image/jpeg', 0.7), lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success!', 'Updated.', 'success'));
-            }
+            let newRef = db.ref('questionsMeta').push();
+            newRef.set({ title, class: cls, type: type }).then(() => { return db.ref('questionPDFs/' + newRef.key).set(e.target.result); }).then(() => { 
+                db.ref('sysUpdate').set({ msg: `New ${type} added for Class ${cls}!`, time: Date.now() }); 
+                firePushAll("Material Uploaded", `New ${type} added for Class ${cls}: ${title}`);
+                Swal.fire('Success!', 'Document uploaded.', 'success'); document.getElementById('qTitle').value = ""; document.getElementById('qFileInput').value = "";
+            }).catch(error => { Swal.fire('Error', 'Upload failed: ' + error.message, 'error'); });
         };
     }
+    function deleteQuestion(k) { Swal.fire({ title: 'Delete Document?', icon: 'warning', showCancelButton: true }).then((res) => { if(res.isConfirmed) { db.ref('questionsMeta/' + k).remove(); db.ref('questionPDFs/' + k).remove(); } }); }
 
-    function setDefaultProfilePic() {
-        if(!canUpdateProfile()) return;
-        Swal.fire({ title: 'Set Default?', icon: 'question', showCancelButton: true }).then((res) => {
-            if(res.isConfirmed) {
-                db.ref('students/' + window.currentUser).update({ profilePic: "", lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success', 'Profile picture reset to default.', 'success'));
+    function uploadBulkQuiz() {
+        let text = document.getElementById('quizBulkInput').value.trim();
+        if(!text) return Swal.fire('Error', 'Input is empty', 'error');
+        let blocks = text.split(/\n\s*\n/); let qs = [];
+        blocks.forEach(b => {
+            let lines = b.trim().split('\n').map(l=>l.trim()).filter(l=>l);
+            if(lines.length >= 6) {
+                let ansLine = lines.find(l => l.toLowerCase().startsWith('ans:'));
+                if(ansLine) { let ansStr = ansLine.split(':')[1].trim(); qs.push({ q: lines[0], a: lines[1], b: lines[2], c: lines[3], d: lines[4], ans: ansStr }); }
             }
+        });
+        if(qs.length === 0) return Swal.fire('Error', 'Could not parse any questions. Check format.', 'error');
+        db.ref('quizBank').set(qs).then(()=>{ db.ref('quizMeta').set({ usedCount: 0, currentWeek: 0 }); Swal.fire('Success', `${qs.length} Questions uploaded!`, 'success'); document.getElementById('quizBulkInput').value = ""; });
+    }
+
+    function renderPieChart() {
+        if(!document.getElementById('adminQuizSection').classList.contains('hidden')) {
+            const ctx = document.getElementById('quizPieChart').getContext('2d');
+            if(adminPieChart) adminPieChart.destroy();
+            let total = quizBank.length || 100; let used = quizMeta.usedCount || 0;
+            adminPieChart = new Chart(ctx, { type: 'pie', data: { labels: ['Used', 'Remaining'], datasets: [{ data: [used, total - used], backgroundColor: ['#e74c3c', '#27ae60'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: document.body.classList.contains('dark-mode') ? '#fff' : '#000' } } } } });
+        }
+    }
+    function resetQuizData() { Swal.fire({title: 'Reset All Quiz Data?', text: "This deletes all 100 Qs and Histories!", icon: 'warning', showCancelButton: true}).then(r=>{ if(r.isConfirmed) { db.ref('quizBank').remove(); db.ref('quizMeta').remove(); db.ref('quizHistories').remove(); Swal.fire('Cleared!', '', 'success'); } }); }
+
+    function uploadRedeemItem() {
+        let slot = document.getElementById('redeemSlot').value; let name = document.getElementById('redeemItemName').value.trim(); let file = document.getElementById('redeemItemImg').files[0];
+        if(!name || !file) return Swal.fire('Error', 'Name and Image required', 'error');
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            db.ref('redeemStore/' + slot).set({ name: name, cost: parseInt(slot), img: e.target.result }).then(()=>{ Swal.fire('Success', 'Store updated', 'success'); document.getElementById('redeemItemName').value = ""; document.getElementById('redeemItemImg').value = ""; });
+        };
+    }
+    
+    function deleteRedeemItem(slot) {
+        Swal.fire({ title: 'Delete this reward?', icon: 'warning', showCancelButton: true }).then(r => {
+            if(r.isConfirmed) { db.ref('redeemStore/' + slot).remove(); Swal.fire('Deleted!', '', 'success'); }
         });
     }
 
-    function updatePhoneNumber() {
-        if(!canUpdateProfile()) return;
-        const ph = document.getElementById('updatePhoneInput').value.trim();
-        if (ph.length !== 10) return Swal.fire('Error', 'Exactly 10 digits.', 'error');
-        db.ref('students/' + window.currentUser).update({ phone: ph, lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success', 'Updated.', 'success'));
-    }
-
-    function updateStudentClass() {
-        let newCls = document.getElementById('updateClassInput').value;
-        Swal.fire({ title: `Upgrade to Class ${newCls}?`, text: "You can only do this once a year!", icon: 'warning', showCancelButton: true }).then((res) => {
-            if(res.isConfirmed) {
-                db.ref('students/' + window.currentUser).update({ class: newCls }).then(()=>{
-                    Swal.fire('Success', 'Class Upgraded Successfully! Your ranking list has been updated.', 'success');
-                    document.getElementById('updateClassInput').value = newCls;
-                });
+    function renderAdminRedeemPreview() {
+        let h = "";
+        ['200', '500', '1000'].forEach(c => {
+            let item = redeemStore[c];
+            if(item) {
+                h += `<div class="redeem-card"><img src="${item.img}"><h4>${item.name}</h4><span class="coin-box" style="justify-content:center;"><i class="fa-solid fa-coins"></i> ${item.cost}</span>
+                <button class="apple-btn btn-action" style="width:100%; margin-top:10px; background:var(--danger);" onclick="deleteRedeemItem('${c}')"><i class="fa-solid fa-trash"></i> Delete</button></div>`;
             }
         });
+        document.getElementById('adminRedeemPreview').innerHTML = h || "<p>No items added yet.</p>";
+    }
+    
+    function approveRedeem(reqKey, u, itemName, cost) {
+        db.ref('students/'+u+'/redeemApprovedFlag').set(itemName).then(()=>{
+            db.ref('redeemRequests/'+reqKey).remove();
+            db.ref('sysUpdate').set({ msg: `${u} redeemed ${itemName}! 🎉`, time: Date.now() });
+            Swal.fire('Approved', 'Student will be notified.', 'success');
+        });
+    }
+
+    function checkCoinsReset() {
+        let d = new Date(); if(d.getMonth() === 11 && d.getDate() === 31) {
+            let lastReset = localStorage.getItem('lastCoinReset') || 0;
+            if(lastReset != d.getFullYear()) { db.ref('students/'+window.currentUser+'/coins').set(0); localStorage.setItem('lastCoinReset', d.getFullYear()); }
+        }
+    }
+
+    function checkBirthday() {
+        let sDob = students[window.currentUser]?.dob; if(!sDob) return;
+        let dob = new Date(sDob); let today = new Date();
+        if(dob.getDate() === today.getDate() && dob.getMonth() === today.getMonth()) {
+            let bWishYear = localStorage.getItem('bWishYear_' + window.currentUser) || 0;
+            if(bWishYear != today.getFullYear()) { triggerFlowers(); Swal.fire({ title: 'Happy Birthday! 🎂', text: 'We gifted you 100 Coins!', icon: 'success' }); giveCoins(window.currentUser, 100, 'Birthday Gift'); localStorage.setItem('bWishYear_' + window.currentUser, today.getFullYear()); }
+        }
+    }
+
+    function checkApprovedRedeem() {
+        let sData = students[window.currentUser];
+        if(sData && sData.redeemApprovedFlag) { triggerFlowers(); Swal.fire({ title: 'Congratulations! 🎉', text: `You redeemed ${sData.redeemApprovedFlag} successfully!`, icon: 'success' }); db.ref('students/'+window.currentUser+'/redeemApprovedFlag').remove(); }
+    }
+
+    function checkWeeklyStreakBonus(u, amP, pmP) {
+        let d = new Date();
+        if(d.getDay() === 0) { 
+            let weekDates = getTrackingDates();
+            let weekKey = weekDates[0]; 
+            if(students[u].lastStreakWeek !== weekKey) {
+                let totalP = amP + pmP;
+                if(totalP === 12) { 
+                    giveCoins(u, 5, 'Perfect Weekly Streak (12/12)'); 
+                } else if(totalP >= 10) { 
+                    giveCoins(u, 3, `Weekly Streak (${totalP}/12)`); 
+                }
+                db.ref('students/'+u+'/lastStreakWeek').set(weekKey);
+            }
+        }
+    }
+
+    function canUpdateProfile() {
+        let sData = students[window.currentUser]; if(!sData) return false; let lastUp = sData.lastProfileUpdate || 0; let days3 = 3 * 24 * 60 * 60 * 1000;
+        if(Date.now() - lastUp < days3) { let left = Math.ceil((days3 - (Date.now() - lastUp))/(1000*60*60*24)); Swal.fire('Locked', `Please wait ${left} day(s).`, 'warning'); return false; } return true;
+    }
+    function uploadProfilePic() {
+        if(!canUpdateProfile()) return; const file = document.getElementById('fileInput').files[0]; if (!file) return; Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        const reader = new FileReader(); reader.readAsDataURL(file);
+        reader.onload = function(e) {
+            const img = new Image(); img.src = e.target.result;
+            img.onload = function() { const cvs = document.createElement('canvas'), scale = 200 / img.width; cvs.width = 200; cvs.height = img.height * scale; cvs.getContext('2d').drawImage(img, 0, 0, cvs.width, cvs.height); db.ref('students/' + window.currentUser).update({ profilePic: cvs.toDataURL('image/jpeg', 0.7), lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success!', 'Updated.', 'success')); }
+        };
+    }
+    function setDefaultProfilePic() { if(!canUpdateProfile()) return; Swal.fire({ title: 'Set Default?', icon: 'question', showCancelButton: true }).then((res) => { if(res.isConfirmed) { db.ref('students/' + window.currentUser).update({ profilePic: "", lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success', 'Profile picture reset to default.', 'success')); } }); }
+    function updatePhoneNumber() { if(!canUpdateProfile()) return; const ph = document.getElementById('updatePhoneInput').value.trim(); if (ph.length !== 10) return Swal.fire('Error', 'Exactly 10 digits.', 'error'); db.ref('students/' + window.currentUser).update({ phone: ph, lastProfileUpdate: Date.now() }).then(() => Swal.fire('Success', 'Updated.', 'success')); }
+    function updateDOB() { let sData = students[window.currentUser]; let lastDobUp = sData.lastDobUpdate || 0; let days90 = 90 * 24 * 60 * 60 * 1000; if(Date.now() - lastDobUp < days90) { let left = Math.ceil((days90 - (Date.now() - lastDobUp))/(1000*60*60*24)); return Swal.fire('Locked', `DOB is locked for ${left} more days.`, 'warning'); } let newDob = document.getElementById('updateDobInput').value; if(!newDob) return; db.ref('students/' + window.currentUser).update({ dob: newDob, lastDobUpdate: Date.now() }).then(() => Swal.fire('Success', 'DOB Updated.', 'success')); }
+    function updateStudentClass() { let newCls = document.getElementById('updateClassInput').value; Swal.fire({ title: `Upgrade to Class ${newCls}?`, text: "You can only do this once a year!", icon: 'warning', showCancelButton: true }).then((res) => { if(res.isConfirmed) { db.ref('students/' + window.currentUser).update({ class: newCls }).then(()=>{ Swal.fire('Success', 'Class Upgraded Successfully! Your ranking list has been updated.', 'success'); document.getElementById('updateClassInput').value = newCls; }); } }); }
+
+    function animatePercentage(targetPerc) {
+        let circle = document.getElementById('attProgressBar'); let text = document.getElementById('attPercText');
+        circle.style.transition = 'none'; circle.style.strokeDashoffset = 251.3; text.textContent = "0%";
+        setTimeout(() => {
+            circle.style.transition = 'stroke-dashoffset 1.5s ease-out'; let offset = 251.3 - (targetPerc / 100) * 251.3;
+            circle.style.strokeDashoffset = offset; circle.style.stroke = targetPerc > 80 ? "var(--success)" : targetPerc >= 50 ? "var(--warning)" : "var(--danger)";
+            if(targetPerc === 0) return;
+            let start = 0; let duration = 1500; let interval = 30; let steps = duration / interval; let stepValue = targetPerc / steps;
+            if(window.attInterval) clearInterval(window.attInterval);
+            window.attInterval = setInterval(() => { start += stepValue; if(start >= targetPerc) { start = targetPerc; clearInterval(window.attInterval); } text.textContent = Math.round(start) + "%"; }, interval);
+        }, 100);
+    }
+
+    function getTrackingDates() {
+        let d = new Date(); let day = d.getDay(); let diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        let monday = new Date(d.setDate(diff)); let dates = [];
+        for(let i=0; i<6; i++) { let temp = new Date(monday); temp.setDate(monday.getDate() + i); dates.push(temp.toLocaleDateString('en-GB').replace(/\//g, '-')); }
+        return dates;
     }
 
     function refreshStudentUI() {
@@ -939,283 +1178,236 @@
         document.getElementById('profileImgDisplay').src = getAvatar(window.currentUser, sData.profilePic);
         document.getElementById('updatePhoneInput').value = sData.phone || "";
         document.getElementById('updateClassInput').value = sData.class || "";
+        document.getElementById('updateDobInput').value = sData.dob || "";
+        
+        animateCounter('navCoinDisplay', parseInt(sData.coins || 0));
 
         let d = new Date();
-        if(d.getMonth() === 11 && d.getDate() === 31) {
-            document.getElementById('updateClassInput').disabled = false;
-            document.getElementById('updateClassBtn').disabled = false;
-            document.getElementById('classLockIcon').className = "fa-solid fa-lock-open";
-        } else {
-            document.getElementById('updateClassInput').disabled = true;
-            document.getElementById('updateClassBtn').disabled = true;
-            document.getElementById('classLockIcon').className = "fa-solid fa-lock";
-        }
-        
+        if(d.getMonth() === 11 && d.getDate() === 31) { document.getElementById('updateClassInput').disabled = false; document.getElementById('updateClassBtn').disabled = false; document.getElementById('classLockIcon').className = "fa-solid fa-lock-open"; } 
+        else { document.getElementById('updateClassInput').disabled = true; document.getElementById('updateClassBtn').disabled = true; document.getElementById('classLockIcon').className = "fa-solid fa-lock"; }
+
+        let uAtt = attendanceData[window.currentUser] || {};
+        let totP = baseHistoricalAttendance[window.currentUser] ? baseHistoricalAttendance[window.currentUser].p : 0; let totClasses = baseHistoricalAttendance[window.currentUser] ? baseHistoricalAttendance[window.currentUser].t : 0;
+        for(let key in uAtt) { totClasses++; if(uAtt[key] === 'P') totP++; }
+        let perc = totClasses === 0 ? 0 : Math.round((totP / totClasses) * 100);
+        window.currentAttPerc = perc; 
+
+        if(!document.getElementById('studentDashboardSection').classList.contains('hidden')) { animatePercentage(perc); }
+
+        let weekDates = getTrackingDates(); let amHtml = "", pmHtml = ""; let amP = 0, pmP = 0;
+        weekDates.forEach(dt => {
+            let amStat = uAtt[dt+'_AM']; let pmStat = uAtt[dt+'_PM'];
+            amHtml += `<div class="streak-circle ${amStat==='P'?'streak-p':amStat==='A'?'streak-a':''}"></div>`;
+            pmHtml += `<div class="streak-circle ${pmStat==='P'?'streak-p':pmStat==='A'?'streak-a':''}"></div>`;
+            if(amStat==='P') amP++; if(pmStat==='P') pmP++;
+        });
+        document.getElementById('streakAmContainer').innerHTML = amHtml; document.getElementById('streakPmContainer').innerHTML = pmHtml;
+
+        checkWeeklyStreakBonus(window.currentUser, amP, pmP);
+
         let userRes = Object.values(results).filter(r => r.user === window.currentUser);
         document.getElementById('studentBody').innerHTML = userRes.map(r => `<tr class="data-row"><td>${r.date||'-'}</td><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td>${r.perc}%</td><td style="font-weight:bold; color:${r.grade==='F'?'var(--danger)':'var(--success)'};">${r.grade}</td></tr>`).join('') || "<tr><td colspan='5'>No results</td></tr>";
         
-        let r = att[window.currentUser] || { p: 0, t: 0 }, perc = r.t === 0 ? 0 : Math.round((r.p / r.t) * 100);
-        document.getElementById('attPercText').textContent = perc + "%";
-        document.getElementById('attProgressBar').style.strokeDashoffset = 251.3 - (perc / 100) * 251.3;
-        document.getElementById('attProgressBar').style.stroke = perc > 80 ? "var(--success)" : perc >= 50 ? "var(--warning)" : "var(--danger)";
-
-        let badgesHtml = "";
-        let totalAvg = userRes.length ? userRes.reduce((s,x)=>s+parseFloat(x.perc),0)/userRes.length : 0;
+        let badgesHtml = ""; let totalAvg = userRes.length ? userRes.reduce((s,x)=>s+parseFloat(x.perc),0)/userRes.length : 0;
         if(perc >= 90) badgesHtml += `<i class="fa-solid fa-star trophy-icon" style="color:var(--gold);" title="90%+ Attendance"></i>`;
-        if(totalAvg >= 90) badgesHtml += `<i class="fa-solid fa-trophy trophy-icon" style="color:var(--gold);" title="Top Scholar"></i>`;
-        else if(totalAvg >= 80) badgesHtml += `<i class="fa-solid fa-medal trophy-icon" style="color:var(--silver);" title="Great Performer"></i>`;
-        document.getElementById('studentDisplayName').innerText = window.currentUser;
-        document.getElementById('studentBadges').innerHTML = badgesHtml;
+        if(totalAvg >= 90) badgesHtml += `<i class="fa-solid fa-trophy trophy-icon" style="color:var(--gold);" title="Top Scholar"></i>`; else if(totalAvg >= 80) badgesHtml += `<i class="fa-solid fa-medal trophy-icon" style="color:var(--silver);" title="Great Performer"></i>`;
+        document.getElementById('studentDisplayName').innerText = window.currentUser; document.getElementById('studentBadges').innerHTML = badgesHtml;
 
-        let myFees = fees[window.currentUser] || {};
-        let feeHtml = "";
-        const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        let myFees = fees[window.currentUser] || {}; let feeHtml = ""; const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         
+        let pieColors = [];
         allMonths.forEach(m => {
-            if(myFees[m]) {
-                feeHtml += `<tr class="data-row">
-                    <td>${m}</td><td>₹${myFees[m].amount}</td><td style="color:var(--success); font-weight:bold;">Paid</td>
-                    <td><button class="apple-btn btn-action" style="background:var(--chakra-blue); padding:4px 8px; font-size:11px;" onclick="downloadReceipt('${m}', ${myFees[m].amount})"><i class="fa-solid fa-download"></i> Receipt</button></td>
-                </tr>`;
-            } else {
-                feeHtml += `<tr class="data-row"><td>${m}</td><td>-</td><td style="color:var(--danger); font-weight:bold;">Due</td><td>-</td></tr>`;
+            if(myFees[m]) { 
+                feeHtml += `<tr class="data-row"><td>${m}</td><td>₹${myFees[m].amount}</td><td style="color:var(--success); font-weight:bold;">Paid</td><td><button class="apple-btn btn-action" style="background:var(--chakra-blue); padding:4px 8px; font-size:11px;" onclick="downloadReceipt('${m}', ${myFees[m].amount})"><i class="fa-solid fa-download"></i> Receipt</button></td></tr>`;
+                pieColors.push('#87CEEB');
+            } else { 
+                feeHtml += `<tr class="data-row"><td>${m}</td><td>-</td><td style="color:var(--danger); font-weight:bold;">Due</td><td>-</td></tr>`; 
+                pieColors.push('#ffcccb');
             }
         });
         document.getElementById('studentFeesBody').innerHTML = feeHtml;
 
-        let subs = [...new Set(userRes.map(x => x.sub))];
-        let filterVal = document.getElementById('chartFilter').value;
-        let filterHtml = '<option value="overall">Overall Progress</option>';
-        subs.forEach(s => {
-            filterHtml += `<option value="${s}">${s}</option>`;
-        });
-        document.getElementById('chartFilter').innerHTML = filterHtml;
-        if(subs.includes(filterVal)) document.getElementById('chartFilter').value = filterVal;
+        if(!document.getElementById('studentFeesSection').classList.contains('hidden')) {
+            const ctxPie = document.getElementById('feesPieChartCanvas').getContext('2d');
+            if(feesPieInstance) feesPieInstance.destroy();
+            feesPieInstance = new Chart(ctxPie, {
+                type: 'pie',
+                data: { labels: allMonths, datasets: [{ data: Array(12).fill(1), backgroundColor: pieColors, borderWidth: 1 }] },
+                options: { animation: { animateRotate: true, animateScale: true }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return c.label + (pieColors[c.dataIndex] === '#87CEEB' ? ': Paid' : ': Due'); } } } } }
+            });
+        }
 
+        let subs = [...new Set(userRes.map(x => x.sub))]; let filterVal = document.getElementById('chartFilter').value; let filterHtml = '<option value="overall">Overall Progress</option>';
+        subs.forEach(s => { filterHtml += `<option value="${s}">${s}</option>`; }); document.getElementById('chartFilter').innerHTML = filterHtml;
+        if(subs.includes(filterVal)) document.getElementById('chartFilter').value = filterVal;
         if(!document.getElementById('studentPerformanceSection').classList.contains('hidden')) updateChartData();
+
+        renderQuizHistory();
     }
 
-    const targetLinePlugin = {
-        id: 'targetLine',
-        beforeDraw: chart => {
-            if(chart.config.type !== 'bar') return;
-            const {ctx, chartArea: {top, right, bottom, left, width, height}, scales: {y}} = chart;
-            ctx.save();
-            const yPos = y.getPixelForValue(80);
-            ctx.beginPath();
-            ctx.moveTo(left, yPos);
-            ctx.lineTo(right, yPos);
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'rgba(39, 174, 96, 0.6)';
-            ctx.setLineDash([5, 5]);
-            ctx.stroke();
-            ctx.restore();
-        }
-    };
+    function showCoinRules() {
+        let histList = coinHistories[window.currentUser] ? Object.values(coinHistories[window.currentUser]) : [];
+        histList.sort((a,b) => b.timestamp - a.timestamp); 
+        let top10 = histList.slice(0, 10);
+        let tableRows = top10.map(h => `<tr class="data-row"><td>${h.date}</td><td style="font-size:11px;">${h.reason}</td><td style="color:var(--success); font-weight:bold;">+${h.amount}</td></tr>`).join('');
+        if(!tableRows) tableRows = "<tr><td colspan='3'>No earnings yet</td></tr>";
 
-    function updateChartData() {
-        if(!window.currentUser) return;
-        let myRes = Object.values(results).filter(r => r.user === window.currentUser).sort((a,b) => (a.timestamp||0)-(b.timestamp||0));
-        const type = document.getElementById('chartType').value;
-        const filter = document.getElementById('chartFilter').value;
-        let labels = [], dataPts = [], bgColors = [];
-        const isDark = document.body.classList.contains('dark-mode');
-        const textColor = isDark ? '#e0e0e0' : '#1d1d1f';
+        let rulesHtml = `
+        <div style="font-size:13px; text-align:left; background:var(--input-bg); padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid var(--border-color); color:var(--text-main);">
+            <h4 style="margin-top:0; color:var(--chakra-blue);"><i class="fa-solid fa-scroll"></i> Earning Rules:</h4>
+            <ul style="padding-left:20px; margin-bottom:0;">
+                <li style="margin-bottom:5px;">Sunday Quiz (5/5 Correct): <b>5 Coins</b></li>
+                <li style="margin-bottom:5px;">Weekly Streak (12 Presents): <b>5 Coins</b></li>
+                <li style="margin-bottom:5px;">Weekly Streak (10+ Presents): <b>3 Coins</b></li>
+                <li style="margin-bottom:5px;">Exam Score (90%+): <b>100 Coins</b></li>
+                <li>Birthday Gift: <b>100 Coins</b></li>
+            </ul>
+        </div>
+        <h4 style="color:var(--chakra-blue); margin-bottom:10px; text-align:left;"><i class="fa-solid fa-clock-rotate-left"></i> Last 10 Earnings</h4>
+        <div style="max-height: 250px; overflow-y:auto; border-radius:10px;">
+            <table class="premium-table" style="font-size:12px;"><thead><tr><th>Date</th><th>Reason</th><th>Earned</th></tr></thead><tbody>${tableRows}</tbody></table>
+        </div>`;
+        Swal.fire({ title: 'My Coins 🪙', html: rulesHtml, confirmButtonColor: '#000080', width: '500px' });
+    }
 
-        let hasHighscore = false;
+    function openRedeemStore() {
+        document.getElementById('redeemModal').classList.remove('hidden');
+        let h = "";
+        ['200', '500', '1000'].forEach(c => {
+            let item = redeemStore[c];
+            if(item) h += `<div class="redeem-card"><img src="${item.img}"><h4>${item.name}</h4><button class="apple-btn" style="width:100%; background:var(--gold); color:black;" onclick="requestRedeem('${item.name}', ${item.cost})"><i class="fa-solid fa-coins"></i> ${item.cost}</button></div>`;
+        });
+        document.getElementById('studentRedeemGrid').innerHTML = h || "<p>Store is empty currently.</p>";
+    }
 
-        if(filter === 'overall') {
-            let grouped = {};
-            myRes.forEach(r => {
-                if(!grouped[r.sub]) grouped[r.sub] = [];
-                grouped[r.sub].push(parseFloat(r.perc));
-            });
-            for(let sub in grouped) {
-                labels.push(sub);
-                let avg = grouped[sub].reduce((a,b) => a+b, 0) / grouped[sub].length;
-                dataPts.push(avg.toFixed(2));
-                if(avg >= 80) { bgColors.push('#27ae60'); hasHighscore = true; }
-                else if(avg >= 40) { bgColors.push('#f39c12'); }
-                else { bgColors.push('#e74c3c'); }
+    function requestRedeem(itemName, cost) {
+        let myCoins = parseInt(students[window.currentUser].coins || 0);
+        if(myCoins < cost) return Swal.fire('Oops!', 'Insufficient balance.', 'error');
+        Swal.fire({ title: 'Want you redeem this ?', text: `Cost: ${cost} coins`, icon: 'question', showCancelButton: true }).then((r)=>{
+            if(r.isConfirmed) {
+                db.ref('students/'+window.currentUser+'/coins').set(myCoins - cost); 
+                db.ref('redeemRequests').push({ student: window.currentUser, itemName: itemName, cost: cost }).then(()=>{
+                    Swal.fire('Requested', 'Wait for Admin Approval', 'success'); document.getElementById('redeemModal').classList.add('hidden');
+                });
             }
-        } else {
-            let subjectRes = myRes.filter(r => r.sub === filter);
-            subjectRes.forEach((r, i) => { 
-                labels.push(`${r.sub} (${i+1})`);
-                let p = parseFloat(r.perc);
-                dataPts.push(p.toFixed(2)); 
-                if(p >= 80) { bgColors.push('#27ae60'); hasHighscore = true; } 
-                else if(p >= 40) { bgColors.push('#f39c12'); } 
-                else { bgColors.push('#e74c3c'); } 
-            });
+        });
+    }
+
+    function renderQuizHistory() {
+        let hList = quizHistories[window.currentUser] || [];
+        if(hList.length > 20) { hList = hList.slice(-20); db.ref('quizHistories/'+window.currentUser).set(hList); }
+        let dispList = hList.slice(-10).reverse();
+        document.getElementById('quizHistoryBody').innerHTML = dispList.map(h => {
+            let circles = h.results.map(r => `<div class="quiz-circle ${r?'correct':'wrong'}"></div>`).join('');
+            return `<tr class="data-row"><td>${h.date}</td><td><div style="display:flex; justify-content:center; align-items:center; gap:5px;">${circles}</div></td></tr>`;
+        }).join('') || "<tr><td colspan='2'>No history</td></tr>";
+    }
+
+    function startWeeklyQuiz() {
+        let today = new Date().getDay(); 
+        if(today !== 0) {
+            return Swal.fire('অপেক্ষা করো!', 'রবিবারের স্পেশাল কুইজ শুধুমাত্র রবিবারেই খেলা যাবে!', 'warning');
         }
 
-        if(hasHighscore && !sessionStorage.getItem('flowerShowTriggered')) {
-            Swal.fire({
-                title: 'Congratulations! 🎉',
-                text: 'You crossed 80% in your exams! Keep it up!',
-                icon: 'success',
-                confirmButtonColor: '#000080'
-            });
-            triggerFlowers();
-            sessionStorage.setItem('flowerShowTriggered', 'true');
-        }
-
-        const ctx = document.getElementById('performanceChart').getContext('2d');
-        if(studentChart) studentChart.destroy();
+        let answered = students[window.currentUser].answeredQs || [];
+        let availableQuestions = quizBank.filter(q => !answered.includes(q.q));
+        if(availableQuestions.length < 5) return Swal.fire('Error', 'Not enough new questions available! Admin needs to upload more.', 'error');
         
-        let chartConfig = {
-            type: type,
-            data: { 
-                labels: labels, 
-                datasets: [{ 
-                    label: filter === 'overall' ? 'Average Marks (%)' : `${filter} Progression (%)`, 
-                    data: dataPts, 
-                    backgroundColor: type === 'line' ? 'transparent' : bgColors, 
-                    borderColor: type === 'line' ? '#27ae60' : bgColors, 
-                    borderWidth: type === 'line' ? 3 : 1, 
-                    borderRadius: type === 'line' ? 0 : 5,
-                    barPercentage: 0.6,
-                    tension: 0.3,
-                    pointBackgroundColor: bgColors,
-                    pointRadius: type === 'line' ? 5 : 0
-                }] 
-            },
-            options: { 
-                responsive: true, 
-                plugins: { legend: { labels: { color: textColor } } }, 
-                scales: { 
-                    y: { beginAtZero: true, max: 100, ticks:{color: textColor} }, 
-                    x:{ticks:{color: textColor}} 
-                } 
-            },
-            plugins: [targetLinePlugin]
-        };
+        let hList = quizHistories[window.currentUser] || [];
+        if(hList.length > 0 && hList[hList.length-1].date === new Date().toLocaleDateString()) { return Swal.fire('ইতিমধ্যেই খেলেছ', 'আজকের কুইজ তুমি খেলে ফেলেছ। আগামী রবিবার আবার এসো।', 'info'); }
 
-        if(type === 'line') {
-            chartConfig.data.datasets[0].segment = {
-                borderColor: ctx => {
-                    if(!ctx.p0 || !ctx.p1) return '#27ae60';
-                    return ctx.p0.parsed.y > ctx.p1.parsed.y ? '#e74c3c' : '#27ae60';
-                }
-            };
+        availableQuestions.sort(() => 0.5 - Math.random());
+        liveQuizQs = availableQuestions.slice(0, 5); liveQuizIndex = 0; liveQuizAnswers = [];
+        document.getElementById('quizLiveModal').classList.remove('hidden'); loadQuizQuestion();
+    }
+
+    function loadQuizQuestion() {
+        if(liveQuizIndex >= 5) return submitQuiz();
+        let qData = liveQuizQs[liveQuizIndex]; document.getElementById('quizQNum').innerText = `Question ${liveQuizIndex+1}/5`; document.getElementById('quizQuestionText').innerText = qData.q;
+        let opts = `<div class="quiz-option" onclick="selectQuizOption(this, 'A')">A) ${qData.a.replace(/^A\)\s*/i,'')}</div><div class="quiz-option" onclick="selectQuizOption(this, 'B')">B) ${qData.b.replace(/^B\)\s*/i,'')}</div><div class="quiz-option" onclick="selectQuizOption(this, 'C')">C) ${qData.c.replace(/^C\)\s*/i,'')}</div><div class="quiz-option" onclick="selectQuizOption(this, 'D')">D) ${qData.d.replace(/^D\)\s*/i,'')}</div>`;
+        document.getElementById('quizOptionsContainer').innerHTML = opts; document.getElementById('quizNextBtn').classList.add('hidden');
+        quizStartTime = Date.now(); document.getElementById('quizTimer').innerText = "30"; clearInterval(liveQuizTimer);
+        liveQuizTimer = setInterval(() => {
+            let elapsed = Math.floor((Date.now() - quizStartTime) / 1000); let left = 30 - elapsed;
+            if(left <= 0) { clearInterval(liveQuizTimer); liveQuizAnswers.push(null); liveQuizIndex++; loadQuizQuestion(); } else { document.getElementById('quizTimer').innerText = left; }
+        }, 1000);
+    }
+
+    function selectQuizOption(el, optCode) {
+        let siblings = document.getElementById('quizOptionsContainer').children; for(let s of siblings) s.classList.remove('selected');
+        el.classList.add('selected'); el.dataset.val = optCode; document.getElementById('quizNextBtn').classList.remove('hidden');
+        if(liveQuizIndex === 4) { document.getElementById('quizNextBtn').innerText = "Submit Quiz"; }
+    }
+
+    function quizNextQuestion() { let selected = document.querySelector('.quiz-option.selected'); if(!selected) return; clearInterval(liveQuizTimer); liveQuizAnswers.push(selected.dataset.val); liveQuizIndex++; loadQuizQuestion(); }
+    function exitQuiz() { Swal.fire({title:'Want to exit?', text:'If you exit, the game will be ended!', icon:'warning', showCancelButton:true}).then(r=>{ if(r.isConfirmed) { clearInterval(liveQuizTimer); document.getElementById('quizLiveModal').classList.add('hidden'); } }); }
+
+    function submitQuiz() {
+        document.getElementById('quizLiveModal').classList.add('hidden'); document.getElementById('quizLoadingScreen').classList.remove('hidden');
+        setTimeout(() => {
+            let resultsArr = []; let correctCount = 0;
+            for(let i=0; i<5; i++) { let isCorrect = liveQuizAnswers[i] && liveQuizAnswers[i].trim().toUpperCase() === liveQuizQs[i].ans.trim().toUpperCase(); resultsArr.push(isCorrect); if(isCorrect) correctCount++; }
+            
+            let answered = students[window.currentUser].answeredQs || []; liveQuizQs.forEach(q => { answered.push(q.q); }); db.ref('students/'+window.currentUser+'/answeredQs').set(answered);
+            let hList = quizHistories[window.currentUser] || []; hList.push({ date: new Date().toLocaleDateString(), results: resultsArr }); db.ref('quizHistories/'+window.currentUser).set(hList);
+            
+            if(correctCount === 5) { giveCoins(window.currentUser, 5, 'Sunday Special Quiz (5/5 Correct)'); }
+            
+            db.ref('adminNotifications/quiz').set(true); 
+
+            document.getElementById('quizLoadingScreen').classList.add('hidden');
+            Swal.fire({ title: 'Quiz Completed!', html: `You got <b>${correctCount}/5</b> correct!<br>${correctCount===5?'You earned 5 Coins 🪙!':''}`, icon: 'success' });
+            renderQuizHistory();
+        }, 2000);
+    }
+
+    const targetLinePlugin = { id: 'targetLine', beforeDraw: chart => { if(chart.config.type !== 'bar' && chart.config.type !== 'line') return; const {ctx, chartArea: {left, right}, scales: {y}} = chart; ctx.save(); const yPos = y.getPixelForValue(80); ctx.beginPath(); ctx.moveTo(left, yPos); ctx.lineTo(right, yPos); ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(39, 174, 96, 0.6)'; ctx.setLineDash([5, 5]); ctx.stroke(); ctx.restore(); } };
+    
+    function updateChartData() {
+        if(!window.currentUser) return; let myRes = Object.values(results).filter(r => r.user === window.currentUser).sort((a,b) => (a.timestamp||0)-(b.timestamp||0));
+        const type = document.getElementById('chartType').value, filter = document.getElementById('chartFilter').value;
+        let labels = [], dataPts = [], bgColors = []; const textColor = document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#1d1d1f'; let hasHighscore = false;
+        
+        if(filter === 'overall') { 
+            let grouped = {}; myRes.forEach(r => { if(!grouped[r.sub]) grouped[r.sub] = []; grouped[r.sub].push(parseFloat(r.perc)); }); 
+            for(let sub in grouped) { labels.push(sub); let avg = grouped[sub].reduce((a,b) => a+b, 0) / grouped[sub].length; dataPts.push(avg.toFixed(2)); if(avg >= 80) { bgColors.push('#27ae60'); hasHighscore = true; } else if(avg >= 40) { bgColors.push('#f39c12'); } else { bgColors.push('#e74c3c'); } } 
+        } else { 
+            let subjectRes = myRes.filter(r => r.sub === filter); 
+            subjectRes.forEach((r, i) => { labels.push(`${r.sub} (${i+1})`); let p = parseFloat(r.perc); dataPts.push(p.toFixed(2)); if(p >= 80) { bgColors.push('#27ae60'); hasHighscore = true; } else if(p >= 40) { bgColors.push('#f39c12'); } else { bgColors.push('#e74c3c'); } }); 
         }
 
+        if(hasHighscore && !sessionStorage.getItem('flowerShowTriggered')) { Swal.fire({ title: 'Congratulations! 🎉', text: 'You crossed 80% in your exams! Keep it up!', icon: 'success', confirmButtonColor: '#000080' }); triggerFlowers(); sessionStorage.setItem('flowerShowTriggered', 'true'); }
+        
+        const ctx = document.getElementById('performanceChart').getContext('2d'); if(studentChart) studentChart.destroy();
+        
+        let animOpts = {};
+        if (type === 'line') {
+            const delayBetweenPoints = 1500 / Math.max(dataPts.length, 1);
+            animOpts = { x: { type: 'number', easing: 'linear', duration: delayBetweenPoints, from: NaN, delay(ctx) { if (ctx.type !== 'data' || ctx.xStarted) return 0; ctx.xStarted = true; return ctx.index * delayBetweenPoints; } }, y: { type: 'number', easing: 'linear', duration: delayBetweenPoints, from: (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y, delay(ctx) { if (ctx.type !== 'data' || ctx.yStarted) return 0; ctx.yStarted = true; return ctx.index * delayBetweenPoints; } } };
+        } else {
+            animOpts = { y: { duration: 1500, easing: 'easeOutQuart' } }; 
+        }
+
+        let chartConfig = { type: type, data: { labels: labels, datasets: [{ label: filter === 'overall' ? 'Average Marks (%)' : `${filter} Progression (%)`, data: dataPts, backgroundColor: type === 'line' ? 'transparent' : bgColors, borderColor: type === 'line' ? '#27ae60' : bgColors, borderWidth: type === 'line' ? 3 : 1, borderRadius: type === 'line' ? 0 : 5, barPercentage: 0.6, tension: 0.3, pointBackgroundColor: bgColors, pointRadius: type === 'line' ? 5 : 0 }] }, options: { animation: animOpts, responsive: true, plugins: { legend: { labels: { color: textColor } } }, scales: { y: { beginAtZero: true, max: 100, ticks:{color: textColor} }, x:{ticks:{color: textColor}} } }, plugins: [targetLinePlugin] };
+        if(type === 'line') { chartConfig.data.datasets[0].segment = { borderColor: ctx => { if(!ctx.p0 || !ctx.p1) return '#27ae60'; return ctx.p0.parsed.y > ctx.p1.parsed.y ? '#e74c3c' : '#27ae60'; } }; }
         studentChart = new Chart(ctx, chartConfig);
     }
-
     function showRadarGraph() {
-        document.getElementById('radarModal').classList.remove('hidden');
-        let myRes = Object.values(results).filter(r => r.user === window.currentUser);
-        let sData = students[window.currentUser];
-        let cls = parseInt(sData.class) || 5;
-        
-        let coreSubjects = (cls >= 9) 
-            ? ['Bengali', 'English', 'Math', 'Phys Sci', 'Life Sci', 'History', 'Geography'] 
-            : ['Bengali', 'English', 'Math', 'ENVS', 'History', 'Geography'];
-            
-        let radarData = [];
-
-        coreSubjects.forEach(sub => {
-            let subRes = myRes.filter(r => r.sub === sub);
-            if(subRes.length > 0) {
-                let avg = subRes.reduce((s,x)=>s+parseFloat(x.perc),0)/subRes.length;
-                radarData.push(avg.toFixed(2));
-            } else {
-                radarData.push(0);
-            }
-        });
-
-        const isDark = document.body.classList.contains('dark-mode');
-        const textColor = isDark ? '#e0e0e0' : '#1d1d1f';
-        const ctx = document.getElementById('radarChartCanvas').getContext('2d');
-        
-        if(radarChartInstance) radarChartInstance.destroy();
-
-        let gradient = ctx.createRadialGradient(250, 175, 0, 250, 175, 200);
-        gradient.addColorStop(0, 'rgba(0, 0, 128, 0.8)');
-        gradient.addColorStop(1, 'rgba(0, 0, 128, 0.2)');
-        
-        radarChartInstance = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: coreSubjects,
-                datasets: [{
-                    label: 'Overall Mastery (%)',
-                    data: radarData,
-                    backgroundColor: gradient,
-                    borderColor: '#FFDF00',
-                    borderWidth: 3,
-                    pointBackgroundColor: '#FFDF00',
-                    pointBorderColor: '#000',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#FFDF00',
-                    pointRadius: 4,
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    r: {
-                        angleLines: { color: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)', lineWidth: 1.5 },
-                        grid: { color: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)', lineWidth: 1.5 },
-                        pointLabels: { color: textColor, font: { size: 14, family: 'Poppins', weight: 'bold' } },
-                        ticks: { min: 0, max: 100, stepSize: 20, backdropColor: 'transparent', color: textColor, font: { weight: 'bold' } }
-                    }
-                },
-                plugins: { legend: { display: false } }
-            }
-        });
+        document.getElementById('radarModal').classList.remove('hidden'); let myRes = Object.values(results).filter(r => r.user === window.currentUser); let cls = parseInt(students[window.currentUser].class) || 5;
+        let coreSubjects = (cls >= 9) ? ['Bengali', 'English', 'Math', 'Phys Sci', 'Life Sci', 'History', 'Geography'] : ['Bengali', 'English', 'Math', 'ENVS', 'History', 'Geography']; let radarData = [];
+        coreSubjects.forEach(sub => { let subRes = myRes.filter(r => r.sub === sub); if(subRes.length > 0) { let avg = subRes.reduce((s,x)=>s+parseFloat(x.perc),0)/subRes.length; radarData.push(avg.toFixed(2)); } else { radarData.push(0); } });
+        const textColor = document.body.classList.contains('dark-mode') ? '#e0e0e0' : '#1d1d1f'; const ctx = document.getElementById('radarChartCanvas').getContext('2d'); if(radarChartInstance) radarChartInstance.destroy();
+        let gradient = ctx.createRadialGradient(250, 175, 0, 250, 175, 200); gradient.addColorStop(0, 'rgba(0, 0, 128, 0.8)'); gradient.addColorStop(1, 'rgba(0, 0, 128, 0.2)');
+        radarChartInstance = new Chart(ctx, { type: 'radar', data: { labels: coreSubjects, datasets: [{ label: 'Overall Mastery (%)', data: radarData, backgroundColor: gradient, borderColor: '#FFDF00', borderWidth: 3, pointBackgroundColor: '#FFDF00', pointBorderColor: '#000', pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#FFDF00', pointRadius: 4, }] }, options: { animation: { duration: 1500, easing: 'easeOutQuart' }, responsive: true, scales: { r: { angleLines: { color: textColor, lineWidth: 1.5 }, grid: { color: textColor, lineWidth: 1.5 }, pointLabels: { color: textColor, font: { size: 14, family: 'Poppins', weight: 'bold' } }, ticks: { min: 0, max: 100, stepSize: 20, backdropColor: 'transparent', color: textColor, font: { weight: 'bold' } } } }, plugins: { legend: { display: false } } } });
     }
-
     async function downloadReceipt(month, amount) {
-        const { jsPDF } = window.jspdf; 
-        const doc = new jsPDF();
-        
-        doc.setLineWidth(0.5); doc.rect(10, 10, 190, 100); 
-        
-        doc.setFontSize(24); doc.setTextColor(0, 0, 128); 
-        doc.text("Pathshala.", 105, 25, null, null, "center");
-        
-        doc.setFontSize(14); doc.setTextColor(0, 0, 0);
-        doc.text("Official Payment Receipt", 105, 35, null, null, "center");
-        
-        doc.setLineWidth(0.2); doc.line(15, 40, 195, 40); 
-        
-        doc.setFontSize(12);
-        doc.text(`Student Name: ${window.currentUser}`, 20, 55);
-        doc.text(`Fee Month: ${month}`, 20, 65);
-        doc.text(`Amount Paid: Rs. ${amount}`, 20, 75);
-        doc.text(`Date of Issue: ${new Date().toLocaleDateString('en-GB')}`, 20, 85);
-        
-        doc.setTextColor(39, 174, 96); 
-        doc.setFontSize(16); doc.text("STATUS: PAID", 140, 75);
-        
-        doc.setTextColor(100, 100, 100); doc.setFontSize(10);
-        doc.text("This is a system generated receipt.", 105, 100, null, null, "center");
-        
-        doc.save(`Pathshala_Receipt_${window.currentUser}_${month}.pdf`);
+        const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setLineWidth(0.5); doc.rect(10, 10, 190, 100); doc.setFontSize(24); doc.setTextColor(0, 0, 128); doc.text("Pathshala.", 105, 25, null, null, "center");
+        doc.setFontSize(14); doc.setTextColor(0, 0, 0); doc.text("Official Payment Receipt", 105, 35, null, null, "center"); doc.setLineWidth(0.2); doc.line(15, 40, 195, 40); 
+        doc.setFontSize(12); doc.text(`Student Name: ${window.currentUser}`, 20, 55); doc.text(`Fee Month: ${month}`, 20, 65); doc.text(`Amount Paid: Rs. ${amount}`, 20, 75); doc.text(`Date of Issue: ${new Date().toLocaleDateString('en-GB')}`, 20, 85);
+        doc.setTextColor(39, 174, 96); doc.setFontSize(16); doc.text("STATUS: PAID", 140, 75); doc.setTextColor(100, 100, 100); doc.setFontSize(10); doc.text("This is a system generated receipt.", 105, 100, null, null, "center"); doc.save(`Pathshala_Receipt_${window.currentUser}_${month}.pdf`);
     }
-
-    async function downloadPDF() { 
-        const { jsPDF } = window.jspdf; const doc = new jsPDF(); 
-        doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Report", 14, 20);
-        doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30);
-        doc.autoTable({ startY: 40, html: '#resultTable', theme: 'grid' }); 
-        doc.save(`${window.currentUser}_Report.pdf`); 
-    }
-
-    async function downloadFeePDF() { 
-        const { jsPDF } = window.jspdf; const doc = new jsPDF(); 
-        doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Fees Report", 14, 20);
-        doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30);
-        
-        let tempTable = document.getElementById('feeTable').cloneNode(true);
-        for(let i=0; i<tempTable.rows.length; i++) tempTable.rows[i].deleteCell(-1);
-
-        doc.autoTable({ startY: 40, html: tempTable, theme: 'grid' }); 
-        doc.save(`${window.currentUser}_Fees_Report.pdf`); 
-    }
+    async function downloadPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Report", 14, 20); doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30); doc.autoTable({ startY: 40, html: '#resultTable', theme: 'grid' }); doc.save(`${window.currentUser}_Report.pdf`); }
+    async function downloadFeePDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Fees Report", 14, 20); doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30); let tempTable = document.getElementById('feeTable').cloneNode(true); for(let i=0; i<tempTable.rows.length; i++) tempTable.rows[i].deleteCell(-1); doc.autoTable({ startY: 40, html: tempTable, theme: 'grid' }); doc.save(`${window.currentUser}_Fees_Report.pdf`); }
 </script>
 </body>
 </html>
