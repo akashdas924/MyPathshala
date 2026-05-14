@@ -46,16 +46,14 @@
         @keyframes rotateChakra { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
         
         .container { max-width: 1200px; margin: 20px auto; padding: 30px; background: var(--card-bg); backdrop-filter: blur(15px); border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative; z-index: 1; transition: 0.3s;}
-        
         .glass-card { background: var(--card-bg); border-radius: 20px; padding: 25px; margin-bottom: 25px; border: 1px solid var(--border-color); transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); color: var(--text-main); }
-        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); animation: floatCard 3s ease-in-out infinite alternate; }
+        .glass-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
         body.dark-mode .glass-card:hover { box-shadow: 0 15px 35px rgba(0,0,0,0.6); }
         .glass-card h3, .glass-card h4 { color: var(--chakra-blue); }
-        @keyframes floatCard { 0% { transform: translateY(-8px); } 100% { transform: translateY(-12px); } }
         
         .apple-btn { background: var(--chakra-blue); color: white; padding: 12px 25px; border-radius: 50px; border: none; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: 'Poppins', sans-serif;}
         .apple-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 128, 0.3); }
-        .apple-btn:active, .quiz-option:active, .tab-btn:active, .gift-box:active { transform: scale(0.95) !important; transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .apple-btn:active, .quiz-option:active, .tab-btn:active, .gift-box:active { transform: scale(0.92) !important; transition: transform 0.1s ease; }
         .btn-action { padding: 6px 12px; font-size: 12px; border-radius: 8px; margin: 2px; }
         .btn-transparent { opacity: 0.3 !important; pointer-events: none !important; }
         
@@ -73,32 +71,34 @@
 
         .premium-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; text-align: center; }
         .premium-table th { background: rgba(0, 0, 128, 0.1); padding: 12px; border-radius: 5px; }
-        .premium-table tr.data-row { background: var(--input-bg); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.3s ease; border-radius: 30px; position: relative; z-index: 1;}
-        .premium-table tr.data-row:hover { transform: scale(1.02) !important; z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        
+        /* Fixed Layout Resizing Bug & Enhanced Shiny Animation */
+        .premium-table tr.data-row { 
+            background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.4) 50%, transparent 65%), var(--input-bg);
+            background-size: 200% 100%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: all 0.3s ease; border-radius: 30px; position: relative; z-index: 1; overflow: hidden; 
+        }
+        body.dark-mode .premium-table tr.data-row {
+            background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.1) 50%, transparent 65%), var(--input-bg);
+            background-size: 200% 100%;
+        }
+        .premium-table tr.data-row:hover { transform: scale(1.02); z-index: 10; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
         body.dark-mode .premium-table tr.data-row:hover { box-shadow: 0 10px 25px rgba(255,255,255,0.1); background-color: rgba(255,255,255,0.15); }
+        
         .premium-table td:first-child { border-top-left-radius: 30px; border-bottom-left-radius: 30px; }
         .premium-table td:last-child { border-top-right-radius: 30px; border-bottom-right-radius: 30px; }
         .premium-table td { padding: 12px 10px; border: none; vertical-align: middle; }
+        
+        @keyframes fadeInUpRank { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes rowShinyBg { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        @keyframes rankSweep { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        .rank-animate-row { animation: fadeInUpRank 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards, rowShinyBg 3.5s linear infinite; opacity: 0; }
 
-        /* Staggered Row Entrance Animation (BUG FIXED) */
-        tbody tr.data-row { opacity: 0; transform: translateY(15px); animation: fadeInUpRow 0.6s ease forwards; }
-        tbody tr.data-row:nth-child(1) { animation-delay: 0.1s; }
-        tbody tr.data-row:nth-child(2) { animation-delay: 0.15s; }
-        tbody tr.data-row:nth-child(3) { animation-delay: 0.2s; }
-        tbody tr.data-row:nth-child(4) { animation-delay: 0.25s; }
-        tbody tr.data-row:nth-child(5) { animation-delay: 0.3s; }
-        tbody tr.data-row:nth-child(n+6) { animation-delay: 0.35s; }
-        @keyframes fadeInUpRow { to { opacity: 1; transform: translateY(0); } }
-        
-        /* Rank Highlight Animations - COMBINED PROPERLY SO THEY DON'T GO INVISIBLE */
-        .rank-1 { background: linear-gradient(110deg, #FFDF00 25%, rgba(255,255,255,0.9) 50%, #FFDF00 75%) !important; background-size: 200% auto !important; color: #000 !important; font-weight: 800; animation: fadeInUpRow 0.6s ease 0.1s forwards, rankSweep 3s linear infinite, goldGlow 2s ease-in-out infinite alternate !important; z-index: 3 !important; }
-        .rank-2 { background: linear-gradient(110deg, #E0E0E0 25%, rgba(255,255,255,0.9) 50%, #E0E0E0 75%) !important; background-size: 200% auto !important; color: #000 !important; font-weight: 700; animation: fadeInUpRow 0.6s ease 0.15s forwards, rankSweep 3s linear infinite, silverGlow 2s ease-in-out infinite alternate !important; z-index: 2 !important; }
-        .rank-3 { background: linear-gradient(110deg, #CD7F32 25%, rgba(255,255,255,0.9) 50%, #CD7F32 75%) !important; background-size: 200% auto !important; color: #fff !important; font-weight: 600; animation: fadeInUpRow 0.6s ease 0.2s forwards, rankSweep 3s linear infinite, bronzeGlow 2s ease-in-out infinite alternate !important; z-index: 2 !important; }
-        
-        @keyframes rankSweep { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
-        @keyframes goldGlow { 0% { box-shadow: 0 0 5px rgba(255, 223, 0, 0.2); } 100% { box-shadow: 0 0 25px rgba(255, 223, 0, 0.95); } }
-        @keyframes silverGlow { 0% { box-shadow: 0 0 5px rgba(224, 224, 224, 0.2); } 100% { box-shadow: 0 0 20px rgba(224, 224, 224, 0.85); } }
-        @keyframes bronzeGlow { 0% { box-shadow: 0 0 5px rgba(205, 127, 50, 0.2); } 100% { box-shadow: 0 0 20px rgba(205, 127, 50, 0.85); } }
+        /* Fixed Invisible Name Bug for 1st, 2nd, 3rd Position */
+        .rank-1 { background: linear-gradient(110deg, #FFDF00 35%, rgba(255,255,255,0.9) 50%, #FFDF00 65%) !important; background-size: 200% 100% !important; color: #000 !important; font-weight: 800; animation: fadeInUpRank 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards, rankSweep 2.5s linear infinite !important; }
+        .rank-2 { background: linear-gradient(110deg, #E0E0E0 35%, rgba(255,255,255,0.9) 50%, #E0E0E0 65%) !important; background-size: 200% 100% !important; color: #000 !important; font-weight: 700; animation: fadeInUpRank 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards, rankSweep 2.5s linear infinite !important; }
+        .rank-3 { background: linear-gradient(110deg, #CD7F32 35%, rgba(255,255,255,0.9) 50%, #CD7F32 65%) !important; background-size: 200% 100% !important; color: #fff !important; font-weight: 600; animation: fadeInUpRank 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards, rankSweep 2.5s linear infinite !important; }
         
         .marquee-box { overflow: hidden; white-space: nowrap; background: rgba(0, 0, 128, 0.05); padding: 10px 0; border-radius: 10px; margin: 20px 0; position: relative; width: 100%; }
         .moving-text { display: inline-block; padding-left: 100%; animation: marquee 15s linear infinite; color: var(--chakra-blue); font-weight: 600; }
@@ -136,10 +136,7 @@
         .sidebar .closebtn { position: absolute; top: 10px; right: 25px; font-size: 36px; border-bottom: none; }
         
         .radar-modal, .quiz-modal, .redeem-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; justify-content: center; align-items: center; overflow-y: auto;}
-        
-        /* Modal Pop-in Effect */
-        .modal-content { background: var(--card-bg); backdrop-filter: blur(25px); padding: 30px; border-radius: 20px; width: 90%; max-width: 600px; text-align: center; border: 1px solid var(--border-color); transform: scale(0.8); opacity: 0; animation: popInModal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
-        @keyframes popInModal { to { transform: scale(1); opacity: 1; } }
+        .modal-content { background: var(--card-bg); backdrop-filter: blur(25px); padding: 30px; border-radius: 20px; width: 90%; max-width: 600px; text-align: center; border: 1px solid var(--border-color); }
 
         .fee-bar-wrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; background: var(--input-bg); padding: 10px; border-radius: 10px; }
         .fee-bar-container { display: flex; gap: 3px; width: 100%; max-width: 250px; height: 18px; background: rgba(0,0,0,0.1); border-radius: 5px; overflow: hidden; }
@@ -155,10 +152,8 @@
         .streak-p { background: var(--success); border-color: var(--success); box-shadow: 0 0 5px rgba(39, 174, 96, 0.5); }
         .streak-a { background: var(--danger); border-color: var(--danger); }
 
-        /* Radar Ping Animation */
-        .red-dot { position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; background-color: var(--danger); border-radius: 50%; border: 2px solid white; z-index: 10; }
-        .red-dot::after { content: ''; position: absolute; top: -2px; left: -2px; width: 100%; height: 100%; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--danger); animation: radarPing 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; z-index: -1; }
-        @keyframes radarPing { 75%, 100% { transform: scale(2.5); opacity: 0; } }
+        .red-dot { position: absolute; top: -5px; right: -5px; width: 12px; height: 12px; background-color: var(--danger); border-radius: 50%; box-shadow: 0 0 8px rgba(231, 76, 60, 0.8); animation: blink 1s infinite; border: 2px solid white; z-index: 10; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         @media (max-width: 768px) { div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; } table { display: block; overflow-x: auto; white-space: nowrap; } }
     </style>
@@ -186,7 +181,7 @@
 
         <div class="nav-icon" onclick="showNotifications()">
             <i class="fa-solid fa-bell"></i>
-            <span id="notifBadge" class="hidden red-dot"></span>
+            <span id="notifBadge" class="hidden" style="position:absolute; top:-4px; right:-4px; width:10px; height:10px; background:#e74c3c; border-radius:50%; border:2px solid var(--card-bg);"></span>
         </div>
         <i class="fa-solid fa-bars nav-icon" id="menuIcon" onclick="toggleSidebar(true)"></i>
     </div>
@@ -294,6 +289,18 @@
                 <textarea id="noticeInput" rows="2" placeholder="Write announcement..."></textarea>
                 <button class="apple-btn" onclick="postNotice()">Update Notice</button>
             </div>
+            
+            <div class="glass-card">
+                <h4><i class="fa-solid fa-coins" style="color: gold;"></i> Give Coin Bonus</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items:center;">
+                    <select id="bonusClass" onchange="filterBonusStudents()" style="flex: 1;"><option value="">Class</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+                    <select id="bonusUserSelect" style="flex: 2;"><option value="">Select Student</option></select>
+                    <input type="number" id="bonusAmount" placeholder="Amount" style="flex: 1;">
+                    <input type="text" id="bonusReason" placeholder="Reason" style="flex: 2;">
+                    <button class="apple-btn" style="background:var(--gold); color:black;" onclick="giveBonusCoins()">Give Bonus</button>
+                </div>
+            </div>
+
             <div class="glass-card">
                 <h4><i class="fa-solid fa-square-poll-vertical"></i> Manage Results</h4>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items:center;">
@@ -369,9 +376,9 @@
         <div id="adminQuizSection" class="hidden fade-in">
             <div class="glass-card">
                 <h4><i class="fa-solid fa-upload"></i> Bulk Quiz Upload (100 Qs for 20 Weeks)</h4>
-                <p style="font-size:12px; color:#666;">Format: Question\nA) Option\nB) Option\nC) Option\nD) Option\nAns: A\n\n(Leave blank line between questions)</p>
+                <p style="font-size:12px; color:#666; text-align:left;">Format Example:<br>Q: Question text here?<br>A: Option 1<br>B: Option 2<br>C: Option 3<br>D: Option 4<br>Ans: A<br><br>(Use <b>---</b> to separate questions)</p>
                 <textarea id="quizBulkInput" rows="10" placeholder="Paste questions here..."></textarea>
-                <button class="apple-btn" style="width:100%; margin-top:10px; background:var(--premium-gradient);" onclick="uploadBulkQuiz()">Upload 100 Questions</button>
+                <button class="apple-btn" style="width:100%; margin-top:10px; background:var(--premium-gradient);" onclick="uploadBulkQuiz()">Upload Questions</button>
                 
                 <h5 style="margin-top: 30px;">Usage Statistics</h5>
                 <div style="max-width: 300px; margin: auto;">
@@ -443,7 +450,7 @@
                         <thead><tr><th>Date</th><th>Subject</th><th>Marks</th><th>%</th><th>Grade</th></tr></thead>
                         <tbody id="studentBody"></tbody>
                     </table>
-                    <button class="apple-btn" style="margin-top: 20px; background: var(--success);" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Download Result PDF</button>
+                    <button class="apple-btn" style="margin-top: 20px; background: var(--success);" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Download Premium Report</button>
                 </div>
             </div>
         </div>
@@ -516,7 +523,7 @@
 
         <div id="studentQuizSection" class="hidden fade-in">
             <div class="glass-card" style="text-align: center;">
-                <h3 style="background: var(--premium-gradient); -webkit-background-clip: text; color: transparent; font-size: 28px; margin-bottom:5px;">Sunday's Special Quiz</h3>
+                <h3 style="background: var(--premium-gradient); -webkit-background-clip: text; color: transparent; font-size: 28px; margin-bottom:5px;">Weekly Quiz Challenge</h3>
                 <p style="font-size:14px; font-weight:600; color:var(--text-main); margin-bottom: 20px;">Play & Win Coins 🪙</p>
                 <button class="apple-btn" style="background: var(--success); font-size: 18px; padding: 15px 40px;" onclick="startWeeklyQuiz()">Start Quiz 🚀</button>
 
@@ -646,7 +653,6 @@
     }
 
     function giveCoins(u, amount, reason) {
-        if(!students[u]) return;
         let currentCoins = parseInt(students[u].coins || 0);
         db.ref('students/'+u+'/coins').set(currentCoins + amount);
         if(amount > 0) {
@@ -716,76 +722,111 @@
 
         if(tab === 'dashboard' && window.currentAttPerc !== undefined) { animatePercentage(window.currentAttPerc); }
         if(tab === 'performance') updateChartData();
+        if(tab === 'fees') { setTimeout(renderFeesPieChart, 100); }
     }
 
-    db.ref('/').on('value', (snapshot) => {
-        const data = snapshot.val() || {};
-        students = data.students || { 'admin': { pw: '123', role: 'admin', approved: true } };
-        results = data.results || {}; 
-        attendanceData = data.attendance || {};
-        questionsMeta = data.questionsMeta || {}; 
-        fees = data.fees || {};
-        passRequests = data.passwordRequests || {};
-        quizBank = data.quizBank || [];
-        quizMeta = data.quizMeta || { usedCount: 0, currentWeek: 0 };
-        quizHistories = data.quizHistories || {};
-        redeemStore = data.redeemStore || { "200": null, "500": null, "1000": null };
-        redeemRequests = data.redeemRequests || {};
-        coinHistories = data.coinHistory || {}; 
-        currentNotice = data.notice || "Welcome to Pathshala!";
+    // ====== DATABASE OPTIMIZATION: SPECIFIC LISTENERS ======
+
+    function loadPublicData() {
+        db.ref('notice').on('value', snap => {
+            currentNotice = snap.val() || "Welcome to Pathshala!";
+            if(document.getElementById('publicNoticeDisplay')) document.getElementById('publicNoticeDisplay').innerText = currentNotice;
+            if(document.getElementById('noticeDisplay')) document.getElementById('noticeDisplay').innerText = currentNotice;
+        });
+
+        db.ref('sysUpdate').on('value', snap => {
+            lastSysUpdate = snap.val() || null;
+            checkSystemNotifications();
+        });
+
+        db.ref('questionsMeta').on('value', snap => {
+            questionsMeta = snap.val() || {};
+            if(!document.getElementById('materialsView').classList.contains('hidden')) renderPublicQuestions();
+        });
+
+        db.ref('students').on('value', snap => {
+            students = snap.val() || { 'admin': { pw: '123', role: 'admin', approved: true } };
+            renderRankList();
+            if(window.currentUser === 'Admin') renderAdmin();
+            else if(window.currentUser && document.getElementById('studentPanel') && !document.getElementById('studentPanel').classList.contains('hidden')) refreshStudentUI();
+        });
+
+        db.ref('results').on('value', snap => {
+            results = snap.val() || {};
+            renderRankList();
+            if(window.currentUser === 'Admin') renderAdmin();
+            else if(window.currentUser && document.getElementById('studentPanel') && !document.getElementById('studentPanel').classList.contains('hidden')) refreshStudentUI();
+        });
+    }
+
+    function loadStudentSpecificData(user) {
+        db.ref('attendance/' + user).on('value', snap => { attendanceData[user] = snap.val() || {}; refreshStudentUI(); });
+        db.ref('fees/' + user).on('value', snap => { fees[user] = snap.val() || {}; refreshStudentUI(); });
+        db.ref('quizHistories/' + user).on('value', snap => { quizHistories[user] = snap.val() || []; refreshStudentUI(); });
+        db.ref('coinHistory/' + user).on('value', snap => { coinHistories[user] = snap.val() || {}; });
         
-        if(document.getElementById('publicNoticeDisplay')) document.getElementById('publicNoticeDisplay').innerText = currentNotice;
-        if(document.getElementById('noticeDisplay')) document.getElementById('noticeDisplay').innerText = currentNotice;
+        db.ref('quizBank').once('value', snap => { quizBank = snap.val() || []; });
+        db.ref('redeemStore').on('value', snap => { redeemStore = snap.val() || {}; });
+        
+        db.ref('studentNotifications/' + user).on('value', snap => {
+            let myNotifs = snap.val() ? snap.val().tabs : {};
+            if(myNotifs) {
+                if(myNotifs.dashboard) setRedDot('sTabDashboard', true);
+                if(myNotifs.performance) setRedDot('sTabPerformance', true);
+                if(myNotifs.fees) setRedDot('sTabFees', true);
+                if(myNotifs.quiz) setRedDot('sTabQuiz', true);
+            }
+        });
+    }
 
-        let isSunday = new Date().getDay() === 0;
-        let showSundayNotif = isSunday && (!localStorage.getItem('sundayQuizSeen') || localStorage.getItem('sundayQuizSeen') != new Date().toLocaleDateString());
+    function loadAdminSpecificData() {
+        db.ref('attendance').on('value', snap => { attendanceData = snap.val() || {}; renderAdmin(); });
+        db.ref('fees').on('value', snap => { fees = snap.val() || {}; renderAdmin(); });
+        db.ref('passwordRequests').on('value', snap => { passRequests = snap.val() || {}; renderAdmin(); });
+        db.ref('redeemRequests').on('value', snap => { redeemRequests = snap.val() || {}; renderAdmin(); checkSystemNotifications(); });
+        db.ref('quizBank').on('value', snap => { quizBank = snap.val() || []; });
+        db.ref('quizMeta').on('value', snap => { quizMeta = snap.val() || { usedCount: 0, currentWeek: 0 }; });
+        db.ref('redeemStore').on('value', snap => { redeemStore = snap.val() || {}; renderAdminRedeemPreview(); });
+        
+        db.ref('adminNotifications').on('value', snap => {
+            let adminNotifs = snap.val() || {};
+            if(adminNotifs.students) setRedDot('tabStudents', true);
+            if(adminNotifs.quiz) setRedDot('tabQuiz', true);
+        });
+    }
+
+    function checkSystemNotifications() {
         let pendingRedeems = Object.keys(redeemRequests).length > 0;
-
-        if(lastSysUpdate || showSundayNotif || (window.currentUser === 'Admin' && pendingRedeems)) {
+        let lastSeen = parseInt(localStorage.getItem('lastNotifSeen') || "0");
+        let hasNewNotice = lastSysUpdate && lastSysUpdate.time > lastSeen;
+        
+        if(hasNewNotice || (window.currentUser === 'Admin' && pendingRedeems)) {
             document.getElementById('notifBadge').classList.remove('hidden');
         } else {
             document.getElementById('notifBadge').classList.add('hidden');
         }
+    }
 
-        const savedUser = localStorage.getItem('pathshalaUser');
-        if (savedUser) window.currentUser = savedUser;
+    // ====== INITIALIZATION ======
+    loadPublicData();
 
-        if (window.currentUser && window.currentUser !== 'Admin') {
-            let myNotifs = (data.studentNotifications && data.studentNotifications[window.currentUser]) ? data.studentNotifications[window.currentUser].tabs : {};
-            if(myNotifs) {
-                setRedDot('sTabDashboard', myNotifs.dashboard);
-                setRedDot('sTabPerformance', myNotifs.performance);
-                setRedDot('sTabFees', myNotifs.fees);
-                setRedDot('sTabQuiz', myNotifs.quiz);
-            }
-        }
-
-        if(window.currentUser === 'Admin') {
-            let adminNotifs = data.adminNotifications || {};
-            if(adminNotifs.students) setRedDot('tabStudents', true);
-            if(adminNotifs.quiz) setRedDot('tabQuiz', true);
-        }
-        
-        renderRankList(); 
-        if(!document.getElementById('materialsView').classList.contains('hidden')) renderPublicQuestions();
-        
-        if(window.currentUser === 'Admin') {
-            if(document.getElementById('adminPanel').classList.contains('hidden')) {
-                hideAllViews(); document.getElementById('topNavArea').style.display = 'flex';
-                document.getElementById('adminPanel').classList.remove('hidden');
-            }
-            renderAdmin();
-        } else if(window.currentUser && students[window.currentUser]) {
-            if(document.getElementById('studentPanel').classList.contains('hidden')){
-                hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; document.getElementById('studentCoinNav').classList.remove('hidden');
-                document.getElementById('studentPanel').classList.remove('hidden'); switchStudentTab('dashboard');
-            }
-            checkCoinsReset(); checkBirthday(); checkApprovedRedeem();
-            refreshStudentUI();
+    const savedUser = localStorage.getItem('pathshalaUser');
+    if (savedUser) {
+        window.currentUser = savedUser;
+        if(savedUser === 'Admin') {
+            loadAdminSpecificData();
+            hideAllViews(); document.getElementById('topNavArea').style.display = 'flex';
+            document.getElementById('adminPanel').classList.remove('hidden'); renderAdmin();
         } else {
-            if(document.getElementById('materialsView').classList.contains('hidden')){ showHome(); }
+            loadStudentSpecificData(savedUser);
+            hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; 
+            document.getElementById('studentCoinNav').classList.remove('hidden');
+            document.getElementById('studentPanel').classList.remove('hidden'); switchStudentTab('dashboard');
+            setTimeout(() => { checkCoinsReset(); checkBirthday(); checkApprovedRedeem(); refreshStudentUI(); }, 2000);
         }
-    });
+    } else {
+        if(document.getElementById('materialsView').classList.contains('hidden')){ showHome(); }
+    }
 
     let localPushTime = parseInt(localStorage.getItem('lastPushTime') || "0");
     db.ref('pushSignals').on('value', snap => {
@@ -800,16 +841,14 @@
     function firePushAll(title, msg) { db.ref('pushSignals/all').set({ title, msg, time: Date.now() }); }
 
     function showNotifications() {
-        let isSunday = new Date().getDay() === 0;
-        if(window.currentUser === 'Admin' && Object.keys(redeemRequests).length > 0) {
+        let pendingRedeems = Object.keys(redeemRequests).length > 0;
+        let lastSeen = parseInt(localStorage.getItem('lastNotifSeen') || "0");
+
+        if(window.currentUser === 'Admin' && pendingRedeems) {
             let reqs = Object.keys(redeemRequests).map(k => `${redeemRequests[k].student} wants ${redeemRequests[k].itemName}`).join('<br>');
             Swal.fire({ title: 'Pending Redeems', html: reqs, confirmButtonText: 'Check Admin Panel' });
             document.getElementById('notifBadge').classList.add('hidden');
-        } else if(isSunday && (!localStorage.getItem('sundayQuizSeen') || localStorage.getItem('sundayQuizSeen') != new Date().toLocaleDateString())) {
-            Swal.fire({ title: 'Sunday Special Quiz Arrived! 🚀', icon: 'info', confirmButtonColor: '#000080' });
-            localStorage.setItem('sundayQuizSeen', new Date().toLocaleDateString());
-            document.getElementById('notifBadge').classList.add('hidden');
-        } else if(lastSysUpdate) {
+        } else if(lastSysUpdate && lastSysUpdate.time > lastSeen) {
             Swal.fire({ title: 'New Update Available!', text: lastSysUpdate.msg, icon: 'info', confirmButtonColor: '#000080' });
             localStorage.setItem('lastNotifSeen', Date.now());
             document.getElementById('notifBadge').classList.add('hidden');
@@ -835,22 +874,50 @@
     function handleLogin() {
         if ("Notification" in window && Notification.permission !== "denied" && Notification.permission !== "granted") { Notification.requestPermission(); }
         let u = document.getElementById('lUser').value.trim(), p = document.getElementById('lPass').value;
-        if(u.toLowerCase() === 'admin' && p === '123') { window.currentUser = 'Admin'; localStorage.setItem('pathshalaUser', 'Admin'); hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; document.getElementById('adminPanel').classList.remove('hidden'); renderAdmin(); } 
+        
+        if(u.toLowerCase() === 'admin' && p === '123') { 
+            window.currentUser = 'Admin'; localStorage.setItem('pathshalaUser', 'Admin'); 
+            loadAdminSpecificData();
+            hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; 
+            document.getElementById('adminPanel').classList.remove('hidden'); renderAdmin(); 
+        } 
         else if(students[u] && students[u].pw === p) {
             if(!students[u].approved) { document.getElementById('pendingMsg').style.display = "block"; return; }
-            window.currentUser = u; localStorage.setItem('pathshalaUser', u); hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; document.getElementById('studentCoinNav').classList.remove('hidden'); document.getElementById('studentPanel').classList.remove('hidden'); switchStudentTab('dashboard'); refreshStudentUI();
+            window.currentUser = u; localStorage.setItem('pathshalaUser', u); 
+            loadStudentSpecificData(u);
+            hideAllViews(); document.getElementById('topNavArea').style.display = 'flex'; 
+            document.getElementById('studentCoinNav').classList.remove('hidden'); 
+            document.getElementById('studentPanel').classList.remove('hidden'); 
+            switchStudentTab('dashboard'); refreshStudentUI();
+            checkCoinsReset(); checkBirthday(); checkApprovedRedeem();
         } else { Swal.fire({ icon: 'error', title: 'Oops...', text: 'Invalid Login ID/Password!' }); }
     }
     
     function handleLogout() { 
-        localStorage.removeItem('pathshalaUser'); window.currentUser = null; document.getElementById('lUser').value = ""; document.getElementById('lPass').value = "";
+        if(window.currentUser && window.currentUser !== 'Admin') {
+            db.ref('attendance/' + window.currentUser).off();
+            db.ref('fees/' + window.currentUser).off();
+            db.ref('quizHistories/' + window.currentUser).off();
+            db.ref('studentNotifications/' + window.currentUser).off();
+            db.ref('coinHistory/' + window.currentUser).off();
+        } else if(window.currentUser === 'Admin') {
+            db.ref('attendance').off();
+            db.ref('fees').off();
+            db.ref('passwordRequests').off();
+            db.ref('redeemRequests').off();
+            db.ref('adminNotifications').off();
+        }
+
+        localStorage.removeItem('pathshalaUser'); window.currentUser = null; 
+        document.getElementById('lUser').value = ""; document.getElementById('lPass').value = "";
         if(studentChart) studentChart.destroy(); if(radarChartInstance) radarChartInstance.destroy(); if(feesPieInstance) feesPieInstance.destroy();
         document.getElementById('navCoinDisplay').innerText = "0";
         document.getElementById('attPercText').innerText = "0%";
         document.getElementById('attProgressBar').style.strokeDashoffset = 251.3;
         window.currentAttPerc = 0;
         if(window.attInterval) clearInterval(window.attInterval);
-        toggleAuth('login'); showHome(); Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Logged Out Successfully', showConfirmButton: false, timer: 1500 });
+        toggleAuth('login'); showHome(); 
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Logged Out Successfully', showConfirmButton: false, timer: 1500 });
     }
 
     function validatePhone() { let ph = document.getElementById('rPhone').value, err = document.getElementById('phoneError'); if(ph.length !== 10) { err.style.display = "block"; return false; } else { err.style.display = "none"; return true; } }
@@ -880,6 +947,7 @@
     function rejectPassword(u) { db.ref('passwordRequests/' + u).remove(); }
 
     function changeRankPage(dir) { rankPage += dir; if(rankPage < 1) rankPage = 1; renderRankList(); }
+    
     function renderRankList() {
         const cls = document.getElementById('rankClassSelect').value; let data = [];
         for (let u in students) {
@@ -891,10 +959,11 @@
         data.sort((a, b) => b.avg - a.avg); let maxPages = Math.ceil(data.length / ranksPerPage) || 1; if(rankPage > maxPages) rankPage = maxPages;
         document.getElementById('rankPageIndicator').innerText = `Page ${rankPage}/${maxPages}`;
         let pagedData = data.slice((rankPage - 1) * ranksPerPage, rankPage * ranksPerPage);
+        
         document.getElementById('rankListBody').innerHTML = pagedData.map((s, i) => {
             let actualRank = (rankPage - 1) * ranksPerPage + i; let rankDisplay = actualRank + 1;
             if(actualRank === 0) rankDisplay = '<i class="fa-solid fa-crown" style="color: #000;"></i> 1'; else if(actualRank === 1) rankDisplay = '<i class="fa-solid fa-medal badge-medium" style="color: #4a4a4a; font-size:16px;"></i> 2'; else if(actualRank === 2) rankDisplay = '<i class="fa-solid fa-award badge-small" style="color: #fff; font-size:14px;"></i> 3';
-            return `<tr class="data-row ${actualRank === 0 ? 'rank-1' : actualRank === 1 ? 'rank-2' : actualRank === 2 ? 'rank-3' : ''}"><td>${rankDisplay}</td><td><img src="${s.pic}" class="avatar"></td><td>${s.name}</td><td>${s.avg.toFixed(2)}%</td></tr>`;
+            return `<tr class="data-row rank-animate-row ${actualRank === 0 ? 'rank-1' : actualRank === 1 ? 'rank-2' : actualRank === 2 ? 'rank-3' : ''}" style="animation-delay: ${i * 0.1}s"><td>${rankDisplay}</td><td><img src="${s.pic}" class="avatar"></td><td>${s.name}</td><td>${s.avg.toFixed(2)}%</td></tr>`;
         }).join('') || "<tr><td colspan='4'>No data found</td></tr>";
     }
 
@@ -975,6 +1044,26 @@
             Swal.fire('Updated!', 'Notice updated.', 'success'); document.getElementById('noticeInput').value = ""; 
         });
     }
+
+    function filterBonusStudents() {
+        const cls = document.getElementById('bonusClass').value, sSelect = document.getElementById('bonusUserSelect'); 
+        sSelect.innerHTML = '<option value="">Select Student</option>';
+        for (let u in students) { if(students[u].class === cls && students[u].approved) sSelect.innerHTML += `<option value="${u}">${u}</option>`; }
+    }
+
+    function giveBonusCoins() {
+        let u = document.getElementById('bonusUserSelect').value;
+        let amount = parseInt(document.getElementById('bonusAmount').value);
+        let reason = document.getElementById('bonusReason').value;
+
+        if(!u || !amount || !reason) return Swal.fire('Warning', 'Please fill all fields!', 'warning');
+        
+        giveCoins(u, amount, reason);
+        Swal.fire('Success', `Given ${amount} coins to ${u}`, 'success');
+        
+        document.getElementById('bonusAmount').value = "";
+        document.getElementById('bonusReason').value = "";
+    }
     
     function filterStudents() {
         const cls = document.getElementById('resClass').value, sSelect = document.getElementById('resUserSelect'); sSelect.innerHTML = '<option value="">Select Student</option>';
@@ -1041,16 +1130,54 @@
     function uploadBulkQuiz() {
         let text = document.getElementById('quizBulkInput').value.trim();
         if(!text) return Swal.fire('Error', 'Input is empty', 'error');
-        let blocks = text.split(/\n\s*\n/); let qs = [];
+
+        let blocks = text.split(/---+/); 
+        let qs = [];
+        let errorCount = 0;
+
         blocks.forEach(b => {
-            let lines = b.trim().split('\n').map(l=>l.trim()).filter(l=>l);
-            if(lines.length >= 6) {
-                let ansLine = lines.find(l => l.toLowerCase().startsWith('ans:'));
-                if(ansLine) { let ansStr = ansLine.split(':')[1].trim(); qs.push({ q: lines[0], a: lines[1], b: lines[2], c: lines[3], d: lines[4], ans: ansStr }); }
+            let blockText = b.trim();
+            if(!blockText) return; 
+
+            let qMatch = blockText.match(/Q:\s*(.+)/i);
+            let aMatch = blockText.match(/A:\s*(.+)/i);
+            let bMatch = blockText.match(/B:\s*(.+)/i);
+            let cMatch = blockText.match(/C:\s*(.+)/i);
+            let dMatch = blockText.match(/D:\s*(.+)/i);
+            let ansMatch = blockText.match(/Ans:\s*([A-D])/i);
+
+            if(qMatch && aMatch && bMatch && cMatch && dMatch && ansMatch) {
+                qs.push({ 
+                    q: qMatch[1].trim(), 
+                    a: aMatch[1].trim(), 
+                    b: bMatch[1].trim(), 
+                    c: cMatch[1].trim(), 
+                    d: dMatch[1].trim(), 
+                    ans: ansMatch[1].toUpperCase().trim() 
+                });
+            } else {
+                errorCount++; 
             }
         });
-        if(qs.length === 0) return Swal.fire('Error', 'Could not parse any questions. Check format.', 'error');
-        db.ref('quizBank').set(qs).then(()=>{ db.ref('quizMeta').set({ usedCount: 0, currentWeek: 0 }); Swal.fire('Success', `${qs.length} Questions uploaded!`, 'success'); document.getElementById('quizBulkInput').value = ""; });
+
+        if(qs.length === 0) {
+            return Swal.fire('Error', 'Could not parse any questions. Check format.', 'error');
+        }
+
+        db.ref('quizBank').set(qs).then(() => { 
+            db.ref('quizMeta').set({ usedCount: 0, currentWeek: 0 }); 
+            for (let u in students) {
+                if (students[u].role === 'student' && students[u].approved) {
+                    db.ref('studentNotifications/' + u + '/tabs/quiz').set(true);
+                }
+            }
+            let msg = `${qs.length} Questions uploaded!`;
+            if(errorCount > 0) msg += ` (Skipped ${errorCount} badly formatted questions)`;
+            Swal.fire('Success', msg, 'success'); 
+            document.getElementById('quizBulkInput').value = ""; 
+        }).catch(err => {
+            Swal.fire('Database Error', err.message, 'error');
+        });
     }
 
     function renderPieChart() {
@@ -1119,23 +1246,6 @@
         if(sData && sData.redeemApprovedFlag) { triggerFlowers(); Swal.fire({ title: 'Congratulations! 🎉', text: `You redeemed ${sData.redeemApprovedFlag} successfully!`, icon: 'success' }); db.ref('students/'+window.currentUser+'/redeemApprovedFlag').remove(); }
     }
 
-    function checkWeeklyStreakBonus(u, amP, pmP) {
-        let d = new Date();
-        if(d.getDay() === 0) { 
-            let weekDates = getTrackingDates();
-            let weekKey = weekDates[0]; 
-            if(students[u].lastStreakWeek !== weekKey) {
-                let totalP = amP + pmP;
-                if(totalP === 12) { 
-                    giveCoins(u, 5, 'Perfect Weekly Streak (12/12)'); 
-                } else if(totalP >= 10) { 
-                    giveCoins(u, 3, `Weekly Streak (${totalP}/12)`); 
-                }
-                db.ref('students/'+u+'/lastStreakWeek').set(weekKey);
-            }
-        }
-    }
-
     function canUpdateProfile() {
         let sData = students[window.currentUser]; if(!sData) return false; let lastUp = sData.lastProfileUpdate || 0; let days3 = 3 * 24 * 60 * 60 * 1000;
         if(Date.now() - lastUp < days3) { let left = Math.ceil((days3 - (Date.now() - lastUp))/(1000*60*60*24)); Swal.fire('Locked', `Please wait ${left} day(s).`, 'warning'); return false; } return true;
@@ -1173,8 +1283,28 @@
         return dates;
     }
 
+    function renderFeesPieChart() {
+        let myFees = fees[window.currentUser] || {};
+        const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        let pieColors = [];
+        allMonths.forEach(m => {
+            if(myFees[m]) pieColors.push('#87CEEB');
+            else pieColors.push('#ffcccb');
+        });
+        
+        const ctxPie = document.getElementById('feesPieChartCanvas').getContext('2d');
+        if(feesPieInstance) feesPieInstance.destroy();
+        feesPieInstance = new Chart(ctxPie, {
+            type: 'pie',
+            data: { labels: allMonths, datasets: [{ data: Array(12).fill(1), backgroundColor: pieColors, borderWidth: 1 }] },
+            options: { animation: { animateRotate: true, animateScale: true }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return c.label + (pieColors[c.dataIndex] === '#87CEEB' ? ': Paid' : ': Due'); } } } } }
+        });
+    }
+
     function refreshStudentUI() {
-        const sData = students[window.currentUser] || {};
+        const sData = students[window.currentUser];
+        if(!sData) return;
+        
         document.getElementById('profileImgDisplay').src = getAvatar(window.currentUser, sData.profilePic);
         document.getElementById('updatePhoneInput').value = sData.phone || "";
         document.getElementById('updateClassInput').value = sData.class || "";
@@ -1203,7 +1333,16 @@
         });
         document.getElementById('streakAmContainer').innerHTML = amHtml; document.getElementById('streakPmContainer').innerHTML = pmHtml;
 
-        checkWeeklyStreakBonus(window.currentUser, amP, pmP);
+        if(new Date().getDay() === 0) {
+            let weekKey = weekDates[0]; 
+            if(sData.lastStreakWeek !== weekKey) {
+                sData.lastStreakWeek = weekKey;
+                let totalP = amP + pmP;
+                if(totalP === 12) { giveCoins(window.currentUser, 5, 'Perfect Weekly Streak (12/12)'); } 
+                else if(totalP >= 10) { giveCoins(window.currentUser, 3, `Weekly Streak (${totalP}/12)`); }
+                db.ref('students/'+window.currentUser+'/lastStreakWeek').set(weekKey);
+            }
+        }
 
         let userRes = Object.values(results).filter(r => r.user === window.currentUser);
         document.getElementById('studentBody').innerHTML = userRes.map(r => `<tr class="data-row"><td>${r.date||'-'}</td><td>${r.sub}</td><td>${r.ob}/${r.fl}</td><td>${r.perc}%</td><td style="font-weight:bold; color:${r.grade==='F'?'var(--danger)':'var(--success)'};">${r.grade}</td></tr>`).join('') || "<tr><td colspan='5'>No results</td></tr>";
@@ -1215,26 +1354,17 @@
 
         let myFees = fees[window.currentUser] || {}; let feeHtml = ""; const allMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         
-        let pieColors = [];
         allMonths.forEach(m => {
             if(myFees[m]) { 
                 feeHtml += `<tr class="data-row"><td>${m}</td><td>₹${myFees[m].amount}</td><td style="color:var(--success); font-weight:bold;">Paid</td><td><button class="apple-btn btn-action" style="background:var(--chakra-blue); padding:4px 8px; font-size:11px;" onclick="downloadReceipt('${m}', ${myFees[m].amount})"><i class="fa-solid fa-download"></i> Receipt</button></td></tr>`;
-                pieColors.push('#87CEEB');
             } else { 
                 feeHtml += `<tr class="data-row"><td>${m}</td><td>-</td><td style="color:var(--danger); font-weight:bold;">Due</td><td>-</td></tr>`; 
-                pieColors.push('#ffcccb');
             }
         });
         document.getElementById('studentFeesBody').innerHTML = feeHtml;
 
         if(!document.getElementById('studentFeesSection').classList.contains('hidden')) {
-            const ctxPie = document.getElementById('feesPieChartCanvas').getContext('2d');
-            if(feesPieInstance) feesPieInstance.destroy();
-            feesPieInstance = new Chart(ctxPie, {
-                type: 'pie',
-                data: { labels: allMonths, datasets: [{ data: Array(12).fill(1), backgroundColor: pieColors, borderWidth: 1 }] },
-                options: { animation: { animateRotate: true, animateScale: true }, plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c) { return c.label + (pieColors[c.dataIndex] === '#87CEEB' ? ': Paid' : ': Due'); } } } } }
-            });
+            renderFeesPieChart();
         }
 
         let subs = [...new Set(userRes.map(x => x.sub))]; let filterVal = document.getElementById('chartFilter').value; let filterHtml = '<option value="overall">Overall Progress</option>';
@@ -1256,7 +1386,7 @@
         <div style="font-size:13px; text-align:left; background:var(--input-bg); padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid var(--border-color); color:var(--text-main);">
             <h4 style="margin-top:0; color:var(--chakra-blue);"><i class="fa-solid fa-scroll"></i> Earning Rules:</h4>
             <ul style="padding-left:20px; margin-bottom:0;">
-                <li style="margin-bottom:5px;">Sunday Quiz (5/5 Correct): <b>5 Coins</b></li>
+                <li style="margin-bottom:5px;">Weekly Quiz (5/5 Correct): <b>5 Coins</b></li>
                 <li style="margin-bottom:5px;">Weekly Streak (12 Presents): <b>5 Coins</b></li>
                 <li style="margin-bottom:5px;">Weekly Streak (10+ Presents): <b>3 Coins</b></li>
                 <li style="margin-bottom:5px;">Exam Score (90%+): <b>100 Coins</b></li>
@@ -1303,19 +1433,25 @@
         }).join('') || "<tr><td colspan='2'>No history</td></tr>";
     }
 
+    function getCurrentWeekKey() {
+        let d = new Date();
+        d.setHours(0,0,0,0);
+        let day = d.getDay();
+        let diff = d.getDate() - day + (day === 0 ? -6 : 1);
+        let monday = new Date(d.setDate(diff));
+        return monday.toLocaleDateString('en-GB');
+    }
+
     function startWeeklyQuiz() {
-        let today = new Date().getDay(); 
-        if(today !== 0) {
-            return Swal.fire('অপেক্ষা করো!', 'রবিবারের স্পেশাল কুইজ শুধুমাত্র রবিবারেই খেলা যাবে!', 'warning');
+        let sData = students[window.currentUser];
+        if(sData.lastQuizWeek === getCurrentWeekKey()) {
+            return Swal.fire('ইতিমধ্যেই খেলেছ', 'তুমি এই সপ্তাহের কুইজ খেলে নিয়েছো। পরের সপ্তাহের জন্য অপেক্ষা করো 👀', 'info');
         }
 
-        let answered = students[window.currentUser].answeredQs || [];
+        let answered = sData.answeredQs || [];
         let availableQuestions = quizBank.filter(q => !answered.includes(q.q));
         if(availableQuestions.length < 5) return Swal.fire('Error', 'Not enough new questions available! Admin needs to upload more.', 'error');
         
-        let hList = quizHistories[window.currentUser] || [];
-        if(hList.length > 0 && hList[hList.length-1].date === new Date().toLocaleDateString()) { return Swal.fire('ইতিমধ্যেই খেলেছ', 'আজকের কুইজ তুমি খেলে ফেলেছ। আগামী রবিবার আবার এসো।', 'info'); }
-
         availableQuestions.sort(() => 0.5 - Math.random());
         liveQuizQs = availableQuestions.slice(0, 5); liveQuizIndex = 0; liveQuizAnswers = [];
         document.getElementById('quizLiveModal').classList.remove('hidden'); loadQuizQuestion();
@@ -1348,10 +1484,13 @@
             let resultsArr = []; let correctCount = 0;
             for(let i=0; i<5; i++) { let isCorrect = liveQuizAnswers[i] && liveQuizAnswers[i].trim().toUpperCase() === liveQuizQs[i].ans.trim().toUpperCase(); resultsArr.push(isCorrect); if(isCorrect) correctCount++; }
             
-            let answered = students[window.currentUser].answeredQs || []; liveQuizQs.forEach(q => { answered.push(q.q); }); db.ref('students/'+window.currentUser+'/answeredQs').set(answered);
+            let answered = students[window.currentUser].answeredQs || []; liveQuizQs.forEach(q => { answered.push(q.q); }); 
+            db.ref('students/'+window.currentUser+'/answeredQs').set(answered);
+            db.ref('students/'+window.currentUser+'/lastQuizWeek').set(getCurrentWeekKey());
+
             let hList = quizHistories[window.currentUser] || []; hList.push({ date: new Date().toLocaleDateString(), results: resultsArr }); db.ref('quizHistories/'+window.currentUser).set(hList);
             
-            if(correctCount === 5) { giveCoins(window.currentUser, 5, 'Sunday Special Quiz (5/5 Correct)'); }
+            if(correctCount === 5) { giveCoins(window.currentUser, 5, 'Weekly Quiz Challenge (5/5 Correct)'); }
             
             db.ref('adminNotifications/quiz').set(true); 
 
@@ -1406,7 +1545,81 @@
         doc.setFontSize(12); doc.text(`Student Name: ${window.currentUser}`, 20, 55); doc.text(`Fee Month: ${month}`, 20, 65); doc.text(`Amount Paid: Rs. ${amount}`, 20, 75); doc.text(`Date of Issue: ${new Date().toLocaleDateString('en-GB')}`, 20, 85);
         doc.setTextColor(39, 174, 96); doc.setFontSize(16); doc.text("STATUS: PAID", 140, 75); doc.setTextColor(100, 100, 100); doc.setFontSize(10); doc.text("This is a system generated receipt.", 105, 100, null, null, "center"); doc.save(`Pathshala_Receipt_${window.currentUser}_${month}.pdf`);
     }
-    async function downloadPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Report", 14, 20); doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30); doc.autoTable({ startY: 40, html: '#resultTable', theme: 'grid' }); doc.save(`${window.currentUser}_Report.pdf`); }
+
+    async function downloadPDF() { 
+        Swal.fire({ title: 'Generating Premium Report...', html: 'Please wait while we prepare your results and graphs...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        
+        const { jsPDF } = window.jspdf; 
+        const doc = new jsPDF('p', 'mm', 'a4'); 
+        
+        doc.setFontSize(22); doc.setTextColor(0, 0, 128); doc.text("Pathshala - Premium Report", 105, 20, null, null, "center"); 
+        doc.setFontSize(12); doc.setTextColor(0, 0, 0); 
+        doc.text(`Student Name: ${window.currentUser}`, 14, 30); 
+        doc.text(`Date: ${new Date().toLocaleDateString('en-GB')}`, 14, 38);
+        
+        doc.autoTable({ startY: 45, html: '#resultTable', theme: 'grid' }); 
+        let finalY = doc.lastAutoTable.finalY + 15;
+        
+        let myRes = Object.values(results).filter(r => r.user === window.currentUser).sort((a,b) => (a.timestamp||0)-(b.timestamp||0));
+        let labels = [], dataPts = [], bgColors = [];
+        let grouped = {}; myRes.forEach(r => { if(!grouped[r.sub]) grouped[r.sub] = []; grouped[r.sub].push(parseFloat(r.perc)); }); 
+        for(let sub in grouped) { 
+            labels.push(sub); let avg = grouped[sub].reduce((a,b) => a+b, 0) / grouped[sub].length; dataPts.push(avg.toFixed(2)); 
+            if(avg >= 80) bgColors.push('#27ae60'); else if(avg >= 40) bgColors.push('#f39c12'); else bgColors.push('#e74c3c'); 
+        }
+
+        let cls = parseInt(students[window.currentUser].class) || 5;
+        let coreSubjects = (cls >= 9) ? ['Bengali', 'English', 'Math', 'Phys Sci', 'Life Sci', 'History', 'Geography'] : ['Bengali', 'English', 'Math', 'ENVS', 'History', 'Geography']; 
+        let radarData = [];
+        coreSubjects.forEach(sub => { let subRes = myRes.filter(r => r.sub === sub); if(subRes.length > 0) { let avg = subRes.reduce((s,x)=>s+parseFloat(x.perc),0)/subRes.length; radarData.push(avg.toFixed(2)); } else { radarData.push(0); } });
+
+        let tempDiv = document.createElement('div');
+        tempDiv.style.position = 'fixed'; tempDiv.style.top = '-10000px';
+        document.body.appendChild(tempDiv);
+
+        const createChartImage = (config, width, height) => {
+            return new Promise(resolve => {
+                let canvas = document.createElement('canvas'); 
+                canvas.width = width; canvas.height = height;
+                tempDiv.appendChild(canvas);
+                config.options.animation = false; config.options.responsive = false;
+                let chart = new Chart(canvas, config);
+                setTimeout(() => { let img = chart.toBase64Image(); chart.destroy(); tempDiv.removeChild(canvas); resolve(img); }, 300);
+            });
+        };
+
+        let barConfig = { type: 'bar', data: { labels: labels, datasets: [{ label: 'Average Marks (%)', data: dataPts, backgroundColor: bgColors }] }, options: { scales: { y: { beginAtZero: true, max: 100 } } } };
+        let lineConfig = { type: 'line', data: { labels: labels, datasets: [{ label: 'Performance Trend (%)', data: dataPts, borderColor: '#27ae60', borderWidth: 3, tension: 0.3 }] }, options: { scales: { y: { beginAtZero: true, max: 100 } } } };
+        
+        let canvasCtx = document.createElement('canvas').getContext('2d');
+        let gradient = canvasCtx.createRadialGradient(250, 250, 0, 250, 250, 250); gradient.addColorStop(0, 'rgba(0, 0, 128, 0.8)'); gradient.addColorStop(1, 'rgba(0, 0, 128, 0.2)');
+        let radarConfig = { type: 'radar', data: { labels: coreSubjects, datasets: [{ label: 'Overall Mastery (%)', data: radarData, backgroundColor: gradient, borderColor: '#FFDF00', borderWidth: 3, pointBackgroundColor: '#FFDF00' }] }, options: { scales: { r: { ticks: { min: 0, max: 100, stepSize: 20 } } } } };
+
+        try {
+            let barImg = await createChartImage(barConfig, 700, 350);
+            let lineImg = await createChartImage(lineConfig, 700, 350);
+            let radarImg = await createChartImage(radarConfig, 500, 500);
+
+            if(finalY > 170) { doc.addPage(); finalY = 20; }
+            doc.setFontSize(14); doc.setTextColor(0,0,128); doc.text("1. Overall Subject Average (Bar Graph)", 14, finalY); doc.addImage(barImg, 'PNG', 15, finalY + 5, 170, 85); finalY += 105;
+            
+            if(finalY > 170) { doc.addPage(); finalY = 20; }
+            doc.text("2. Performance Trend (Line Graph)", 14, finalY); doc.addImage(lineImg, 'PNG', 15, finalY + 5, 170, 85); finalY += 105;
+
+            if(finalY > 140) { doc.addPage(); finalY = 20; }
+            doc.text("3. Subject Mastery (Radar Graph)", 14, finalY); doc.addImage(radarImg, 'PNG', 45, finalY + 5, 120, 120);
+
+            doc.save(`${window.currentUser}_Premium_Report.pdf`);
+            Swal.close();
+            Swal.fire('Success', 'Premium Report Downloaded!', 'success');
+        } catch(e) { 
+            console.error(e); 
+            Swal.fire('Error', 'Failed to generate graphs.', 'error'); 
+        }
+        
+        document.body.removeChild(tempDiv);
+    }
+    
     async function downloadFeePDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.setFontSize(18); doc.setTextColor(0, 0, 128); doc.text("Pathshala Fees Report", 14, 20); doc.setFontSize(12); doc.setTextColor(0, 0, 0); doc.text(`Name: ${window.currentUser}`, 14, 30); let tempTable = document.getElementById('feeTable').cloneNode(true); for(let i=0; i<tempTable.rows.length; i++) tempTable.rows[i].deleteCell(-1); doc.autoTable({ startY: 40, html: tempTable, theme: 'grid' }); doc.save(`${window.currentUser}_Fees_Report.pdf`); }
 </script>
 </body>
